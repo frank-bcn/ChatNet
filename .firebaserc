@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "chatnet-2dc66": {
+      "hosting": {
+        "chatNet": [
+          "chatnet-2dc66"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "chatnet-2dc66"
+  }
+}
