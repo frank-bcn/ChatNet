@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { RegisterSuccessDialogComponent } from './register-success-dialog/register-success-dialog.component';
 import { LoginComponent } from './login/login.component';
+import { SignUpComponent } from './sign-up/sign-up.component';
+import { MainPageComponent } from './main-page/main-page.component';
 
 
 
@@ -18,6 +20,8 @@ import { LoginComponent } from './login/login.component';
     AppComponent,
     RegisterSuccessDialogComponent,
     LoginComponent,
+    SignUpComponent,
+    MainPageComponent,
    
   ],
   imports: [

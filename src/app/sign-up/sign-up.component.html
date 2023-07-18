@@ -1,9 +1,12 @@
-<form (ngSubmit)="loginUser()" #loginForm="ngForm">
+<form (ngSubmit)="registerUser()" #registerForm="ngForm">
     <div class="login-div">
         <div class="logo"></div>
-        <div class="title">LogIn</div>
+        <div class="title">Sign Up</div>
         <div class="fields">
             <div class="username">
+                <label>
+                    <input type="text" name="username" placeholder="Username" [(ngModel)]="username" required>
+                </label>
             </div>
             <div class="password">
                 <label>
@@ -16,9 +19,12 @@
                 </label>
             </div>
         </div>
-        <button class="signin-button" type="submit" [disabled]="loginForm.invalid">Einloggen</button>
+        <button class="signin-button" type="submit" [disabled]="registerForm.invalid">Registrieren</button>
         <div class="link">
-            <a href="#">Forget password?</a> or <a routerLink="/signup">SignUp</a>
+            <a href="#">Forget password?</a> or <a href="#">Log In</a>
         </div>
+    </div>
+    <div *ngIf="showSuccessMessage" class="popup">
+        <div class="message">Sie haben sich erfolgreich registriert!</div>
     </div>
 </form>
