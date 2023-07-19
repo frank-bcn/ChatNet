@@ -1,0 +1,26 @@
+.page {
+  overflow: hidden;
+  width: 360px;
+  height: 750px;
+  border-radius: 30px;
+  margin: 25px auto;
+  box-shadow: 12px 12px 50px 5px rgba(0, 0, 0, .2);
+}
+
+.containerSearch {
+  display: flex;
+  justify-content: center;
+}
+
+.userSearch {
+  display: flex;
+  width: 65%;
+  height: 40px;
+  border-radius: 20px;
+  border: 0px solid #f3f4f7;
+  box-shadow: inset 3px 3px 5px rgba(55, 84, 170, .15),
+    inset -3px -3px 5px rgba(255, 255, 255, 1) !important;
+  padding: 5px 15px;
+  outline: none !important;
+  color: #535D74;
+}

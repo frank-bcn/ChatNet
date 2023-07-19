@@ -1,15 +1,17 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-main-page',
-  templateUrl: './main-page.component.html',
-  styleUrls: ['./main-page.component.scss']
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss']
 })
-export class MainPageComponent {
+export class HeaderComponent {
+
   username: string;
   greeting: string;
 
-  constructor() {
+  constructor(private router: Router) {
     this.username = '';
     this.greeting = this.getGreeting();
   }
@@ -24,5 +26,9 @@ export class MainPageComponent {
     } else {
       return 'Guten Abend';
     }
+  }
+
+  openProfile() {
+    this.router.navigate(['/profile']);
   }
 }

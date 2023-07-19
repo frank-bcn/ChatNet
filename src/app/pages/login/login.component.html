@@ -1,18 +1,22 @@
 <form (ngSubmit)="loginUser()" #loginForm="ngForm">
     <div class="login-div">
-        <div class="logo"></div>
+        <div class="logo">
+            <img src="./assets/img/logo.png">
+        </div>
         <div class="title">LogIn</div>
         <div class="fields">
             <div class="username">
             </div>
             <div class="password">
                 <label>
-                    <input type="email" name="email" placeholder="Email" [(ngModel)]="email" required>
+                    <input type="email" name="email" placeholder="Email" [(ngModel)]="email" required
+                        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
                 </label>
             </div>
             <div class="password">
                 <label>
                     <input type="password" name="password" placeholder="Password" [(ngModel)]="password" required>
+                    <!--pattern einfügen-->
                 </label>
             </div>
         </div>
