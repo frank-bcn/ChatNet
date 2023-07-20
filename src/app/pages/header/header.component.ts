@@ -1,19 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent {
-
+export class HeaderComponent implements OnInit {
   username: string;
   greeting: string;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private afAuth: AngularFireAuth) {
     this.username = '';
     this.greeting = this.getGreeting();
+  }
+
+  ngOnInit() {
+    this.afAuth.authState.subscribe(user => {
+      if (user) {
+        this.username = user.displayName || '';
+        this.updateGreeting();
+      }
+    });
   }
 
   getGreeting(): string {
@@ -25,6 +34,14 @@ export class HeaderComponent {
       return 'Guten Tag';
     } else {
       return 'Guten Abend';
+    }
+  }
+
+  updateGreeting() {
+    if (this.username) {
+      this.greeting = `${this.getGreeting()}`;
+    } else {
+      this.greeting = this.getGreeting();
     }
   }
 

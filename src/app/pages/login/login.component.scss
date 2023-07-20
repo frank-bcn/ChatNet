@@ -38,19 +38,26 @@
     padding: 75px 5px 5px;
 }
 
-.fields input {
-    border: none;
-    outline: none;
-    background: none;
-    font-size: 18px;
-    color: #555;
-    padding: 20px 10px 20px 5px;
+.fields input:-webkit-autofill {
+    background-color: transparent !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: initial !important;
 }
 
-.username, .password {
-    margin-bottom: 30px;
-    border-radius: 25px;
-    box-shadow: inset 8px 8px 8px #cbced1, inset -8px -8px 8px #fff;
+.fields input {
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 18px;
+  color: #555;
+  padding: 20px 10px 20px 5px;
+}
+
+.username,
+.password {
+  margin-bottom: 30px;
+  border-radius: 25px;
+  box-shadow: inset 8px 8px 8px #cbced1, inset -8px -8px 8px #fff;
 }
 
 .signin-button {
@@ -71,8 +78,9 @@
 }
 
 .signin-button:disabled {
-    background-color: gray; 
+    background-color: gray;
 }
+
 /*.signin-button:hover {
     background-color: #50e5b9;
 }*/
@@ -98,9 +106,9 @@
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-  
-  .message {
+}
+
+.message {
     text-align: center;
     font-size: 18px;
-  }
+}

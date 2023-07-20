@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-
   email: any;
   password: any;
 
@@ -18,7 +17,8 @@ export class LoginComponent {
     this.afAuth.signInWithEmailAndPassword(this.email, this.password)
       .then(userCredential => {
         console.log('Benutzerdaten:', userCredential.user);
-      
+
+        console.log('Benutzername:', userCredential.user?.displayName);
 
         this.router.navigate(['/main-page']); 
       })

@@ -38,6 +38,12 @@
     padding: 75px 5px 5px;
 }
 
+.fields input:-webkit-autofill {
+    background-color: transparent !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: initial !important;
+}
+
 .fields input {
     border: none;
     outline: none;

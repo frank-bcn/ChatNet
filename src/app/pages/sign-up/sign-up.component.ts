@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 })
 export class SignUpComponent {
 
-  username: any;
+  username: string = '';
   email: any;
   password: any;
   showSuccessMessage: boolean = false;
@@ -19,14 +19,21 @@ export class SignUpComponent {
   registerUser() {
     this.afAuth.createUserWithEmailAndPassword(this.email, this.password)
       .then(userCredential => {
-        console.log('Benutzerdaten:', userCredential.user);
-
-        this.showSuccessMessage = true;
-
-        setTimeout(() => {
-          this.showSuccessMessage = false;
-          this.router.navigate(['']);
-        }, 3000);
+  
+        userCredential.user?.updateProfile({
+          displayName: this.username
+        }).then(() => {
+          
+  
+          this.showSuccessMessage = true;
+  
+          setTimeout(() => {
+            this.showSuccessMessage = false;
+            this.router.navigate(['']);
+          }, 3000);
+        }).catch(error => {
+          
+        });
       })
       .catch(error => {
         console.error('Fehler bei der Benutzererstellung', error);

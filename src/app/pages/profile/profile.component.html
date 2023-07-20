@@ -1,5 +1,34 @@
 <div class="page">
-    <div class="headlineProfile">
-        <button class="menuButton" type="button" (click)="goToMainPage()"><img src="./assets/img/arrow.png"></button>
+  <div class="headlineProfile">
+    <span class="profileName"><b>{{ username }}</b></span>
+    <button class="menuButton" type="button" (click)="goToMainPage()">
+      <img src="./assets/img/arrow.png">
+    </button>
+  </div>
+  <div class="userContent">
+    <div class="profilImage">
+      <img src="./assets/img/profile+.png">
     </div>
+  </div>
+  <div class="fields">
+    <div class="username">
+      <label>
+        <span class="labelText">Email:</span>
+        <input type="email" name="email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+          [(ngModel)]="email">
+      </label>
+    </div>
+    <div class="password">
+      <label>
+        <span class="labelText">Username:</span>
+        <input type="text" name="text" required [(ngModel)]="username">
+      </label>
+    </div>
+  </div>
+  <button class="signin-button" type="submit" (click)="updateUserData()">Ändern</button>
+
+  <div *ngIf="showSuccessMessage" class="popup">
+    <div class="message">Sie haben Ihre daten erfolgreich geändert!</div>
+  </div>
+
 </div>
