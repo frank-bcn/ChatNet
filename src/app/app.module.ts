@@ -16,6 +16,10 @@ import { HeaderComponent } from 'src/app/pages/header/header.component';
 import { ProfileComponent } from 'src/app/pages/profile/profile.component';
 import { ChatProfilePreviewComponent } from 'src/app/pages/chat-profile-preview/chat-profile-preview.component';
 import { ChatDialogComponent } from 'src/app/pages/chat-dialog/chat-dialog.component';
+import { provideFirestore,getFirestore } from '@angular/fire/firestore';
+import { FIREBASE_OPTIONS } from '@angular/fire/compat';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { provideAuth, getAuth } from '@angular/fire/auth';
 
 
 
@@ -38,11 +42,14 @@ import { ChatDialogComponent } from 'src/app/pages/chat-dialog/chat-dialog.compo
     BrowserAnimationsModule,
     FormsModule,
     MatDialogModule,
-
-    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireModule,
     AngularFireAuthModule,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirestore(() => getFirestore()),
+    provideAuth(() => getAuth()),
+    
   ],
-  providers: [],
+  providers: [{ provide: FIREBASE_OPTIONS, useValue: environment.firebase }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
