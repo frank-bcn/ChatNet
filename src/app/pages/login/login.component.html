@@ -6,8 +6,6 @@
         <div class="title">LogIn</div>
         <div class="fields">
             <div class="username">
-            </div>
-            <div class="password">
                 <label>
                     <input type="email" name="email" placeholder="Email" [(ngModel)]="email" required
                         pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
@@ -15,14 +13,13 @@
             </div>
             <div class="password">
                 <label>
-                    <input type="password" name="password" placeholder="Password" [(ngModel)]="password" required>
-                    <!--pattern einfügen-->
+                    <input type="password" name="password" placeholder="Passwort" [(ngModel)]="password" required>
                 </label>
             </div>
         </div>
         <button class="signin-button" type="submit" [disabled]="loginForm.invalid">Einloggen</button>
         <div class="link">
-            <a href="#">Forget password?</a> or <a routerLink="/signup">SignUp</a>
+            <a href="#">Passwort vergessen?</a> oder <a routerLink="/signup">Registrieren</a>
         </div>
     </div>
 </form>

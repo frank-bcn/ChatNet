@@ -1,11 +1,25 @@
 <div class="page">
   <div class="app mainpage">
-
     <app-header></app-header>
 
     <div class="containerSearch">
-      <input type="text" id="" class="userSearch" placeholder="Search Users">
+      <input
+        type="text"
+        id=""
+        class="userSearch"
+        placeholder="Search Users"
+        [(ngModel)]="searchQuery"
+        (input)="searchUsers()"
+      >
+    </div>
+
+    <!-- Display filtered results -->
+    <div *ngIf="getFilteredResults().length > 0">
+      <ul>
+        <li *ngFor="let user of getFilteredResults()">
+          {{ user.username }} - {{ user.email }}
+        </li>
+      </ul>
     </div>
   </div>
-  <app-chat-profile-preview></app-chat-profile-preview>
-</div>
+</div> 

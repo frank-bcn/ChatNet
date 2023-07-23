@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Firestore, collection, doc, setDoc,} from '@angular/fire/firestore';
+import { Firestore, collection, doc, setDoc } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { User } from 'src/app/models/signUpUserdata';
-
-
 
 @Component({
   selector: 'app-sign-up',
@@ -12,15 +10,12 @@ import { User } from 'src/app/models/signUpUserdata';
   styleUrls: ['./sign-up.component.scss']
 })
 export class SignUpComponent {
-
- 
   username: string = '';
   email: any;
   password: any;
   showSuccessMessage: boolean = false;
 
-  user:User = new User(); 
-  
+  user: User = new User();
 
   constructor(private afAuth: AngularFireAuth, private router: Router, private firestore: Firestore) {}
 
@@ -30,11 +25,8 @@ export class SignUpComponent {
         userCredential.user?.updateProfile({
           displayName: this.username
         }).then(() => {
-         
           this.saveSignUpUserData(this.email, this.username);
-  
           this.showSuccessMessage = true;
-  
           setTimeout(() => {
             this.showSuccessMessage = false;
             this.router.navigate(['']);
@@ -53,10 +45,9 @@ export class SignUpComponent {
     this.user.username = username;
     const coll = collection(this.firestore, 'users');
     setDoc(doc(coll), this.user.toJson()).then(() => {
-
+      // Success saving user data
     }).catch((error) => {
       console.log('save user failed');
     });
-    
   }
 }

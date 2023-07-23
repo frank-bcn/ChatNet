@@ -13,22 +13,19 @@
   <div class="fields">
     <div class="username">
       <label>
-        <span class="labelText">Email:</span>
-        <input type="email" name="email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-          [(ngModel)]="email">
-      </label>
-    </div>
-    <div class="password">
-      <label>
         <span class="labelText">Username:</span>
         <input type="text" name="text" required [(ngModel)]="username">
       </label>
     </div>
+    <div class="email">
+      <label>
+        <span class="labelText">Email:</span>
+        <input type="email" name="email" required [(ngModel)]="email">
+      </label>
+    </div>
   </div>
   <button class="signin-button" type="submit" (click)="updateUserData()">Ändern</button>
-
   <div *ngIf="showSuccessMessage" class="popup">
-    <div class="message">Sie haben Ihre daten erfolgreich geändert!</div>
+    <div class="message">Sie haben Ihre Daten erfolgreich geändert!</div>
   </div>
-
 </div>

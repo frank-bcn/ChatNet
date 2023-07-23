@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   email: any;
   password: any;
+  darkMode = false;
 
   constructor(private afAuth: AngularFireAuth, private router: Router) {}
 
@@ -29,5 +30,14 @@ export class LoginComponent {
 
   navigateToSignUp() {
     this.router.navigate(['/signup']);
+  }
+
+  toggleDarkMode() {
+    const body = document.getElementsByTagName('body')[0];
+    if (this.darkMode) {
+      body.classList.add('dark-mode');
+    } else {
+      body.classList.remove('dark-mode');
+    }
   }
 }
