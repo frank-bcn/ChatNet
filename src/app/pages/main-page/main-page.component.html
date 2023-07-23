@@ -9,17 +9,28 @@
         class="userSearch"
         placeholder="Search Users"
         [(ngModel)]="searchQuery"
-        (input)="searchUsers()"
-      >
+        (input)="searchUsers()">
     </div>
 
-    <!-- Display filtered results -->
-    <div *ngIf="getFilteredResults().length > 0">
-      <ul>
-        <li *ngFor="let user of getFilteredResults()">
-          {{ user.username }} - {{ user.email }}
+    <div *ngIf="getFilteredResults().length > 0" class="userListContainer">
+      <ul class="userList" style="list-style-type: none;">
+        <li *ngFor="let user of getFilteredResults()" class="userItem">
+          <div class="profilImage">
+            <img src="./assets/img/pic.png">
+          </div>
+          <ng-container *ngIf="searchQuery.startsWith('@')">
+            {{ user.email }}
+          </ng-container>
+          <ng-container *ngIf="!searchQuery.startsWith('@')">
+            {{ user.username }}
+          </ng-container>
+          <button class="menuButton" type="button"><img src="./assets/img/personAdd.png"></button>
         </li>
+        
       </ul>
     </div>
+    <div class="chatList">
+    <app-chat-profile-preview></app-chat-profile-preview>
+    </div>
   </div>
-</div> 
+</div>
