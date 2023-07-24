@@ -10,7 +10,8 @@ import { User } from 'src/app/models/signUpUserdata';
 export class MainPageComponent {
   searchQuery: string = '';
   searchResults: User[] = [];
-   // Assuming you have the currentUser information
+  DropdownMenu: boolean = false;
+  showChatList: boolean = true;
 
   constructor(private firestore: Firestore) {}
 
@@ -34,20 +35,23 @@ export class MainPageComponent {
       getDocs(searchQuery)
         .then((querySnapshot) => {
           this.searchResults = querySnapshot.docs.map((doc) => doc.data() as User);
-          // Exclude current user from search results
           this.searchResults = this.searchResults.filter(user => user.username);
+          this.showChatList = false;
         })
         .catch((error) => {
           console.log('Error searching users', error);
         });
     } else {
-      // Reset search results if search query is empty
       this.searchResults = [];
+      this.showChatList = true;
     }
   }
 
-// Merge the filtered results to show in the template
   getFilteredResults(): User[] {
     return [...this.searchResults];
+  }
+
+  toggleDropdown() {
+    this.DropdownMenu = !this.DropdownMenu;
   }
 }

@@ -24,7 +24,7 @@
   display: flex;
   justify-content: center;
   background-color: #f3f4f7;
-  margin-bottom: 10px; 
+  margin-bottom: 10px;
 }
 
 .userListContainer {
@@ -37,6 +37,7 @@
   list-style-type: none;
   padding: 0;
   margin: 0;
+  width: 78%;
 }
 
 .userItem {
@@ -49,12 +50,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 54px;
-  height: 54px;
-  border-radius: 54px;
+  width: 35px;
+  height: 35px;
+  border-radius: 35px;
   border: 2px solid white;
-  box-shadow: 5px 5px 10px rgba(55, 84, 170, .2), -3px -3px 5px rgba(255, 255, 255, 1), 0px 0px 4px rgba(255, 255, 255, .2);
+  box-shadow: 5px 5px 10px rgba(55, 84, 170, 0.2), -3px -3px 5px rgb(255, 255, 255), 0px 0px 4px rgba(255, 255, 255, 0.2);
   margin-right: 20px;
+}
+
+.profilImage img {
+  display: flex;
+  height: 30px;
+  width: 30px;
 }
 
 .menuButton {
@@ -95,4 +102,45 @@
     inset 7px 7px 15px rgba(55, 84, 170, .15),
     inset -7px -7px 20px rgba(255, 255, 255, 1),
     0px 0px 4px rgba(255, 255, 255, .2) !important;
+}
+
+.dropdown {
+  position: absolute;
+  width: 24%;
+  top: 191px;
+  left: 359px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown li {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.dropdown li:last-child {
+  border-bottom: none;
+}
+
+.searchDesignOne {
+  display: flex;
+  justify-content: space-between;
+  box-shadow: inset 3px 3px 5px rgba(55, 84, 170, .15), inset -3px -3px 5px rgba(255, 255, 255, 1), 0px 0px 4px rgba(255, 255, 255, .2) !important;
+  border-radius: 20px;
+}
+
+.searchDesignTwo {
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 3px 3px 5px rgba(55, 84, 170, .15), -3px -3px 5px rgba(255, 255, 255, 1), 0px 0px 4px rgba(255, 255, 255, .2) !important;
+  border-radius: 20px;
 }
