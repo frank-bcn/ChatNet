@@ -17,14 +17,14 @@ export class MainPageComponent implements OnInit {
   loggedInUserId: string = '';
   contactList: User[] = [];
 
-  constructor(private afAuth: AngularFireAuth, private firestore: Firestore, private router: Router) {}
+  constructor(private afAuth: AngularFireAuth, private firestore: Firestore, private router: Router) { }
 
   ngOnInit() {
     this.afAuth.authState.subscribe((user) => {
       if (user) {
         this.loggedInUserId = user.uid;
         console.log(this.loggedInUserId);
-        this.loadContactList(); 
+        this.loadContactList();
       }
     });
   }
@@ -41,9 +41,7 @@ export class MainPageComponent implements OnInit {
     this.router.navigate(['/chat-dialog']);
   }
 
-  searchUsers() {
-    const coll = collection(this.firestore, 'users');
-
+  createSearchQuery(): any {
     if (this.searchQuery && this.searchQuery.length > 0) {
       const firstChar = this.searchQuery.charAt(0).toLowerCase();
       const queryField = this.searchQuery.startsWith('@') ? 'email' : 'username';
@@ -51,21 +49,38 @@ export class MainPageComponent implements OnInit {
         ? this.searchQuery.substring(1).toLowerCase()
         : firstChar;
 
-      const searchQuery = query(
-        coll,
+      return query(
+        collection(this.firestore, 'users'),
         orderBy(queryField),
         startAt(queryValue),
         endAt(queryValue + '\uf8ff')
       );
+    }
+  }
 
-      getDocs(searchQuery)
-        .then((querySnapshot) => {
-          this.searchResults = querySnapshot.docs.map((doc) => doc.data() as User);
-          this.searchResults = this.searchResults.filter(user => user.username);
+  loadSearchResults(searchQuery: any): Promise<User[]> {
+    return getDocs(searchQuery)
+      .then((querySnapshot) => {
+        return querySnapshot.docs.map((doc) => doc.data() as User);
+      })
+      .catch((error) => {
+        console.log('Fehler beim Suchen von Benutzern', error);
+        return [];
+      });
+  }
+
+  filterSearchResults(results: User[]): User[] {
+    return results.filter(user => user.username);
+  }
+
+  searchUsers() {
+    const searchQuery = this.createSearchQuery();
+
+    if (searchQuery) {
+      this.loadSearchResults(searchQuery)
+        .then((results) => {
+          this.searchResults = this.filterSearchResults(results);
           this.showChatList = false;
-        })
-        .catch((error) => {
-          console.log('Fehler beim Suchen von Benutzern', error);
         });
     } else {
       this.searchResults = [];
@@ -73,40 +88,50 @@ export class MainPageComponent implements OnInit {
     }
   }
 
+  userExistsInContactList(user: User): boolean {
+    return this.contactList.some((contact) => contact.email === user.email);
+  }
+
+  addUserToContactList(user: User) {
+    this.contactList.push(user);
+    console.log('User added to contactList:', user);
+  }
+
+  updateContactListInDatabase() {
+    const userRef = doc(this.firestore, 'users', this.loggedInUserId);
+    setDoc(userRef, { contactList: this.contactList }, { merge: true })
+      .then(() => {
+        console.log('User added to contactList in the database');
+        this.resetSearchResultsAndShowChatList();
+      })
+      .catch((error) => {
+        console.error('Error adding user to contactList:', error);
+      });
+  }
+
   addToContactList(user: User) {
     if (!this.contactList) {
       this.contactList = [];
     }
 
-    const userExists = this.contactList.some((contact) => contact.email === user.email);
+    const userExists = this.userExistsInContactList(user);
     console.log('User exists in contactList:', userExists);
 
     if (!userExists) {
-      this.contactList.push(user);
-      console.log('User added to contactList:', user);
-
-      const userRef = doc(this.firestore, 'users', this.loggedInUserId);
-      setDoc(userRef, { contactList: this.contactList }, { merge: true })
-        .then(() => {
-          console.log('User added to contactList in the database');
-          this.resetSearchResultsAndShowChatList();
-        })
-        .catch((error) => {
-          console.error('Error adding user to contactList:', error);
-        });
+      this.addUserToContactList(user);
+      this.updateContactListInDatabase();
     } else {
       console.log('User already exists in contactList');
     }
   }
 
-  
   loadContactList() {
     const userRef = doc(this.firestore, 'users', this.loggedInUserId);
     getDoc(userRef)
       .then((docSnap) => {
         if (docSnap.exists()) {
           const data = docSnap.data();
-          this.contactList = data['contactList'] || []; 
+          this.contactList = data['contactList'] || [];
         }
       })
       .catch((error) => {
@@ -126,21 +151,3 @@ export class MainPageComponent implements OnInit {
     this.showChatList = true;
   }
 }
-
-
-/*
-  addToContactList(user: User) {
-    if (!this.contactList.find((contact) => contact.uid === user.uid)) {
-      this.contactList.push(user);
-      
-      const userRef = doc(this.firestore, 'users', this.loggedInUserId);
-      setDoc(userRef, { contactList: this.contactList }, { merge: true })
-        .then(() => {
-          console.log('User added to contactList in the database');
-          this.resetSearchResultsAndShowChatList();
-        })
-        .catch((error) => {
-          console.error('Error adding user to contactList:', error);
-        });
-    }
-  }*/
