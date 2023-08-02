@@ -14,7 +14,6 @@ export class SignUpComponent {
   email: any;
   password: any;
   showSuccessMessage: boolean = false;
-
   user: User = new User();
 
   constructor(private afAuth: AngularFireAuth, private router: Router, private firestore: Firestore) {}
@@ -43,11 +42,15 @@ export class SignUpComponent {
   saveSignUpUserData(uid: any, email: any, username: any): void {
     this.user.email = email;
     this.user.username = username;
+    this.user.contactList = [];
+  
     const docRef = doc(this.firestore, 'users', uid);
-    setDoc(docRef, this.user.toJson()).then(() => {
-      
-    }).catch((error) => {
-      console.log('save user failed');
-    });
+    setDoc(docRef, this.user.toJson())
+      .then(() => {
+
+      })
+      .catch((error) => {
+        console.log('Save user failed', error);
+      });
   }
 }

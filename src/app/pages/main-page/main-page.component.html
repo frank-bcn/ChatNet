@@ -20,13 +20,31 @@
           <ng-container *ngIf="!searchQuery.startsWith('@')">
             {{ user.username }}
           </ng-container>
-          <button class="menuButton" type="button"><img src="./assets/img/personAdd.png"></button>
+          <button class="menuButton" type="button" (click)="addToContactList(user); clearInputAndShowChatList()">
+            <img src="./assets/img/personAdd.png">
+          </button>
         </li>
       </ul>
     </div>
 
-    <div class="chatList" *ngIf="showChatList">
-      <app-chat-profile-preview></app-chat-profile-preview>
+    <div class="chatList">
+      <div class="containerPreview" *ngFor="let contact of contactList" (click)="openChatDialog()">
+        <div class="container">
+          <div class="userImage">
+            <img src="./assets/img/pic.png">
+          </div>
+          <div class="containerInformation">
+            <div class="information">
+              <div class="UserName">{{ contact.username }}</div>
+              <div class="time">Uhrzeit</div>
+            </div>
+            <div class="informationChat">
+              <div class="lastMessageText">Letzter gesendeter Text hier anzeigen</div>
+              <div class="lastMessageUnreaded">1</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

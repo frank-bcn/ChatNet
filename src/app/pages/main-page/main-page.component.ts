@@ -1,19 +1,45 @@
-import { Component } from '@angular/core';
-import { Firestore, collection, query, orderBy, startAt, endAt, getDocs } from '@angular/fire/firestore';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Firestore, collection, query, orderBy, startAt, endAt, getDocs, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { User } from 'src/app/models/signUpUserdata';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss']
 })
-export class MainPageComponent {
+export class MainPageComponent implements OnInit {
   searchQuery: string = '';
   searchResults: User[] = [];
   DropdownMenu: boolean = false;
   showChatList: boolean = true;
+  loggedInUserId: string = '';
+  contactList: User[] = [];
 
-  constructor(private firestore: Firestore) {}
+  constructor(private afAuth: AngularFireAuth, private firestore: Firestore, private router: Router) {}
+
+  ngOnInit() {
+    this.afAuth.authState.subscribe((user) => {
+      if (user) {
+        this.loggedInUserId = user.uid;
+        console.log(this.loggedInUserId);
+        this.loadContactList(); 
+      }
+    });
+  }
+
+  getFilteredResults(): User[] {
+    return [...this.searchResults];
+  }
+
+  toggleDropdown() {
+    this.DropdownMenu = !this.DropdownMenu;
+  }
+
+  openChatDialog() {
+    this.router.navigate(['/chat-dialog']);
+  }
 
   searchUsers() {
     const coll = collection(this.firestore, 'users');
@@ -39,7 +65,7 @@ export class MainPageComponent {
           this.showChatList = false;
         })
         .catch((error) => {
-          console.log('Error searching users', error);
+          console.log('Fehler beim Suchen von Benutzern', error);
         });
     } else {
       this.searchResults = [];
@@ -47,11 +73,74 @@ export class MainPageComponent {
     }
   }
 
-  getFilteredResults(): User[] {
-    return [...this.searchResults];
+  addToContactList(user: User) {
+    if (!this.contactList) {
+      this.contactList = [];
+    }
+
+    const userExists = this.contactList.some((contact) => contact.email === user.email);
+    console.log('User exists in contactList:', userExists);
+
+    if (!userExists) {
+      this.contactList.push(user);
+      console.log('User added to contactList:', user);
+
+      const userRef = doc(this.firestore, 'users', this.loggedInUserId);
+      setDoc(userRef, { contactList: this.contactList }, { merge: true })
+        .then(() => {
+          console.log('User added to contactList in the database');
+          this.resetSearchResultsAndShowChatList();
+        })
+        .catch((error) => {
+          console.error('Error adding user to contactList:', error);
+        });
+    } else {
+      console.log('User already exists in contactList');
+    }
   }
 
-  toggleDropdown() {
-    this.DropdownMenu = !this.DropdownMenu;
+  
+  loadContactList() {
+    const userRef = doc(this.firestore, 'users', this.loggedInUserId);
+    getDoc(userRef)
+      .then((docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          this.contactList = data['contactList'] || []; 
+        }
+      })
+      .catch((error) => {
+        console.error('Error loading contactList:', error);
+      });
+  }
+
+  resetSearchResultsAndShowChatList() {
+    this.searchResults = [];
+    this.searchQuery = '';
+    this.showChatList = true;
+    this.toggleDropdown();
+  }
+
+  clearInputAndShowChatList() {
+    this.searchQuery = '';
+    this.showChatList = true;
   }
 }
+
+
+/*
+  addToContactList(user: User) {
+    if (!this.contactList.find((contact) => contact.uid === user.uid)) {
+      this.contactList.push(user);
+      
+      const userRef = doc(this.firestore, 'users', this.loggedInUserId);
+      setDoc(userRef, { contactList: this.contactList }, { merge: true })
+        .then(() => {
+          console.log('User added to contactList in the database');
+          this.resetSearchResultsAndShowChatList();
+        })
+        .catch((error) => {
+          console.error('Error adding user to contactList:', error);
+        });
+    }
+  }*/
