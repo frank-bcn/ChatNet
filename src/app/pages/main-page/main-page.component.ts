@@ -16,6 +16,7 @@ export class MainPageComponent implements OnInit {
   showChatList: boolean = true;
   loggedInUserId: string = '';
   contactList: User[] = [];
+  selectedUser: User | null = null;
 
   constructor(private afAuth: AngularFireAuth, private firestore: Firestore, private router: Router) { }
 
@@ -37,7 +38,8 @@ export class MainPageComponent implements OnInit {
     this.DropdownMenu = !this.DropdownMenu;
   }
 
-  openChatDialog() {
+  openChatDialog(user: User) {
+    this.selectedUser = user; 
     this.router.navigate(['/chat-dialog']);
   }
 

@@ -28,7 +28,7 @@
     </div>
 
     <div class="chatList">
-      <div class="containerPreview" *ngFor="let contact of contactList" (click)="openChatDialog()">
+      <div class="containerPreview" *ngFor="let contact of contactList" (click)="openChatDialog(contact)">
         <div class="container">
           <div class="userImage">
             <img src="./assets/img/pic.png">

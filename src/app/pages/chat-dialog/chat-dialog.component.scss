@@ -1,7 +1,7 @@
 .page {
     overflow: hidden;
     width: 360px;
-    height: 750px;
+    height: 650px;
     border-radius: 30px;
     margin: 25px auto;
     box-shadow: 12px 12px 50px 5px rgba(0, 0, 0, .2);
@@ -10,7 +10,7 @@
 .contentSide {
     display: flex;
     flex-direction: column;
-    height: 80%;
+    height: 85%;
 }
 
 .headlineProfile {
@@ -76,19 +76,27 @@
 
 .message {
     max-width: 80%;
-    border-radius: 15px;
     margin: 10px 0;
     width: max-content;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    margin-left: 20px;
+}
+
+.messageItem {
+    margin: 5px 0;
 }
 
 .messageReceived {
+    display: flex;
+    border-radius: 15px;
     box-shadow: inset 3px 3px 5px rgba(55, 84, 170, .15), inset -3px -3px 5px rgba(255, 255, 255, 1), 0px 0px 4px rgba(255, 255, 255, .2) !important;
     border-bottom-left-radius: 0;
 }
 
 .messageSend {
+    display: flex;
+    border-radius: 15px;
     box-shadow: 3px 3px 5px rgba(55, 84, 170, .15), -3px -3px 5px rgba(255, 255, 255, 1), 0px 0px 4px rgba(255, 255, 255, .2) !important;
     border-bottom-right-radius: 0;
     margin-left: auto;
@@ -115,15 +123,49 @@
 
 .userSearch {
     display: flex;
-    min-height: 139px;
-    min-width: 339px;
-    max-height: 139px;
-    max-width: 339px;
+    margin-left: 15px;
+    width: 70%;
+    height: 50px;
     border-radius: 20px;
     border: 0px solid #f3f4f7;
-    box-shadow: inset 3px 3px 5px rgba(55, 84, 170, .15),
-        inset -3px -3px 5px rgba(255, 255, 255, 1) !important;
+    box-shadow: inset 3px 3px 5px rgba(55, 84, 170, 0.15), inset -3px -3px 5px rgb(255, 255, 255) !important;
     padding: 5px 15px;
     outline: none !important;
     color: #535D74;
+}
+
+.menuButton img {
+    max-width: 50%;
+    max-height: 50%;
+}
+
+.menuButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    width: 50px;
+    height: 50px;
+    position: relative;
+    border: none;
+    border-radius: 40px;
+    margin-left: 20px;
+    color: #6D7587;
+    background-color: var(--back-color);
+    box-shadow: 7px 7px 15px rgba(55, 84, 170, .15),
+        -7px -7px 20px rgba(255, 255, 255, 1),
+        inset 0px 0px 4px rgba(255, 255, 255, .2),
+        inset 7px 7px 15px rgba(55, 84, 170, 0),
+        inset -7px -7px 20px rgba(255, 255, 255, 0),
+        0px 0px 4px rgba(255, 255, 255, 0) !important;
+    transition: box-shadow .25s ease !important;
+}
+
+.menuButton:active {
+    box-shadow: 7px 7px 15px rgba(55, 84, 170, .15),
+        -7px -7px 20px rgba(255, 255, 255, 1),
+        inset 0px 0px 4px rgba(255, 255, 255, 0),
+        inset 7px 7px 15px rgba(55, 84, 170, .15),
+        inset -7px -7px 20px rgba(255, 255, 255, 1),
+        0px 0px 4px rgba(255, 255, 255, .2) !important;
 }
