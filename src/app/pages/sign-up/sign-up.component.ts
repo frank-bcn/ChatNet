@@ -40,6 +40,7 @@ export class SignUpComponent {
   }
 
   saveSignUpUserData(uid: any, email: any, username: any): void {
+    this.user.uid = uid;
     this.user.email = email;
     this.user.username = username;
     this.user.contactList = [];

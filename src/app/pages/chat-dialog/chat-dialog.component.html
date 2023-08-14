@@ -1,25 +1,19 @@
 <div class="page">
-    <div class="contentSide">
-        <div class="headlineProfile">
-            <div class="profilImage">
-                <img src="./assets/img/profile+.png">
-            </div>
-            <button class="menuButton" type="button" (click)="goToMainPage()"><img
-                    src="./assets/img/arrow.png"></button>
-        </div>
-
-        <div class="message">
-            <div *ngFor="let message of messages" class="messageItem"
-                [ngClass]="{'messageReceived': message.sentByUser, 'messageSend': !message.sentByUser}">
-                <div class="messageText">{{ message.text }}</div>
-                <div class="messageTime">{{ message.time }}</div>
-            </div>
-        </div>
-
-
+  <div class="headlineProfile">
+    <div class="profilImage">
+      <img src="./assets/img/profile+.png">
     </div>
-    <div class="container">
-        <input type="text" [(ngModel)]="messageInput" class="userSearch" placeholder="Nachricht eingeben...">
-        <button class="menuButton" (click)="sendMessage()"><img src="./assets/img/send.png"></button>
+    <button class="menuButton" type="button" (click)="goToMainPage()"><img src="./assets/img/arrow.png"></button>
+  </div>
+  <div class="contentSide">
+    <div class="message">
+      <div class="messageItem" *ngFor="let chat of chatHistory">
+        <div *ngIf="chat.sender.uid === loggedInUser.uid" class="sentMessage">{{ chat.message }}</div>
+      </div>
     </div>
+  </div>
+  <div class="container">
+    <input type="text" class="userSearch" placeholder="Nachricht eingeben...">
+    <button (click)="sendMessage()" class="menuButton"><img src="./assets/img/send.png"></button>
+  </div>
 </div>

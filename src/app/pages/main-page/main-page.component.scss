@@ -182,6 +182,7 @@
 }
 
 .UserName {
+  display: flex;
   color: #3C475A;
   font-size: 18px;
   text-align: start;
@@ -225,4 +226,19 @@
   text-overflow: ellipsis;
   text-align: start;
   flex-grow: 1;
+}
+
+.onlineStatus {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-left: 8px;
+}
+
+.online {
+  background-color: green;
+}
+
+.offline {
+  background-color: gray;
 }

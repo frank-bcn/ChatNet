@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { Firestore, collection, query, orderBy, startAt, endAt, getDocs, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { User } from 'src/app/models/signUpUserdata';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { OnlineStatusService } from 'src/app/service/online-status.service';
+import { ChatService } from 'src/app/service/chat-service.service';
 
 @Component({
   selector: 'app-main-page',
@@ -17,21 +19,29 @@ export class MainPageComponent implements OnInit {
   loggedInUserId: string = '';
   contactList: User[] = [];
   selectedUser: User | null = null;
+  isOnline: boolean = false;
+  chats: any[] = [];
 
-  constructor(private afAuth: AngularFireAuth, private firestore: Firestore, private router: Router) { }
+  constructor(
+    private afAuth: AngularFireAuth,
+    private firestore: Firestore,
+    private router: Router,
+    private onlineStatusService: OnlineStatusService,
+    public chatService: ChatService
+  ) { }
 
   ngOnInit() {
     this.afAuth.authState.subscribe((user) => {
       if (user) {
         this.loggedInUserId = user.uid;
-        console.log(this.loggedInUserId);
         this.loadContactList();
+        this.onlineStatusService.isOnline;
       }
     });
   }
 
   getFilteredResults(): User[] {
-    return [...this.searchResults];
+    return this.searchResults.filter(user => user.email !== this.loggedInUserId);
   }
 
   toggleDropdown() {
@@ -39,8 +49,9 @@ export class MainPageComponent implements OnInit {
   }
 
   openChatDialog(user: User) {
-    this.selectedUser = user; 
-    this.router.navigate(['/chat-dialog']);
+    this.selectedUser = user;
+    console.log('Ausgewählter Benutzer:', this.selectedUser);
+    this.router.navigate(['/chat-dialog'], { state: { selectedUser: user } });
   }
 
   createSearchQuery(): any {
@@ -72,7 +83,9 @@ export class MainPageComponent implements OnInit {
   }
 
   filterSearchResults(results: User[]): User[] {
-    return results.filter(user => user.username);
+    return results.filter(user =>
+      user.username && user.email !== this.loggedInUserId && user.uid !== this.loggedInUserId
+    );
   }
 
   searchUsers() {
@@ -82,6 +95,7 @@ export class MainPageComponent implements OnInit {
       this.loadSearchResults(searchQuery)
         .then((results) => {
           this.searchResults = this.filterSearchResults(results);
+          this.searchResults = this.searchResults.filter(user => user.email !== this.loggedInUserId);
           this.showChatList = false;
         });
     } else {
@@ -94,36 +108,71 @@ export class MainPageComponent implements OnInit {
     return this.contactList.some((contact) => contact.email === user.email);
   }
 
-  addUserToContactList(user: User) {
-    this.contactList.push(user);
-    console.log('User added to contactList:', user);
+  addUserToContactList(loggedInUserId: string, userToAdd: User) {
+    
+    this.contactList.push(userToAdd);
+    console.log('Benutzer zur Kontaktliste hinzugefügt:', userToAdd);
+
+    const chatData = {
+      loggedInUid: loggedInUserId,
+      addedUid: userToAdd.uid,
+    };
+
+    this.chats.push(chatData);
+    this.saveChatsToDatabase(this.chats);
+  }
+
+  async saveChatToDatabase(chatData: any) {
+    try {
+     
+      console.log('Chat in Datenbank gespeichert:', chatData);
+
+      this.chats.push(chatData);
+
+      console.log('Chat wurde zu "chats" hinzugefügt:', chatData);
+    } catch (error) {
+      console.error('Fehler beim Speichern des Chats in der Datenbank:', error);
+    }
+  }
+
+
+  async saveChatsToDatabase(chats: any[]) {
+    try {
+    
+      const chatsCollectionRef = collection(this.firestore, 'chats'); 
+      for (const chat of chats) {
+        await setDoc(doc(chatsCollectionRef), chat);
+      }
+
+      console.log('Chats in Datenbank gespeichert:', chats);
+    } catch (error) {
+      console.error('Fehler beim Speichern der Chats in der Datenbank:', error);
+    }
   }
 
   updateContactListInDatabase() {
     const userRef = doc(this.firestore, 'users', this.loggedInUserId);
     setDoc(userRef, { contactList: this.contactList }, { merge: true })
       .then(() => {
-        console.log('User added to contactList in the database');
+        console.log('Benutzer zur Kontaktliste in der Datenbank hinzugefügt');
         this.resetSearchResultsAndShowChatList();
       })
       .catch((error) => {
-        console.error('Error adding user to contactList:', error);
+        console.error('Fehler beim Hinzufügen des Benutzers zur Kontaktliste:', error);
       });
   }
 
   addToContactList(user: User) {
-    if (!this.contactList) {
-      this.contactList = [];
-    }
-
+  
     const userExists = this.userExistsInContactList(user);
-    console.log('User exists in contactList:', userExists);
 
     if (!userExists) {
-      this.addUserToContactList(user);
+
+      this.addUserToContactList(this.loggedInUserId, user);
+
       this.updateContactListInDatabase();
     } else {
-      console.log('User already exists in contactList');
+      console.log('Benutzer existiert bereits in der Kontaktliste');
     }
   }
 
@@ -137,7 +186,7 @@ export class MainPageComponent implements OnInit {
         }
       })
       .catch((error) => {
-        console.error('Error loading contactList:', error);
+        console.error('Fehler beim Laden der Kontaktliste:', error);
       });
   }
 

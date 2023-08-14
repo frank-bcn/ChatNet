@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
+import { OnlineStatusService } from 'src/app/service/online-status.service';
 
 @Component({
   selector: 'app-login',
@@ -11,8 +12,13 @@ export class LoginComponent {
   email: any;
   password: any;
   darkMode = false;
+  isOnline = false;
 
-  constructor(private afAuth: AngularFireAuth, private router: Router) {}
+  constructor(
+    private afAuth: AngularFireAuth,
+    private router: Router,
+    private onlineStatusService: OnlineStatusService 
+  ) {}
 
   loginUser() {
     this.afAuth.signInWithEmailAndPassword(this.email, this.password)
@@ -20,6 +26,7 @@ export class LoginComponent {
         console.log('Benutzerdaten:', userCredential.user);
 
         console.log('Benutzername:', userCredential.user?.displayName);
+        this.onlineStatusService.isOnline = true;
 
         this.router.navigate(['/main-page']); 
       })
