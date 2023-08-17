@@ -47,14 +47,11 @@ export class ProfileComponent {
           console.error('Fehler beim Aktualisieren des Benutzernamens:', error);
         });
 
-        
         user.updateEmail(this.email).then(() => {
-          console.log('E-Mail wurde erfolgreich aktualisiert!');
+          
         }).catch(error => {
-          console.error('Fehler beim Aktualisieren der E-Mail:', error);
+          
         });
-
-        
         const userRef = doc(this.firestore, 'users', user.uid);
         const userData = {
           displayName: this.username,
@@ -63,7 +60,7 @@ export class ProfileComponent {
 
         setDoc(userRef, userData, { merge: true })
           .then(() => {
-            console.log('Benutzerdaten wurden in Firestore aktualisiert!');
+            
           })
           .catch(error => {
             console.error('Fehler beim Aktualisieren der Benutzerdaten in Firestore:', error);

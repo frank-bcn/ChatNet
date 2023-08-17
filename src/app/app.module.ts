@@ -20,6 +20,8 @@ import { provideFirestore,getFirestore } from '@angular/fire/firestore';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
+import { ContactlistComponent } from './pages/contactlist/contactlist.component';
+import { ChatsComponent } from './pages/chats/chats.component';
 
 
 
@@ -34,6 +36,8 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
     ProfileComponent,
     ChatProfilePreviewComponent,
     ChatDialogComponent,
+    ContactlistComponent,
+    ChatsComponent,
    
   ],
   imports: [

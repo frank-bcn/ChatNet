@@ -10,6 +10,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 export class HeaderComponent implements OnInit {
   username: string;
   greeting: string;
+  isDropdownOpen: boolean = false;
 
   constructor(private router: Router, private afAuth: AngularFireAuth) {
     this.username = '';
@@ -45,7 +46,20 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+    const button = document.querySelector('.menuButton');
+    if (button) {
+      button.classList.toggle('open', this.isDropdownOpen);
+    }
+  }
+
+  closeDropdown() {
+    this.isDropdownOpen = false;
+  }
+
   openProfile() {
     this.router.navigate(['/profile']);
+    this.closeDropdown();
   }
 }

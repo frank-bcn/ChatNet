@@ -35,9 +35,14 @@ export class MainPageComponent implements OnInit {
       if (user) {
         this.loggedInUserId = user.uid;
         this.loadContactList();
-        this.onlineStatusService.isOnline;
+        const userId = this.selectedUser;
+        this.loadOnlineStatus(user.uid);
       }
     });
+  }
+
+  async loadOnlineStatus(useruid: string) {
+    this.isOnline = await this.onlineStatusService.getOnlineStatus(useruid);
   }
 
   getFilteredResults(): User[] {
@@ -48,10 +53,12 @@ export class MainPageComponent implements OnInit {
     this.DropdownMenu = !this.DropdownMenu;
   }
 
-  openChatDialog(user: User) {
-    this.selectedUser = user;
-    console.log('Ausgewählter Benutzer:', this.selectedUser);
-    this.router.navigate(['/chat-dialog'], { state: { selectedUser: user } });
+  navigateToContactList() {
+    this.router.navigate(['/contactlist']);
+  }
+
+  navigateToChats() {
+    this.router.navigate(['/chats']);
   }
 
   createSearchQuery(): any {
@@ -109,7 +116,7 @@ export class MainPageComponent implements OnInit {
   }
 
   addUserToContactList(loggedInUserId: string, userToAdd: User) {
-    
+
     this.contactList.push(userToAdd);
     console.log('Benutzer zur Kontaktliste hinzugefügt:', userToAdd);
 
@@ -124,27 +131,21 @@ export class MainPageComponent implements OnInit {
 
   async saveChatToDatabase(chatData: any) {
     try {
-     
-      console.log('Chat in Datenbank gespeichert:', chatData);
-
       this.chats.push(chatData);
 
-      console.log('Chat wurde zu "chats" hinzugefügt:', chatData);
     } catch (error) {
-      console.error('Fehler beim Speichern des Chats in der Datenbank:', error);
+    
     }
   }
 
-
   async saveChatsToDatabase(chats: any[]) {
     try {
-    
-      const chatsCollectionRef = collection(this.firestore, 'chats'); 
+
+      const chatsCollectionRef = collection(this.firestore, 'chats');
       for (const chat of chats) {
         await setDoc(doc(chatsCollectionRef), chat);
       }
 
-      console.log('Chats in Datenbank gespeichert:', chats);
     } catch (error) {
       console.error('Fehler beim Speichern der Chats in der Datenbank:', error);
     }
@@ -154,16 +155,16 @@ export class MainPageComponent implements OnInit {
     const userRef = doc(this.firestore, 'users', this.loggedInUserId);
     setDoc(userRef, { contactList: this.contactList }, { merge: true })
       .then(() => {
-        console.log('Benutzer zur Kontaktliste in der Datenbank hinzugefügt');
+       
         this.resetSearchResultsAndShowChatList();
       })
       .catch((error) => {
-        console.error('Fehler beim Hinzufügen des Benutzers zur Kontaktliste:', error);
+       
       });
   }
 
   addToContactList(user: User) {
-  
+
     const userExists = this.userExistsInContactList(user);
 
     if (!userExists) {
@@ -172,7 +173,7 @@ export class MainPageComponent implements OnInit {
 
       this.updateContactListInDatabase();
     } else {
-      console.log('Benutzer existiert bereits in der Kontaktliste');
+      
     }
   }
 
@@ -200,5 +201,23 @@ export class MainPageComponent implements OnInit {
   clearInputAndShowChatList() {
     this.searchQuery = '';
     this.showChatList = true;
+  }
+
+  async logout() {
+    try {
+      const user = await this.afAuth.currentUser;
+  
+      if (user) {
+        await this.onlineStatusService.setOnlineStatus(user.uid, false);
+        await this.afAuth.signOut();
+        
+      } else {
+        
+      }
+  
+      this.router.navigate(['']);
+    } catch (error) {
+      
+    }
   }
 }

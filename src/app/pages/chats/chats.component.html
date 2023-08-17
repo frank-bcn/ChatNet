@@ -1,0 +1,29 @@
+<div class="page">
+    <div class="headlineProfile">
+        <span class="profileName"><b>{{ username }}</b></span>
+        <button class="menuButton" type="button" (click)="goToMainPage()">
+            <img src="./assets/img/arrow.png">
+        </button>
+    </div>
+        <div class="chatList">
+      <div class="containerPreview" *ngFor="let contact of contacts" (click)="openChatDialog(contact)">
+        <div class="container">
+          <div class="userImage">
+            <img src="./assets/img/pic.png">
+          </div>
+          <div class="containerInformation">
+            <div class="information">
+              <div class="UserName">{{ contact.username }}
+                <div class="onlineStatus" [ngClass]="{'online': isOnline, 'offline': !isOnline}"></div>
+              </div>
+              <div class="time">Uhrzeit</div>
+            </div>
+            <div class="informationChat">
+              <div class="lastMessageText">Letzter gesendeter Text hier anzeigen</div>
+              <div class="lastMessageUnreaded">1</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>

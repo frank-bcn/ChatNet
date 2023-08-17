@@ -3,5 +3,13 @@
         <img src="./assets/img/pic.png">
     </div>
     <p>{{ greeting }}, <b>{{ username }}</b></p>
-    <button class="menuButton" type="button" (click)="openProfile()"><img src="./assets/img/profile+.png"></button>
+    <div class="dropdown">
+        <button class="menuButton" type="button" (click)="toggleDropdown()">
+            <img src="./assets/img/menu.png">
+        </button>
+        <div class="dropdown-content" *ngIf="isDropdownOpen">
+            <button (click)="openProfile()" class="menuButtonProfile" type="button"><a>Profile</a></button> 
+            <button class="menuButtonGroup" type="button"><a>Gruppenchats</a></button>
+        </div>
+    </div>
 </div>

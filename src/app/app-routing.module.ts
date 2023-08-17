@@ -5,6 +5,8 @@ import { SignUpComponent } from 'src/app/pages/sign-up/sign-up.component';
 import { MainPageComponent } from 'src/app/pages/main-page/main-page.component';
 import { ProfileComponent } from 'src/app/pages/profile/profile.component';
 import { ChatDialogComponent } from 'src/app/pages/chat-dialog/chat-dialog.component';
+import { ContactlistComponent } from 'src/app/pages/contactlist/contactlist.component';
+import { ChatsComponent } from 'src/app/pages/chats/chats.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -12,6 +14,8 @@ const routes: Routes = [
   { path: 'main-page', component: MainPageComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'chat-dialog', component: ChatDialogComponent },
+  { path: 'contactlist', component: ContactlistComponent },
+  { path: 'chats', component: ChatsComponent },
 ];
 
 @NgModule({

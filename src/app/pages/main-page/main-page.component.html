@@ -7,6 +7,15 @@
         (input)="searchUsers()" (click)="toggleDropdown()">
     </div>
 
+    <div class="containerContactChat">
+      <div class="chats">
+        <button class="menuButtonContainer" type="button" (click)="navigateToChats()">Chats</button>
+      </div>
+      <div class="contactList">
+        <button class="menuButtonContainer" type="button" (click)="navigateToContactList()">Contactlist</button>
+      </div>
+    </div>
+
     <div *ngIf="getFilteredResults().length > 0" class="userListContainer">
       <ul class="userList" style="list-style-type: none;">
         <li *ngFor="let user of getFilteredResults(); let i = index" class="userItem"
@@ -26,27 +35,10 @@
         </li>
       </ul>
     </div>
+    <div class="malSchauen">
 
-    <div class="chatList">
-      <div class="containerPreview" *ngFor="let contact of contactList" (click)="openChatDialog(contact)">
-        <div class="container">
-          <div class="userImage">
-            <img src="./assets/img/pic.png">
-          </div>
-          <div class="containerInformation">
-            <div class="information">
-              <div class="UserName">{{ contact.username }}
-                <div class="onlineStatus" [ngClass]="{'online': isOnline, 'offline': !isOnline}"></div>
-              </div>
-              <div class="time">Uhrzeit</div>
-            </div>
-            <div class="informationChat">
-              <div class="lastMessageText">Letzter gesendeter Text hier anzeigen</div>
-              <div class="lastMessageUnreaded">1</div>
-            </div>
-          </div>
-        </div>
-      </div>
+
     </div>
+    <button class="signin-button" (click)="logout()">Ausloggen</button>
   </div>
 </div>

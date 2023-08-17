@@ -1,0 +1,139 @@
+.page {
+  overflow: hidden;
+  width: 360px;
+  height: 650px;
+  border-radius: 30px;
+  margin: 25px auto;
+  box-shadow: 12px 12px 50px 5px rgba(0, 0, 0, .2);
+}
+
+.headlineProfile {
+  display: flex;
+  height: 50px;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  top: 30px;
+  right: 15px;
+}
+
+.profileName {
+  display: flex;
+  margin-left: 33px;
+  font-size: 30px;
+}
+
+.menuButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 40px;
+  color: #6D7587;
+  background-color: var(--back-color);
+  box-shadow: 7px 7px 15px rgba(55, 84, 170, .15),
+    -7px -7px 20px rgba(255, 255, 255, 1),
+    inset 0px 0px 4px rgba(255, 255, 255, .2),
+    inset 7px 7px 15px rgba(55, 84, 170, 0),
+    inset -7px -7px 20px rgba(255, 255, 255, 0),
+    0px 0px 4px rgba(255, 255, 255, 0) !important;
+  transition: box-shadow .25s ease !important;
+}
+
+.menuButton img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.menuButton:active {
+  box-shadow: 7px 7px 15px rgba(55, 84, 170, .15),
+    -7px -7px 20px rgba(255, 255, 255, 1),
+    inset 0px 0px 4px rgba(255, 255, 255, 0),
+    inset 7px 7px 15px rgba(55, 84, 170, .15),
+    inset -7px -7px 20px rgba(255, 255, 255, 1),
+    0px 0px 4px rgba(255, 255, 255, .2) !important;
+}
+
+.content {
+  display: flex;
+  margin-top: 50px;
+  margin-left: 15px;
+  margin-right: 15px;
+  margin-top: 30px;
+  flex-direction: column;
+  height: 84%;
+  width: 90%;
+}
+
+.containerUser {
+  display: flex;
+  align-items: center;
+  margin-top: 50px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.userImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 54px;
+  border: 2px solid white;
+  box-shadow: 5px 5px 10px rgba(55, 84, 170, .2), -3px -3px 5px rgba(255, 255, 255, 1), 0px 0px 4px rgba(255, 255, 255, .2);
+}
+
+.containerInformation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 65px;
+  overflow: hidden;
+  margin-bottom: -10px;
+  margin-left: 19px;
+  width: 77%;
+}
+
+.information {
+  display: flex;
+  margin-top: 5px;
+}
+
+.UserName {
+  display: flex;
+  color: #3C475A;
+  font-size: 18px;
+  text-align: start;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sendMessage {
+  display: flex;
+  height: 25px;
+}
+
+.trash {
+  display: flex;
+  height: 25px;
+}
+
+.onlineStatus {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-left: 8px;
+}
+
+.online {
+  background-color: green;
+}
+
+.offline {
+  background-color: gray;
+}

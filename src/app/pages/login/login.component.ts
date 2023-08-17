@@ -12,27 +12,29 @@ export class LoginComponent {
   email: any;
   password: any;
   darkMode = false;
-  isOnline = false;
 
   constructor(
     private afAuth: AngularFireAuth,
     private router: Router,
-    private onlineStatusService: OnlineStatusService 
+    private onlineStatusService: OnlineStatusService
   ) {}
 
-  loginUser() {
-    this.afAuth.signInWithEmailAndPassword(this.email, this.password)
-      .then(userCredential => {
-        console.log('Benutzerdaten:', userCredential.user);
+  async loginUser() {
+    try {
+      const userCredential = await this.afAuth.signInWithEmailAndPassword(this.email, this.password);
 
-        console.log('Benutzername:', userCredential.user?.displayName);
-        this.onlineStatusService.isOnline = true;
+      console.log('Benutzerdaten:', userCredential.user);
+      console.log('Benutzername:', userCredential.user?.displayName);
 
-        this.router.navigate(['/main-page']); 
-      })
-      .catch(error => {
-        console.error('Fehler beim Einloggen', error);
-      });
+      const userId = userCredential.user?.uid;
+      if (userId) {
+        await this.onlineStatusService.setOnlineStatus(userId, true);
+
+        this.router.navigate(['/main-page']);
+      }
+    } catch (error) {
+      console.error('Fehler beim Einloggen', error);
+    }
   }
 
   navigateToSignUp() {
