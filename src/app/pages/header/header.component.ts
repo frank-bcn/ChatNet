@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Firestore, deleteDoc, doc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-header',
@@ -11,8 +12,14 @@ export class HeaderComponent implements OnInit {
   username: string;
   greeting: string;
   isDropdownOpen: boolean = false;
+  loggedInUserId: string = '';
+  showConfirmation: boolean = false;
 
-  constructor(private router: Router, private afAuth: AngularFireAuth) {
+  constructor(
+    private router: Router,
+    private afAuth: AngularFireAuth,
+    private firestore: Firestore
+  ) {
     this.username = '';
     this.greeting = this.getGreeting();
   }
@@ -21,6 +28,7 @@ export class HeaderComponent implements OnInit {
     this.afAuth.authState.subscribe(user => {
       if (user) {
         this.username = user.displayName || '';
+        this.loggedInUserId = user.uid;
         this.updateGreeting();
       }
     });
@@ -61,5 +69,47 @@ export class HeaderComponent implements OnInit {
   openProfile() {
     this.router.navigate(['/profile']);
     this.closeDropdown();
+  }
+
+  openConfirmation() {
+    console.log("openConfirmation called");
+    this.showConfirmation = true;
+  }
+
+  cancelDelete() {
+    console.log("cancelDelete called");
+    this.showConfirmation = false;
+  }
+
+  confirmDelete() {
+    console.log("confirmDelete called");
+    this.showConfirmation = false;
+
+    this.deleteAccount();
+  }
+
+  deleteAccount() {
+    if (this.loggedInUserId) {
+      const user = this.afAuth.currentUser;
+
+      if (user) {
+        user.then(currentUser => {
+          if (currentUser) {
+            currentUser.delete()
+              .then(() => {
+
+                return deleteDoc(doc(this.firestore, 'users', this.loggedInUserId));
+              })
+              .then(() => {
+
+                this.router.navigate(['/signup']);
+              })
+              .catch(error => {
+                console.error('Fehler beim Löschen des Benutzerkontos:', error);
+              });
+          }
+        });
+      }
+    }
   }
 }

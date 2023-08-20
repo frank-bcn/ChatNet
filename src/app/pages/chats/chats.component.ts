@@ -19,6 +19,7 @@ export class ChatsComponent {
   isOnline: boolean = false;
   contacts: any[] = [];
   selectedUser: User | null = null;
+  chats: any[] = [];
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -35,12 +36,14 @@ export class ChatsComponent {
 
   ngOnInit() {
     this.afAuth.authState.subscribe(user => {
+      console.log('Chats:', this.chats);
       if (user) {
         this.username = user.displayName || '';
         this.email = user.email || '';
         this.loadContactList(user.uid);
       }
     });
+    
   }
 
   async loadContactList(userId: string) {

@@ -115,42 +115,6 @@ export class MainPageComponent implements OnInit {
     return this.contactList.some((contact) => contact.email === user.email);
   }
 
-  addUserToContactList(loggedInUserId: string, userToAdd: User) {
-
-    this.contactList.push(userToAdd);
-    console.log('Benutzer zur Kontaktliste hinzugefügt:', userToAdd);
-
-    const chatData = {
-      loggedInUid: loggedInUserId,
-      addedUid: userToAdd.uid,
-    };
-
-    this.chats.push(chatData);
-    this.saveChatsToDatabase(this.chats);
-  }
-
-  async saveChatToDatabase(chatData: any) {
-    try {
-      this.chats.push(chatData);
-
-    } catch (error) {
-    
-    }
-  }
-
-  async saveChatsToDatabase(chats: any[]) {
-    try {
-
-      const chatsCollectionRef = collection(this.firestore, 'chats');
-      for (const chat of chats) {
-        await setDoc(doc(chatsCollectionRef), chat);
-      }
-
-    } catch (error) {
-      console.error('Fehler beim Speichern der Chats in der Datenbank:', error);
-    }
-  }
-
   updateContactListInDatabase() {
     const userRef = doc(this.firestore, 'users', this.loggedInUserId);
     setDoc(userRef, { contactList: this.contactList }, { merge: true })
@@ -164,16 +128,14 @@ export class MainPageComponent implements OnInit {
   }
 
   addToContactList(user: User) {
-
     const userExists = this.userExistsInContactList(user);
-
+  
     if (!userExists) {
-
-      this.addUserToContactList(this.loggedInUserId, user);
-
+      // Pass the loggedInUserId and user to the service function
+      this.chatService.addUserToContactList(this.loggedInUserId, user);
       this.updateContactListInDatabase();
     } else {
-      
+      // Handle the case when the user already exists in the contact list
     }
   }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Firestore, collection, getDocs, query, where, deleteDoc, doc } from '@angular/fire/firestore';
+import { Firestore, collection, getDocs, query, where, deleteDoc, doc, updateDoc, getDoc } from '@angular/fire/firestore';
 import { OnlineStatusService } from 'src/app/service/online-status.service';
 import { ChatService } from 'src/app/service/chat-service.service';
 import { User } from 'src/app/models/signUpUserdata';
@@ -58,19 +58,55 @@ export class ContactlistComponent implements OnInit {
     this.router.navigate(['/main-page']);
   }
 
-  async removeContact(contact: any) {
-    try {
-      this.contacts = this.contacts.filter(c => c.uid !== contact.uid);
+  async deleteContact(contact: any) {
+    const loggedInUser = await this.afAuth.currentUser;
+    if (loggedInUser) {
+      const loggedInUserId = loggedInUser.uid;
   
-      // Remove the user from the contact list in memory
-      this.contactList = this.contactList.filter(c => c.uid !== contact.uid);
+      const userDocRef = doc(this.firestore, 'users', loggedInUserId);
+      const userDocSnapshot = await getDoc(userDocRef);
   
-      // Update the contact list in the database
-      /*this.updateContactListInDatabase();*/
+      if (userDocSnapshot.exists()) {
+        const userContacts = userDocSnapshot.data()['contactList'] || [];
+        const updatedContacts = userContacts.filter((c: any) => c.uid !== contact.uid);
   
-    } catch (error) {
-      console.error('Error removing contact:', error);
-      this.contacts.push(contact);
+        await updateDoc(userDocRef, { contactList: updatedContacts });
+  
+        console.log('Contact removed from the contact list:', contact);
+  
+        // Reload the contact list
+        await this.loadContactList(loggedInUserId);
+      }
+    }
+  }
+  
+  async addContactToChat(contact: any) {
+    const loggedInUser = await this.afAuth.currentUser;
+    if (loggedInUser) {
+      const loggedInUserId = loggedInUser.uid;
+      const userToAdd: User = contact;
+  
+      // Überprüfen, ob bereits ein Chat zwischen den Benutzern existiert
+      const chatExists = await this.chatService.checkIfChatExists(loggedInUserId, userToAdd.uid);
+  
+      if (!chatExists) {
+        // Überprüfen, ob der eingeloggte Benutzer dieselbe UID wie "addedUid" hat
+        if (loggedInUserId !== userToAdd.uid) {
+          // Überprüfen, ob ein Chat bereits mit beiden Benutzern existiert
+          const chatWithBothExists = await this.chatService.checkIfChatWithBothExists(loggedInUserId, userToAdd.uid);
+  
+          if (!chatWithBothExists) {
+            this.chatService.addUserToContactList(loggedInUserId, userToAdd);
+            console.log('Chat entry added to database:', userToAdd);
+          } else {
+            console.log('Chat between users already exists.');
+          }
+        } else {
+          console.log('Cannot start a chat with yourself.');
+        }
+      } else {
+        console.log('Chat between users already exists.');
+      }
     }
   }
 }

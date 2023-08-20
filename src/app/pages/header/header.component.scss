@@ -168,3 +168,63 @@ p,
     inset -7px -7px 20px rgba(255, 255, 255, 1),
     0px 0px 4px rgba(255, 255, 255, .2) !important;
 }
+
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.popupbutton {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.menuButtonContainer {
+  border: none;
+    width: 40%;
+    height: 30px;
+    margin-top: 30px;
+    border-radius: 40px;
+    color: #6D7587;
+    background-color: var(--back-color);
+    box-shadow: 7px 7px 15px rgba(55, 84, 170, 0.15), -7px -7px 20px rgb(255, 255, 255), inset 0px 0px 4px rgba(255, 255, 255, 0.2), inset 7px 7px 15px rgba(55, 84, 170, 0), inset -7px -7px 20px rgba(255, 255, 255, 0), 0px 0px 4px rgba(255, 255, 255, 0) !important;
+    transition: box-shadow 0.25s ease !important;
+}
+
+.menuButtonContainer:active {
+  box-shadow: 7px 7px 15px rgba(55, 84, 170, .15),
+    -7px -7px 20px rgba(255, 255, 255, 1),
+    inset 0px 0px 4px rgba(255, 255, 255, 0),
+    inset 7px 7px 15px rgba(55, 84, 170, .15),
+    inset -7px -7px 20px rgba(255, 255, 255, 1),
+    0px 0px 4px rgba(255, 255, 255, .2) !important;
+}
+
+.menuButtonContainerDelete {
+  border: none;
+  width: 40%;
+  height: 30px;
+  margin-top: 30px;
+  border-radius: 40px;
+  color: #02c8db;
+  background-color: var(--back-color);
+  box-shadow: 7px 7px 15px rgba(55, 84, 170, 0.15), -7px -7px 20px rgb(255, 255, 255), inset 0px 0px 4px rgba(255, 255, 255, 0.2), inset 7px 7px 15px rgba(55, 84, 170, 0), inset -7px -7px 20px rgba(255, 255, 255, 0), 0px 0px 4px rgba(255, 255, 255, 0) !important;
+  transition: box-shadow 0.25s ease !important;
+}
+
+.menuButtonContainerDelete:active {
+  box-shadow: 7px 7px 15px rgba(55, 84, 170, .15),
+    -7px -7px 20px rgba(255, 255, 255, 1),
+    inset 0px 0px 4px rgba(255, 255, 255, 0),
+    inset 7px 7px 15px rgba(55, 84, 170, .15),
+    inset -7px -7px 20px rgba(255, 255, 255, 1),
+    0px 0px 4px rgba(255, 255, 255, .2) !important;
+}

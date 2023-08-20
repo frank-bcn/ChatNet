@@ -8,8 +8,17 @@
             <img src="./assets/img/menu.png">
         </button>
         <div class="dropdown-content" *ngIf="isDropdownOpen">
-            <button (click)="openProfile()" class="menuButtonProfile" type="button"><a>Profile</a></button> 
+            <button (click)="openProfile()" class="menuButtonProfile" type="button"><a>Profile</a></button>
             <button class="menuButtonGroup" type="button"><a>Gruppenchats</a></button>
+            <button (click)="openConfirmation()" class="menuButtonGroup" type="button"><a>Delete Account</a></button>
         </div>
+    </div>
+</div>
+
+<div class="popup" *ngIf="showConfirmation">
+    <p>Bist du sicher, dass du dein Konto löschen möchtest?</p>
+    <div class="popupbutton">
+        <button (click)="cancelDelete()" class="menuButtonContainer" type="button">Abbrechen</button>
+        <button (click)="confirmDelete()" class="menuButtonContainerDelete" type="button">Löschen</button>
     </div>
 </div>
