@@ -91,17 +91,24 @@ export class HeaderComponent implements OnInit {
   deleteAccount() {
     if (this.loggedInUserId) {
       const user = this.afAuth.currentUser;
-
+  
       if (user) {
         user.then(currentUser => {
           if (currentUser) {
-            currentUser.delete()
+            const userUid = currentUser.uid;
+  
+            // Lösche UID aus der contactlist-Sammlung
+            const contactListDocRef = doc(this.firestore, 'contactlist', userUid);
+            deleteDoc(contactListDocRef)
               .then(() => {
-
-                return deleteDoc(doc(this.firestore, 'users', this.loggedInUserId));
+                // Lösche das Benutzerkonto
+                return currentUser.delete();
               })
               .then(() => {
-
+                // Lösche den Benutzerdatensatz aus der users-Sammlung
+                return deleteDoc(doc(this.firestore, 'users', userUid));
+              })
+              .then(() => {
                 this.router.navigate(['/signup']);
               })
               .catch(error => {
@@ -111,5 +118,5 @@ export class HeaderComponent implements OnInit {
         });
       }
     }
-  }
+  }  
 }

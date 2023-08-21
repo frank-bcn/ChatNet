@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Firestore, collection, getDocs, query, where, deleteDoc, doc, updateDoc, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, getDocs, query, where, doc, updateDoc, getDoc } from '@angular/fire/firestore';
 import { OnlineStatusService } from 'src/app/service/online-status.service';
 import { ChatService } from 'src/app/service/chat-service.service';
 import { User } from 'src/app/models/signUpUserdata';
@@ -18,7 +18,7 @@ export class ContactlistComponent implements OnInit {
   showSuccessMessage: boolean = false;
   isOnline: boolean = false;
   contacts: any[] = [];
-  contactList: User[] = [];
+  loggedInUserId: string = '';
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -37,23 +37,29 @@ export class ContactlistComponent implements OnInit {
       if (user) {
         this.username = user.displayName || '';
         this.email = user.email || '';
-        this.loadContactList(user.uid);
+        this.loggedInUserId = user.uid;
+  
+        this.loadContactList(this.loggedInUserId);
       }
     });
   }
-
-  async loadContactList(userId: string) {
-    const contactsRef = collection(this.firestore, 'users');
-    const contactsQuery = query(contactsRef, where('uid', '!=', userId));
-
-    const querySnapshot = await getDocs(contactsQuery);
-
-    this.contacts = [];
-    querySnapshot.forEach((doc) => {
-      this.contacts.push(doc.data());
-    });
+  
+  async loadContactList(loggedInUserId: string) {
+    const userDocRef = doc(this.firestore, 'contactlist', loggedInUserId);
+    const userDocSnapshot = await getDoc(userDocRef);
+  
+    if (userDocSnapshot.exists()) {
+      const userContacts = userDocSnapshot.data()['contactList'] || [];
+  
+      for (const contact of userContacts) {
+        const isContactOnline = await this.onlineStatusService.getOnlineStatus(contact.uid);
+        contact.online = isContactOnline;
+      }
+  
+      this.contacts = userContacts;
+    }
   }
-
+  
   goToMainPage() {
     this.router.navigate(['/main-page']);
   }
@@ -74,38 +80,7 @@ export class ContactlistComponent implements OnInit {
   
         console.log('Contact removed from the contact list:', contact);
   
-        // Reload the contact list
-        await this.loadContactList(loggedInUserId);
-      }
-    }
-  }
-  
-  async addContactToChat(contact: any) {
-    const loggedInUser = await this.afAuth.currentUser;
-    if (loggedInUser) {
-      const loggedInUserId = loggedInUser.uid;
-      const userToAdd: User = contact;
-  
-      // Überprüfen, ob bereits ein Chat zwischen den Benutzern existiert
-      const chatExists = await this.chatService.checkIfChatExists(loggedInUserId, userToAdd.uid);
-  
-      if (!chatExists) {
-        // Überprüfen, ob der eingeloggte Benutzer dieselbe UID wie "addedUid" hat
-        if (loggedInUserId !== userToAdd.uid) {
-          // Überprüfen, ob ein Chat bereits mit beiden Benutzern existiert
-          const chatWithBothExists = await this.chatService.checkIfChatWithBothExists(loggedInUserId, userToAdd.uid);
-  
-          if (!chatWithBothExists) {
-            this.chatService.addUserToContactList(loggedInUserId, userToAdd);
-            console.log('Chat entry added to database:', userToAdd);
-          } else {
-            console.log('Chat between users already exists.');
-          }
-        } else {
-          console.log('Cannot start a chat with yourself.');
-        }
-      } else {
-        console.log('Chat between users already exists.');
+        await this.loadContactList(this.loggedInUserId);;
       }
     }
   }

@@ -34,13 +34,30 @@ export class MainPageComponent implements OnInit {
     this.afAuth.authState.subscribe((user) => {
       if (user) {
         this.loggedInUserId = user.uid;
-        this.loadContactList();
         const userId = this.selectedUser;
         this.loadOnlineStatus(user.uid);
       }
     });
   }
 
+  addToContactList(uid: string, email: string, username: string, img: string, online: boolean) {
+    if (!this.contactList.some(contact => contact.uid === uid)) {
+      const newContact = new User({
+        uid: uid,
+        email: email,
+        username: username,
+        img: img,
+        online: online
+      });
+  
+      this.contactList.push(newContact);
+  
+      this.updateContactListInDatabase();
+    } else {
+      console.log('Benutzer ist bereits in der Kontaktliste');
+    }
+  }
+  
   async loadOnlineStatus(useruid: string) {
     this.isOnline = await this.onlineStatusService.getOnlineStatus(useruid);
   }
@@ -115,44 +132,19 @@ export class MainPageComponent implements OnInit {
     return this.contactList.some((contact) => contact.email === user.email);
   }
 
-  updateContactListInDatabase() {
-    const userRef = doc(this.firestore, 'users', this.loggedInUserId);
-    setDoc(userRef, { contactList: this.contactList }, { merge: true })
-      .then(() => {
-       
-        this.resetSearchResultsAndShowChatList();
-      })
-      .catch((error) => {
-       
-      });
-  }
-
-  addToContactList(user: User) {
-    const userExists = this.userExistsInContactList(user);
+  async updateContactListInDatabase() {
+    const userRef = doc(this.firestore, 'contactlist', this.loggedInUserId);
+    const contactListJSON = this.contactList.map(contact => contact.toJson());
   
-    if (!userExists) {
-      // Pass the loggedInUserId and user to the service function
-      this.chatService.addUserToContactList(this.loggedInUserId, user);
-      this.updateContactListInDatabase();
-    } else {
-      // Handle the case when the user already exists in the contact list
+    try {
+      console.log('Kontaktliste zum Speichern:', contactListJSON);
+      await setDoc(userRef, { contactList: contactListJSON }, { merge: true });
+      this.resetSearchResultsAndShowChatList();
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren der Kontaktliste:', error);
     }
   }
-
-  loadContactList() {
-    const userRef = doc(this.firestore, 'users', this.loggedInUserId);
-    getDoc(userRef)
-      .then((docSnap) => {
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          this.contactList = data['contactList'] || [];
-        }
-      })
-      .catch((error) => {
-        console.error('Fehler beim Laden der Kontaktliste:', error);
-      });
-  }
-
+  
   resetSearchResultsAndShowChatList() {
     this.searchResults = [];
     this.searchQuery = '';

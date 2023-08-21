@@ -29,7 +29,7 @@
           <ng-container *ngIf="!searchQuery.startsWith('@')">
             {{ user.username }}
           </ng-container>
-          <button class="menuButton" type="button" (click)="addToContactList(user); clearInputAndShowChatList()">
+          <button class="menuButton" type="button" (click)="addToContactList(user.uid, user.email, user.username, user.img, user.online)">
             <img src="./assets/img/personAdd.png">
           </button>
         </li>
@@ -37,7 +37,7 @@
     </div>
     <div class="malSchauen">
 
-
+      
     </div>
     <button class="signin-button" (click)="logout()">Ausloggen</button>
   </div>

@@ -16,7 +16,11 @@ export class SignUpComponent {
   showSuccessMessage: boolean = false;
   user: User = new User();
 
-  constructor(private afAuth: AngularFireAuth, private router: Router, private firestore: Firestore) {}
+  constructor(
+    private afAuth: AngularFireAuth,
+    private router: Router,
+    private firestore: Firestore
+  ) { }
 
   registerUser() {
     this.afAuth.createUserWithEmailAndPassword(this.email, this.password)
@@ -24,14 +28,15 @@ export class SignUpComponent {
         userCredential.user?.updateProfile({
           displayName: this.username
         }).then(() => {
-          this.saveSignUpUserData(userCredential.user?.uid, this.email, this.username); 
+          this.saveSignUpUserData(userCredential.user?.uid, this.email, this.username);
+          this.addUidToContactList(userCredential.user?.uid);
           this.showSuccessMessage = true;
           setTimeout(() => {
             this.showSuccessMessage = false;
             this.router.navigate(['']);
           }, 3000);
         }).catch(error => {
-          
+          // ... (Fehlerbehandlung)
         });
       })
       .catch(error => {
@@ -43,15 +48,30 @@ export class SignUpComponent {
     this.user.uid = uid;
     this.user.email = email;
     this.user.username = username;
-    this.user.contactList = [];
-  
+
     const docRef = doc(this.firestore, 'users', uid);
     setDoc(docRef, this.user.toJson())
       .then(() => {
-
+        // ... (Erfolgsbehandlung)
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('Save user failed', error);
+      });
+  }
+
+  addUidToContactList(uid: any): void {
+    const contactListDocRef = doc(this.firestore, 'contactlist', uid);
+    
+    const data = {
+      uid: uid
+    };
+    
+    setDoc(contactListDocRef, data)
+      .then(() => {
+        // Erfolgsbehandlung
+      })
+      .catch(error => {
+        console.log('Speichern des Benutzers fehlgeschlagen', error);
       });
   }
 }

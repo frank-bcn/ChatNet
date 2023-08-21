@@ -22,20 +22,16 @@ export class LoginComponent {
   async loginUser() {
     try {
       const userCredential = await this.afAuth.signInWithEmailAndPassword(this.email, this.password);
-
-      console.log('Benutzerdaten:', userCredential.user);
-      console.log('Benutzername:', userCredential.user?.displayName);
-
       const userId = userCredential.user?.uid;
+      
       if (userId) {
         await this.onlineStatusService.setOnlineStatus(userId, true);
-
-        this.router.navigate(['/main-page']);
+        // ...
       }
     } catch (error) {
       console.error('Fehler beim Einloggen', error);
     }
-  }
+  }  
 
   navigateToSignUp() {
     this.router.navigate(['/signup']);
