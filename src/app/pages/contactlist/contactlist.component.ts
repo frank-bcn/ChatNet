@@ -38,28 +38,28 @@ export class ContactlistComponent implements OnInit {
         this.username = user.displayName || '';
         this.email = user.email || '';
         this.loggedInUserId = user.uid;
-  
+
         this.loadContactList(this.loggedInUserId);
       }
     });
   }
-  
+
   async loadContactList(loggedInUserId: string) {
     const userDocRef = doc(this.firestore, 'contactlist', loggedInUserId);
     const userDocSnapshot = await getDoc(userDocRef);
-  
+
     if (userDocSnapshot.exists()) {
       const userContacts = userDocSnapshot.data()['contactList'] || [];
-  
+
       for (const contact of userContacts) {
         const isContactOnline = await this.onlineStatusService.getOnlineStatus(contact.uid);
         contact.online = isContactOnline;
       }
-  
+
       this.contacts = userContacts;
     }
   }
-  
+
   goToMainPage() {
     this.router.navigate(['/main-page']);
   }
@@ -69,18 +69,18 @@ export class ContactlistComponent implements OnInit {
       const loggedInUser = await this.afAuth.currentUser;
       if (loggedInUser) {
         const loggedInUserId = loggedInUser.uid;
-  
+
         const userDocRef = doc(this.firestore, 'contactlist', loggedInUserId);
         const userDocSnapshot = await getDoc(userDocRef);
-  
+
         if (userDocSnapshot.exists()) {
           const userContacts = userDocSnapshot.data()?.['contactList'] || [];
           const updatedContacts = userContacts.filter((c: any) => c.uid !== contact.uid);
-  
+
           await updateDoc(userDocRef, { ['contactList']: updatedContacts });
-  
+
           console.log('Contact removed from contact list:', contact);
-  
+
           await this.loadContactList(loggedInUserId);
         }
       }
@@ -88,4 +88,17 @@ export class ContactlistComponent implements OnInit {
       console.error('Error deleting contact from list:', error);
     }
   }
+
+  async addContactToChat(contact: any) {
+    const loggedInUser = await this.afAuth.currentUser;
+    if (loggedInUser) {
+      const loggedInUserId = loggedInUser.uid;
+      const userToAdd: User = contact;
+  
+      const chatId = await this.chatService.addOrGetChat(loggedInUserId, userToAdd.uid);
+
+      this.router.navigate(['/chat-dialog', chatId]);
+    }
+  }
+   
 }

@@ -134,11 +134,23 @@ export class MainPageComponent implements OnInit {
 
   async updateContactListInDatabase() {
     const userRef = doc(this.firestore, 'contactlist', this.loggedInUserId);
-    const contactListJSON = this.contactList.map(contact => contact.toJson());
   
     try {
-      console.log('Kontaktliste zum Speichern:', contactListJSON);
-      await setDoc(userRef, { contactList: contactListJSON }, { merge: true });
+    
+      const docSnap = await getDoc(userRef);
+      const existingData = docSnap.data();
+      const existingContactList = existingData ? existingData['contactList'] || [] : [];
+  
+      const updatedContactList = [...existingContactList];
+  
+      for (const newContact of this.contactList) {
+        if (!updatedContactList.some(contact => contact.uid === newContact.uid)) {
+          updatedContactList.push(newContact.toJson());
+        }
+      }
+  
+      await setDoc(userRef, { ['contactList']: updatedContactList });
+  
       this.resetSearchResultsAndShowChatList();
     } catch (error) {
       console.error('Fehler beim Aktualisieren der Kontaktliste:', error);
@@ -151,7 +163,7 @@ export class MainPageComponent implements OnInit {
     this.showChatList = true;
     this.toggleDropdown();
   }
-
+  
   clearInputAndShowChatList() {
     this.searchQuery = '';
     this.showChatList = true;

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from 'src/app/models/signUpUserdata';
-import { Firestore, collection, doc, setDoc, getDocs } from '@angular/fire/firestore';
+import { Firestore, collection, doc, setDoc, getDocs, getDoc } from '@angular/fire/firestore';
 import { ChatExistsDialogComponent } from 'src/app/chat-exists-dialog/chat-exists-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -16,7 +16,6 @@ export class ChatService {
   constructor(private firestore: Firestore, private dialog: MatDialog) { }
 
   async initializeChats() {
-    // Retrieve existing chats from the database and populate the chats array
     const chatsCollectionRef = collection(this.firestore, 'chats');
     const chatsSnapshot = await getDocs(chatsCollectionRef);
 
@@ -34,14 +33,23 @@ export class ChatService {
       console.error('Fehler beim Speichern des Chats in der Datenbank:', error);
     }
   }
-
-  private showChatExistsPopup() {
-    const dialogRef = this.dialog.open(ChatExistsDialogComponent, {
-      width: '250px',
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('Chat exists popup closed:', result);
-    });
+  
+  async addOrGetChat(user1Id: string, user2Id: string) {
+    const sortedUserIds = [user1Id, user2Id].sort();
+    const chatId = sortedUserIds.join('_'); 
+  
+    const chatCollectionRef = collection(this.firestore, 'chats');
+    const chatDocRef = doc(chatCollectionRef, chatId);
+  
+    const chatDocSnapshot = await getDoc(chatDocRef);
+    if (chatDocSnapshot.exists()) {
+      return chatDocSnapshot.data(); 
+    }
+  
+    const chatData = { users: sortedUserIds };
+    await setDoc(chatDocRef, chatData);
+  
+    return chatData;
   }
+  
 }
