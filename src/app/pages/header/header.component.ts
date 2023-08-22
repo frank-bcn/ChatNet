@@ -96,16 +96,14 @@ export class HeaderComponent implements OnInit {
         user.then(currentUser => {
           if (currentUser) {
             const userUid = currentUser.uid;
-  
-            // Lösche UID aus der contactlist-Sammlung
+
             const contactListDocRef = doc(this.firestore, 'contactlist', userUid);
             deleteDoc(contactListDocRef)
               .then(() => {
-                // Lösche das Benutzerkonto
+        
                 return currentUser.delete();
               })
               .then(() => {
-                // Lösche den Benutzerdatensatz aus der users-Sammlung
                 return deleteDoc(doc(this.firestore, 'users', userUid));
               })
               .then(() => {

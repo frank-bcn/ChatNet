@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Firestore, collection, getDocs, query, where, doc, updateDoc, getDoc } from '@angular/fire/firestore';
+import { Firestore, doc, updateDoc, getDoc } from '@angular/fire/firestore';
 import { OnlineStatusService } from 'src/app/service/online-status.service';
 import { ChatService } from 'src/app/service/chat-service.service';
 import { User } from 'src/app/models/signUpUserdata';
@@ -64,24 +64,28 @@ export class ContactlistComponent implements OnInit {
     this.router.navigate(['/main-page']);
   }
 
-  async deleteContact(contact: any) {
-    const loggedInUser = await this.afAuth.currentUser;
-    if (loggedInUser) {
-      const loggedInUserId = loggedInUser.uid;
+  async deleteContactFromList(contact: any) {
+    try {
+      const loggedInUser = await this.afAuth.currentUser;
+      if (loggedInUser) {
+        const loggedInUserId = loggedInUser.uid;
   
-      const userDocRef = doc(this.firestore, 'users', loggedInUserId);
-      const userDocSnapshot = await getDoc(userDocRef);
+        const userDocRef = doc(this.firestore, 'contactlist', loggedInUserId);
+        const userDocSnapshot = await getDoc(userDocRef);
   
-      if (userDocSnapshot.exists()) {
-        const userContacts = userDocSnapshot.data()['contactList'] || [];
-        const updatedContacts = userContacts.filter((c: any) => c.uid !== contact.uid);
+        if (userDocSnapshot.exists()) {
+          const userContacts = userDocSnapshot.data()?.['contactList'] || [];
+          const updatedContacts = userContacts.filter((c: any) => c.uid !== contact.uid);
   
-        await updateDoc(userDocRef, { contactList: updatedContacts });
+          await updateDoc(userDocRef, { ['contactList']: updatedContacts });
   
-        console.log('Contact removed from the contact list:', contact);
+          console.log('Contact removed from contact list:', contact);
   
-        await this.loadContactList(this.loggedInUserId);;
+          await this.loadContactList(loggedInUserId);
+        }
       }
+    } catch (error) {
+      console.error('Error deleting contact from list:', error);
     }
   }
 }

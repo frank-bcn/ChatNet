@@ -26,7 +26,7 @@ export class LoginComponent {
       
       if (userId) {
         await this.onlineStatusService.setOnlineStatus(userId, true);
-        // ...
+        this.router.navigate(['/main-page']);
       }
     } catch (error) {
       console.error('Fehler beim Einloggen', error);

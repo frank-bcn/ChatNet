@@ -36,7 +36,7 @@ export class SignUpComponent {
             this.router.navigate(['']);
           }, 3000);
         }).catch(error => {
-          // ... (Fehlerbehandlung)
+          
         });
       })
       .catch(error => {
@@ -52,7 +52,7 @@ export class SignUpComponent {
     const docRef = doc(this.firestore, 'users', uid);
     setDoc(docRef, this.user.toJson())
       .then(() => {
-        // ... (Erfolgsbehandlung)
+        
       })
       .catch(error => {
         console.log('Save user failed', error);
@@ -68,7 +68,7 @@ export class SignUpComponent {
     
     setDoc(contactListDocRef, data)
       .then(() => {
-        // Erfolgsbehandlung
+        
       })
       .catch(error => {
         console.log('Speichern des Benutzers fehlgeschlagen', error);
