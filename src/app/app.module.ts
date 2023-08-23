@@ -22,7 +22,7 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { ContactlistComponent } from './pages/contactlist/contactlist.component';
 import { ChatsComponent } from './pages/chats/chats.component';
-import { ChatExistsDialogComponent } from './chat-exists-dialog/chat-exists-dialog.component';
+import { GroupChatComponent } from './pages/group-chat/group-chat.component';
 
 
 
@@ -39,7 +39,7 @@ import { ChatExistsDialogComponent } from './chat-exists-dialog/chat-exists-dial
     ChatDialogComponent,
     ContactlistComponent,
     ChatsComponent,
-    ChatExistsDialogComponent,
+    GroupChatComponent,
    
   ],
   imports: [

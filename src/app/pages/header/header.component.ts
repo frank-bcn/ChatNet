@@ -38,11 +38,13 @@ export class HeaderComponent implements OnInit {
     const currentHour = new Date().getHours();
 
     if (currentHour >= 5 && currentHour < 12) {
-      return 'Guten Morgen';
+      return 'Good morning';
     } else if (currentHour >= 12 && currentHour < 18) {
-      return 'Guten Tag';
+      return 'Good afternoon';
+    } else if (currentHour >= 18 && currentHour < 22) {
+      return 'Good evening';
     } else {
-      return 'Guten Abend';
+      return 'Good night';
     }
   }
 
@@ -71,6 +73,11 @@ export class HeaderComponent implements OnInit {
     this.closeDropdown();
   }
 
+  openGroupChat() {
+    this.router.navigate(['/group']);
+    this.closeDropdown();
+  }
+
   openConfirmation() {
     console.log("openConfirmation called");
     this.showConfirmation = true;
@@ -91,7 +98,7 @@ export class HeaderComponent implements OnInit {
   deleteAccount() {
     if (this.loggedInUserId) {
       const user = this.afAuth.currentUser;
-  
+
       if (user) {
         user.then(currentUser => {
           if (currentUser) {
@@ -100,7 +107,7 @@ export class HeaderComponent implements OnInit {
             const contactListDocRef = doc(this.firestore, 'contactlist', userUid);
             deleteDoc(contactListDocRef)
               .then(() => {
-        
+
                 return currentUser.delete();
               })
               .then(() => {
@@ -116,5 +123,5 @@ export class HeaderComponent implements OnInit {
         });
       }
     }
-  }  
+  }
 }

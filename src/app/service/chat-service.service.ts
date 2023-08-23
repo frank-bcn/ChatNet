@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from 'src/app/models/signUpUserdata';
 import { Firestore, collection, doc, setDoc, getDocs, getDoc } from '@angular/fire/firestore';
-import { ChatExistsDialogComponent } from 'src/app/chat-exists-dialog/chat-exists-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({

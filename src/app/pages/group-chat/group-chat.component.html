@@ -1,0 +1,56 @@
+<div class="page">
+    <div class="headlineProfile">
+        <span class="profileName"><b>{{ username }}</b></span>
+        <button class="menuButton" type="button" (click)="goToMainPage()">
+            <img src="./assets/img/arrow.png">
+        </button>
+    </div>
+    <div class="userContent">
+        <div class="profilImage">
+            <img src="./assets/img/profile+.png">
+        </div>
+    </div>
+    <div class="fields">
+        <div class="username">
+            <label>
+                <input type="text" name="text" placeholder="Group name">
+            </label>
+        </div>
+        <div class="email">
+            <label>
+                <input type="name" placeholder="add contact" (click)="showContactList = true">
+            </label>
+        </div>
+    </div>
+    <div class="userListContainer">
+        <ul class="userList" *ngIf="showContactList">
+            <li class="contact-item" *ngFor="let contact of contacts; let i = index"
+                [ngClass]="{'searchDesignOne': i % 2 === 0, 'searchDesignTwo': i % 2 !== 0}">
+                <div class="userImage">
+                    <img src="./assets/img/pic.png">
+                </div>
+                <div class="containerInformation">
+                    <div class="information">
+                        <div class="UserName">{{ contact.username }}</div>
+                        <div class="onlineStatus" [ngClass]="{'online': contact.online, 'offline': !contact.online}">
+                        </div>
+                    </div>
+                </div>
+                <button class="menuButton" type="button" (click)="toggleContact(contact)">
+                    <div class="square" [ngClass]="{'checked': contact.isSelected}">
+                        <div *ngIf="contact.isSelected" class="checkmark">&#10003;</div>
+                    </div>
+                </button>
+                
+            </li>
+        </ul>
+    </div>
+
+
+    <button class="signin-button" type="button" (click)="createGroup()">Create group</button>
+    <div *ngIf="showSuccessMessage" class="popup">
+        <div class="message">Sie haben Ihre Daten erfolgreich geändert!</div>
+    </div>
+
+
+</div>
