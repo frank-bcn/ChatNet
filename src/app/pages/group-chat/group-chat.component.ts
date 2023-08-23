@@ -70,11 +70,24 @@ export class GroupChatComponent {
     try {
       const docRef = await addDoc(collection(this.firestore, 'chats'), groupData);
       this.showSuccessMessage = true;
+
+      setTimeout(() => {
+        this.showSuccessMessage = false;
+
+        this.navigateToChatDialog(docRef.id);
+      }, 3000);
     } catch (error) {
       console.error('Error creating group:', error);
     }
   }
 
+  navigateToChatDialog(chatId: string) {
+    console.log('Navigating to chat dialog with chat ID:', chatId);
+  
+    
+    this.router.navigate(['/chat-dialog', chatId]);
+  }
+  
   toggleContact(contact: any) {
     contact.isSelected = !contact.isSelected;
 

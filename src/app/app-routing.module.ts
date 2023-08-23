@@ -14,7 +14,7 @@ const routes: Routes = [
   { path: 'signup', component: SignUpComponent },
   { path: 'main-page', component: MainPageComponent },
   { path: 'profile', component: ProfileComponent },
-  { path: 'chat-dialog', component: ChatDialogComponent },
+  { path: 'chat-dialog/:chatId', component: ChatDialogComponent },
   { path: 'contactlist', component: ContactlistComponent },
   { path: 'chats', component: ChatsComponent },
   { path: 'group', component: GroupChatComponent },

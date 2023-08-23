@@ -90,15 +90,20 @@ export class ContactlistComponent implements OnInit {
   }
 
   async addContactToChat(contact: any) {
-    const loggedInUser = await this.afAuth.currentUser;
-    if (loggedInUser) {
-      const loggedInUserId = loggedInUser.uid;
-      const userToAdd: User = contact;
-  
-      const chatId = await this.chatService.addOrGetChat(loggedInUserId, userToAdd.uid);
+    try {
+        const loggedInUser = await this.afAuth.currentUser;
+        if (loggedInUser) {
+            const loggedInUserId = loggedInUser.uid;
+            const userToAdd: User = contact;
 
-      this.router.navigate(['/chat-dialog', chatId]);
+            const chatId = await this.chatService.addOrGetChat(loggedInUserId, userToAdd.uid);
+
+            console.log('Navigiere zum Chat-Dialog mit Chat-ID:', chatId);
+
+            this.router.navigate(['/chat-dialog', chatId]);
+        }
+    } catch (error) {
+        console.error('Fehler beim Hinzufügen des Kontakts zum Chat:', error);
     }
-  }
-   
+}  
 }
