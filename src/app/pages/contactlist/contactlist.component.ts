@@ -91,19 +91,19 @@ export class ContactlistComponent implements OnInit {
 
   async addContactToChat(contact: any) {
     try {
-        const loggedInUser = await this.afAuth.currentUser;
-        if (loggedInUser) {
-            const loggedInUserId = loggedInUser.uid;
-            const userToAdd: User = contact;
+      const loggedInUser = await this.afAuth.currentUser;
+      if (loggedInUser) {
+        const loggedInUserId = loggedInUser.uid;
+        const userToAdd: User = contact;
 
-            const chatId = await this.chatService.addOrGetChat(loggedInUserId, userToAdd.uid);
+        const chatId = await this.chatService.addOrGetChat(loggedInUserId, userToAdd.uid);
 
-            console.log('Navigiere zum Chat-Dialog mit Chat-ID:', chatId);
+        console.log('Navigiere zum Chat-Dialog mit Chat-ID:', chatId);
 
-            this.router.navigate(['/chat-dialog', chatId]);
-        }
+        this.router.navigate(['/chat-dialog', chatId]);
+      }
     } catch (error) {
-        console.error('Fehler beim Hinzufügen des Kontakts zum Chat:', error);
+      console.error('Fehler beim Hinzufügen des Kontakts zum Chat:', error);
     }
-}  
+  }
 }

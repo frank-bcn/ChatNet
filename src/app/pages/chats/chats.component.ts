@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Firestore, collection, getDocs, query, where } from '@angular/fire/firestore';
+import { Firestore } from '@angular/fire/firestore';
 import { OnlineStatusService } from 'src/app/service/online-status.service';
 import { ChatService } from 'src/app/service/chat-service.service';
 import { User } from 'src/app/models/signUpUserdata';
@@ -33,29 +33,29 @@ export class ChatsComponent {
     this.email = '';
   }
 
-
   ngOnInit() {
-    this.afAuth.authState.subscribe(user => {
-      console.log('Chats:', this.chats);
+    this.afAuth.authState.subscribe(async user => {
       if (user) {
         this.username = user.displayName || '';
         this.email = user.email || '';
-        this.loadContactList(user.uid);
+
+        await this.loadChats(user.uid);
       }
     });
-    
   }
 
-  async loadContactList(userId: string) {
-    const contactsRef = collection(this.firestore, 'users');
-    const contactsQuery = query(contactsRef, where('uid', '!=', userId));
+  async loadChats(loggedInUserId: string) {
+    await this.chatService.initializeChats(loggedInUserId);
 
-    const querySnapshot = await getDocs(contactsQuery);
+    this.chats = await Promise.all(this.chatService.chats.map(async chat => {
+      const otherUserId = chat.users.find((uid: string) => uid !== loggedInUserId);
+      const username = await this.getUsernameForUid(otherUserId);
+      return { ...chat, otherUsername: username };
+    }));
+  }
 
-    this.contacts = [];
-    querySnapshot.forEach((doc) => {
-      this.contacts.push(doc.data());
-    });
+  async getUsernameForUid(uid: string): Promise<string> {
+    return this.chatService.getUsername(uid);
   }
 
   goToMainPage() {

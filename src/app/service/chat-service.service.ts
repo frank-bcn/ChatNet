@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from 'src/app/models/signUpUserdata';
 import { Firestore, collection, doc, setDoc, getDocs, getDoc } from '@angular/fire/firestore';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -13,17 +12,28 @@ export class ChatService {
   selectedUser: User | null = null;
   chats: any[] = [];
 
-  constructor(private firestore: Firestore, private router: Router, private dialog: MatDialog) { }
+  constructor(private firestore: Firestore, private router: Router) { }
 
-  async initializeChats() {
+  async initializeChats(loggedInUserId: string) {
+    this.loggedInUserId = loggedInUserId; 
     const chatsCollectionRef = collection(this.firestore, 'chats');
     const chatsSnapshot = await getDocs(chatsCollectionRef);
-
-    chatsSnapshot.forEach(doc => {
-      this.chats.push(doc.data());
-    });
+  
+    this.chats = chatsSnapshot.docs.map(doc => doc.data());
   }
-
+  
+  async getUsername(uid: string): Promise<string> {
+    const userDocRef = doc(collection(this.firestore, 'users'), uid);
+    const userDocSnapshot = await getDoc(userDocRef);
+    
+    if (userDocSnapshot.exists()) {
+      const userData = userDocSnapshot.data() as User;
+      return userData.username || '';
+    }
+    
+    return '';
+  }
+  
   async saveChatToDatabase(chatData: any) {
     try {
       const chatsCollectionRef = collection(this.firestore, 'chats');
