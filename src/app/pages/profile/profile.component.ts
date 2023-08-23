@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+import { Firestore, doc, setDoc, getDoc, updateDoc} from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-profile',
@@ -33,43 +33,95 @@ export class ProfileComponent {
   }
 
   updateUserData() {
-    this.afAuth.currentUser.then(user => {
-      if (user) {
-        
-        user.updateProfile({
-          displayName: this.username,
-        }).then(() => {
+    this.afAuth.currentUser
+      .then(async user => {
+        if (user) {
+          await this.updateUserProfile(user);
+          await this.updateUserEmail(user);
+  
+          const userData = {
+            username: this.username,
+            email: this.email
+          };
+          await this.updateUserInFirestore(user, userData);
+          await this.updateContactList(user, userData);
+  
           this.showSuccessMessage = true;
           setTimeout(() => {
             this.showSuccessMessage = false;
           }, 3000);
-        }).catch(error => {
-          console.error('Fehler beim Aktualisieren des Benutzernamens:', error);
-        });
-
-        user.updateEmail(this.email).then(() => {
-          
-        }).catch(error => {
-          
-        });
-        const userRef = doc(this.firestore, 'users', user.uid);
-        const userData = {
-          displayName: this.username,
-          email: this.email
-        };
-
-        setDoc(userRef, userData, { merge: true })
-          .then(() => {
-            
-          })
-          .catch(error => {
-            console.error('Fehler beim Aktualisieren der Benutzerdaten in Firestore:', error);
-          });
-      } else {
-        console.error('Benutzer nicht gefunden.');
+        } else {
+          console.error('Benutzer nicht gefunden.');
+        }
+      })
+      .catch(error => {
+        console.error('Fehler beim Abrufen des aktuellen Benutzers:', error);
+      });
+  }
+  
+  async updateUserProfile(user: any) {
+    try {
+      await user.updateProfile({
+        displayName: this.username,
+      });
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren des Benutzernamens:', error);
+    }
+  }
+  
+  async updateUserEmail(user: any) {
+    const newEmail = this.email;
+    try {
+      await user.updateEmail(this.email);
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren der E-Mail:', error);
+    }
+  }
+  
+  async updateUserInFirestore(user: any, userData: any) {
+    try {
+      const userRef = doc(this.firestore, 'users', user.uid);
+      await setDoc(userRef, userData, { merge: true });
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren der Benutzerdaten in Firestore:', error);
+    }
+  }
+  
+  async updateContactList(user: any, userData: any) {
+    try {
+      const userContactListRef = doc(this.firestore, 'contactlist', user.uid);
+      const userContactListSnapshot = await getDoc(userContactListRef);
+  
+      if (userContactListSnapshot.exists()) {
+        const userContacts = userContactListSnapshot.data()?.['contactList'] || [];
+  
+        for (const contact of userContacts) {
+          await this.updateContact(user, contact, userData);
+        }
       }
-    }).catch(error => {
-      console.error('Fehler beim Abrufen des aktuellen Benutzers:', error);
-    });
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren der Kontaktliste:', error);
+    }
+  }
+  
+  async updateContact(user: any, contact: any, userData: any) {
+    try {
+      const contactRef = doc(this.firestore, 'contactlist', contact.uid);
+      const contactSnapshot = await getDoc(contactRef);
+  
+      if (contactSnapshot.exists()) {
+        const updatedContactList = contactSnapshot.data()?.['contactList'] || [];
+        const updatedContacts = updatedContactList.map((c: any) => {
+          if (c.uid === user.uid) {
+            return { ...c, username: userData.username, email: userData.email };
+          }
+          return c;
+        });
+  
+        await updateDoc(contactRef, { ['contactList']: updatedContacts });
+      }
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren des Kontakts:', error);
+    }
   }
 }

@@ -52,7 +52,6 @@ export class GroupChatComponent {
     }
   }
   
-
   goToMainPage() {
     this.router.navigate(['/main-page']);
   }

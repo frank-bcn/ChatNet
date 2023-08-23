@@ -42,16 +42,12 @@
                         <div *ngIf="contact.isSelected" class="checkmark">&#10003;</div>
                     </div>
                 </button>
-                
+
             </li>
         </ul>
     </div>
-
-
     <button class="signin-button" type="button" (click)="createGroup()">Create group</button>
     <div *ngIf="showSuccessMessage" class="popup">
-        <div class="message">Sie haben Ihre Daten erfolgreich geändert!</div>
+        <div class="message">You have successfully created the group chat! </div>
     </div>
-
-
 </div>
