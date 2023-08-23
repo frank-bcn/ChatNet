@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Firestore, collection, addDoc, doc, getDoc } from '@angular/fire/firestore'; // Änderung hier
-import { OnlineStatusService } from 'src/app/service/online-status.service';
-import { ChatService } from 'src/app/service/chat-service.service';
+import { Firestore, collection, addDoc, doc, getDoc } from '@angular/fire/firestore';
 import { User } from 'src/app/models/signUpUserdata';
 
 @Component({
@@ -16,26 +14,20 @@ export class GroupChatComponent {
   username: string;
   email: any;
   showSuccessMessage: boolean = false;
-  isOnline: boolean = false;
   contacts: any[] = [];
   loggedInUserId: string = '';
-  contactlist: User[] = []; 
-  selectedContact: string = '';
-  isContactListOpen: boolean = false;
   selectedContacts: User[] = [];
+  groupName: string;
   showContactList: boolean = false;
-
 
   constructor(
     private afAuth: AngularFireAuth,
     private firestore: Firestore,
-    private router: Router,
-    private onlineStatusService: OnlineStatusService,
-    public chatService: ChatService,
-
+    private router: Router
   ) {
     this.username = '';
     this.email = '';
+    this.groupName = '';
   }
 
   ngOnInit() {
@@ -53,27 +45,27 @@ export class GroupChatComponent {
   async loadContactList(loggedInUserId: string) {
     const userDocRef = doc(this.firestore, 'contactlist', loggedInUserId);
     const userDocSnapshot = await getDoc(userDocRef);
-
+  
     if (userDocSnapshot.exists()) {
       const userContacts = userDocSnapshot.data()['contactList'] || [];
-
-      for (const contact of userContacts) {
-        const isContactOnline = await this.onlineStatusService.getOnlineStatus(contact.uid);
-        contact.online = isContactOnline;
-      }
-
       this.contacts = userContacts;
     }
   }
+  
 
   goToMainPage() {
     this.router.navigate(['/main-page']);
   }
 
   async createGroup() {
-    const groupName = this.username;
+    const groupName = this.groupName;
+    const selectedContactUids = this.selectedContacts.map(contact => contact.uid);
+    const loggedInUserUid = this.loggedInUserId;
+
     const groupData = {
       username: groupName,
+      selectedContacts: selectedContactUids,
+      createdBy: loggedInUserUid,
     };
 
     try {
