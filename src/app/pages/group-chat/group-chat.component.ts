@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Firestore, collection, addDoc, doc, getDoc } from '@angular/fire/firestore';
 import { User } from 'src/app/models/signUpUserdata';
+import { ChatService } from 'src/app/service/chat-service.service'; // Importieren Sie Ihren ChatService
 
 @Component({
   selector: 'app-group-chat',
@@ -23,7 +24,8 @@ export class GroupChatComponent {
   constructor(
     private afAuth: AngularFireAuth,
     private firestore: Firestore,
-    private router: Router
+    private router: Router,
+    private chatService: ChatService // Fügen Sie Ihren ChatService hinzu
   ) {
     this.username = '';
     this.email = '';
@@ -60,31 +62,25 @@ export class GroupChatComponent {
     const groupName = this.groupName;
     const selectedContactUids = this.selectedContacts.map(contact => contact.uid);
     const loggedInUserUid = this.loggedInUserId;
-
-    const groupData = {
-      username: groupName,
-      selectedContacts: selectedContactUids,
-      createdBy: loggedInUserUid,
-    };
-
-    try {
-      const docRef = await addDoc(collection(this.firestore, 'chats'), groupData);
+  
+    const chatId = await this.chatService.createGroupChat(groupName, loggedInUserUid, selectedContactUids);
+  
+    if (chatId) {
       this.showSuccessMessage = true;
-
+  
       setTimeout(() => {
         this.showSuccessMessage = false;
-
-        this.navigateToChatDialog(docRef.id);
+  
+        // Navigiere zum Chat-Dialog
+        this.navigateToChatDialog(chatId);
       }, 3000);
-    } catch (error) {
-      console.error('Error creating group:', error);
+    } else {
+      console.error('Fehler beim Erstellen des Gruppenchats.');
     }
-  }
+  }  
 
   navigateToChatDialog(chatId: string) {
     console.log('Navigating to chat dialog with chat ID:', chatId);
-  
-    
     this.router.navigate(['/chat-dialog', chatId]);
   }
   

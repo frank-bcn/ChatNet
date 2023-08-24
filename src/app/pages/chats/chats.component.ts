@@ -45,15 +45,25 @@ export class ChatsComponent {
   }
 
   async loadChats(loggedInUserId: string) {
+  
     await this.chatService.initializeChats(loggedInUserId);
-
+  
     this.chats = await Promise.all(this.chatService.chats.map(async chat => {
-      const otherUserId = chat.users.find((uid: string) => uid !== loggedInUserId);
-      const username = await this.getUsernameForUid(otherUserId);
-      return { ...chat, otherUsername: username };
+      if (chat.groupName) {
+        
+        return { ...chat, displayName: chat.groupName };
+      } else {
+        const otherUserId = chat.users && chat.users.find((uid: string) => uid !== loggedInUserId);
+        if (otherUserId) {
+          const username = await this.getUsernameForUid(otherUserId);
+          return { ...chat, displayName: username };
+        } else {
+          return chat;
+        }
+      }
     }));
   }
-
+  
   async getUsernameForUid(uid: string): Promise<string> {
     return this.chatService.getUsername(uid);
   }

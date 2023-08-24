@@ -65,4 +65,31 @@ export class ChatService {
     console.log('Navigiere zum Chat-Dialog mit Chat-ID:', chatId);
     this.router.navigate(['/chat-dialog', chatId]);
   }
+
+  async createGroupChat(groupName: string, loggedInUserId: string, selectedContactUids: string[]): Promise<string | null> {
+    try {
+      const chatId = loggedInUserId + '_' + groupName;
+      
+      const chatCollectionRef = collection(this.firestore, 'chats');
+      const chatDocRef = doc(chatCollectionRef, chatId);
+      
+      const chatDocSnapshot = await getDoc(chatDocRef);
+      if (chatDocSnapshot.exists()) {
+        return null;
+      }
+      
+      const chatData = {
+        groupName: groupName,
+        selectedContacts: selectedContactUids,
+        createdBy: loggedInUserId,
+      };
+      
+      await setDoc(chatDocRef, chatData);
+      return chatId;
+    } catch (error) {
+      console.error('Fehler beim Erstellen des Gruppenchats:', error);
+      return null;
+    }
+  }
+  
 }
