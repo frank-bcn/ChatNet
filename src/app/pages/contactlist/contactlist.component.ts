@@ -95,15 +95,42 @@ export class ContactlistComponent implements OnInit {
       if (loggedInUser) {
         const loggedInUserId = loggedInUser.uid;
         const userToAdd: User = contact;
-
-        const chatId = await this.chatService.addOrGetChat(loggedInUserId, userToAdd.uid);
-
-        console.log('Navigiere zum Chat-Dialog mit Chat-ID:', chatId);
-
+        const sortedUids = [loggedInUserId, userToAdd.uid].sort();
+        const chatId = sortedUids.join('_');
+  
+        const chatExists = await this.checkIfChatExists(chatId);
+  
+        if (!chatExists) {
+          await this.chatService.addOrGetChat(loggedInUserId, userToAdd.uid);
+          console.log('Navigiere zum Chat-Dialog mit Chat-ID:', chatId);
+        } else {
+          console.log('Chat existiert bereits:', chatId);
+        }
+  
         this.router.navigate(['/chat-dialog', chatId]);
       }
     } catch (error) {
       console.error('Fehler beim Hinzufügen des Kontakts zum Chat:', error);
+    }
+  }
+  
+  async checkIfChatExists(chatId: string): Promise<boolean> {
+    try {
+      const chatDocRef = doc(this.firestore, 'chats', chatId);
+      const chatDocSnapshot = await getDoc(chatDocRef);
+  
+      if (chatDocSnapshot.exists()) {
+        return true;
+      }
+      const uids = chatId.split('_');
+      const reverseChatId = `${uids[1]}_${uids[0]}`;
+      const reverseChatDocRef = doc(this.firestore, 'chats', reverseChatId);
+      const reverseChatDocSnapshot = await getDoc(reverseChatDocRef);
+  
+      return reverseChatDocSnapshot.exists();
+    } catch (error) {
+      console.error('Fehler beim Überprüfen des Chat-Existenz:', error);
+      return false;
     }
   }
 }

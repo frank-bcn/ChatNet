@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Firestore, collection, addDoc, doc, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, getDocs, doc, getDoc, where, query} from '@angular/fire/firestore';
 import { User } from 'src/app/models/signUpUserdata';
-import { ChatService } from 'src/app/service/chat-service.service'; // Importieren Sie Ihren ChatService
+import { ChatService } from 'src/app/service/chat-service.service';
 
 @Component({
   selector: 'app-group-chat',
@@ -15,6 +15,7 @@ export class GroupChatComponent {
   username: string;
   email: any;
   showSuccessMessage: boolean = false;
+  showErrorMessage: boolean = false;
   contacts: any[] = [];
   loggedInUserId: string = '';
   selectedContacts: User[] = [];
@@ -25,7 +26,7 @@ export class GroupChatComponent {
     private afAuth: AngularFireAuth,
     private firestore: Firestore,
     private router: Router,
-    private chatService: ChatService // Fügen Sie Ihren ChatService hinzu
+    private chatService: ChatService,
   ) {
     this.username = '';
     this.email = '';
@@ -59,26 +60,71 @@ export class GroupChatComponent {
   }
 
   async createGroup() {
-    const groupName = this.groupName;
-    const selectedContactUids = this.selectedContacts.map(contact => contact.uid);
+    const { groupName, selectedContacts } = this;
+    const adminUid = this.loggedInUserId;
+  
+    if (selectedContacts.length < 2) {
+      this.showErrorMessage = true; 
+      setTimeout(() => {
+        this.showErrorMessage = false;
+      }, 3000);
+      return;
+    }
+  
+    const selectedContactUids = this.getSelectedContactUids(selectedContacts, adminUid);
+    const chatId = this.createChatId(groupName, selectedContactUids);
+  
+    if (await this.checkIfGroupChatExists(chatId)) {
+      this.navigateToChatDialog(chatId);
+      return;
+    }
+  
+    const createdChatId = await this.createGroupChat(groupName, selectedContactUids);
+    this.handleChatCreationResult(createdChatId);
+  }
+  
+  
+  getSelectedContactUids(selectedContacts: any[], adminUid: string) {
+    return selectedContacts.map(contact => contact.uid).concat(adminUid).sort();
+  }
+  
+  createChatId(groupName: string, selectedContactUids: string[]) {
+    return `${groupName}_${selectedContactUids.join('_')}`;
+  }
+  
+  async createGroupChat(groupName: string, selectedContactUids: string[]) {
     const loggedInUserUid = this.loggedInUserId;
+    return await this.chatService.createGroupChat(groupName, loggedInUserUid, selectedContactUids);
+  }
   
-    const chatId = await this.chatService.createGroupChat(groupName, loggedInUserUid, selectedContactUids);
-  
-    if (chatId) {
+  handleChatCreationResult(createdChatId: string | null) {
+    if (createdChatId) {
       this.showSuccessMessage = true;
-  
       setTimeout(() => {
         this.showSuccessMessage = false;
-  
-        // Navigiere zum Chat-Dialog
-        this.navigateToChatDialog(chatId);
+        this.navigateToChatDialog(createdChatId);
       }, 3000);
     } else {
-      console.error('Fehler beim Erstellen des Gruppenchats.');
+      this.showErrorMessage = true;
+      setTimeout(() => {
+        this.showErrorMessage = false;
+      }, 3000);
     }
-  }  
-
+  }
+  
+  async checkIfGroupChatExists(chatId: string): Promise<boolean> {
+    try {
+      const chatCollectionRef = collection(this.firestore, 'chats');
+      const chatQuery = query(chatCollectionRef, where('chatId', '==', chatId));
+      const querySnapshot = await getDocs(chatQuery);
+  
+      return !querySnapshot.empty;
+    } catch (error) {
+      console.error('Fehler beim Überprüfen des Gruppenchat-Existenz:', error);
+      return false;
+    }
+  }
+    
   navigateToChatDialog(chatId: string) {
     console.log('Navigating to chat dialog with chat ID:', chatId);
     this.router.navigate(['/chat-dialog', chatId]);

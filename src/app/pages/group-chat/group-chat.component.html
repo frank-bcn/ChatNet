@@ -48,6 +48,10 @@
     </div>
     <button class="signin-button" type="button" (click)="createGroup()">Create group</button>
     <div *ngIf="showSuccessMessage" class="popup">
-        <div class="message">You have successfully created the group chat! </div>
+        <div class="message">You have successfully created the group chat!</div>
+    </div>
+    
+    <div *ngIf="showErrorMessage" class="popup">
+        <div class="message">There are too few participants for a group. Please add more contacts.</div>
     </div>
 </div>

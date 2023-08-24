@@ -81,7 +81,7 @@ export class ChatService {
       const chatData = {
         groupName: groupName,
         selectedContacts: selectedContactUids,
-        createdBy: loggedInUserId,
+        admin: loggedInUserId,
       };
       
       await setDoc(chatDocRef, chatData);
