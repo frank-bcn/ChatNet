@@ -22,6 +22,17 @@ export class ChatService {
     this.chats = chatsSnapshot.docs.map(doc => doc.data());
   }
   
+  async getChatData(chatId: string) {
+    const chatDocRef = doc(this.firestore, 'chats', chatId);
+    const chatDocSnapshot = await getDoc(chatDocRef);
+  
+    if (chatDocSnapshot.exists()) {
+      return chatDocSnapshot.data();
+    }
+    
+    return null;
+  }
+  
   async getUsername(uid: string): Promise<string> {
     const userDocRef = doc(collection(this.firestore, 'users'), uid);
     const userDocSnapshot = await getDoc(userDocRef);
@@ -91,5 +102,4 @@ export class ChatService {
       return null;
     }
   }
-  
 }

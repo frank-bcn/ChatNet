@@ -5,6 +5,7 @@ import { Firestore } from '@angular/fire/firestore';
 import { OnlineStatusService } from 'src/app/service/online-status.service';
 import { ChatService } from 'src/app/service/chat-service.service';
 import { User } from 'src/app/models/signUpUserdata';
+import { ChatDataService } from 'src/app/service/chat-data.service';
 
 @Component({
   selector: 'app-chats',
@@ -27,26 +28,28 @@ export class ChatsComponent {
     private router: Router,
     private onlineStatusService: OnlineStatusService,
     public chatService: ChatService,
+    private chatDataService: ChatDataService,
 
   ) {
     this.username = '';
     this.email = '';
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.afAuth.authState.subscribe(async user => {
       if (user) {
         this.username = user.displayName || '';
         this.email = user.email || '';
-
+  
         await this.loadChats(user.uid);
       }
     });
   }
 
   async loadChats(loggedInUserId: string) {
-  
+    console.log('Initializing chats...');
     await this.chatService.initializeChats(loggedInUserId);
+    console.log('Chats initialized:', this.chatService.chats);
   
     this.chats = await Promise.all(this.chatService.chats.map(async chat => {
       if (chat.groupName) {
@@ -72,9 +75,14 @@ export class ChatsComponent {
     this.router.navigate(['/main-page']);
   }
 
-  openChatDialog(user: User) {
-    this.selectedUser = user;
-    console.log('Ausgewählter Benutzer:', this.selectedUser);
-    this.router.navigate(['/chat-dialog'], { state: { selectedUser: user } });
+  // In ChatsComponent
+openChatDialog(chat: any) {
+  if (chat && chat.groupName) {
+    this.chatDataService.selectedChat = chat;
+    this.router.navigate(['/chat-dialog', chat.groupName]);
+  } else {
+    console.error('Ungültiger Chat.');
   }
+}
+
 }

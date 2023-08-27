@@ -7,6 +7,18 @@
     box-shadow: 12px 12px 50px 5px rgba(0, 0, 0, .2);
 }
 
+.chatTitle {
+    display: flex;
+    justify-content: center;
+}
+
+.title {
+    display: flex;
+    justify-self: center;
+    font-size: 30px;
+    font-weight: 700; 
+}
+
 .contentSide {
     display: flex;
     flex-direction: column;

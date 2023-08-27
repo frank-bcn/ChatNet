@@ -5,6 +5,12 @@
     </div>
     <button class="menuButton" type="button" (click)="goToMainPage()"><img src="./assets/img/arrow.png"></button>
   </div>
+  <div class="chatTitle">
+    <div class="title">{{ chat.groupName }}</div>
+  </div>
+  <div class="username" *ngFor="let uid of chat.users">
+    {{ chatService.getUsername(uid) | async }}
+  </div>
   <div class="contentSide">
     <div class="message">
       <div class="messageItem">
@@ -14,6 +20,6 @@
   </div>
   <div class="container">
     <input type="text" class="userSearch" placeholder="Nachricht eingeben...">
-    <button (click)="sendMessage()" class="menuButton"><img src="./assets/img/send.png"></button>
+    <!--<button (click)="sendMessage()" class="menuButton"><img src="./assets/img/send.png"></button>-->
   </div>
 </div>
