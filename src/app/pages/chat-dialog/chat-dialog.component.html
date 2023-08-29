@@ -4,20 +4,18 @@
       <img src="./assets/img/profile+.png">
     </div>
     <button class="menuButton" type="button" (click)="goToMainPage()"><img src="./assets/img/arrow.png"></button>
-    
-     
   </div>
   <div class="chatTitle" *ngIf="showChatTitle && chat.groupName">
     <div class="title">{{ chat.groupName }}</div>
   </div>
-  
+  <div class="chatTitle">
+    <div class="title">{{ chatUsernames[chat.id] }}</div>
+  </div>
   <div class="messageItem usernames-container" *ngIf="usernamesLoaded && chat.groupName">
     <div *ngFor="let uid of chat.selectedContacts" class="username">
       {{ chatDataService.usernames[uid] }}
     </div>
   </div>
-
-
   <div class="contentSide">
     <div class="message">
       <div class="messageItem">

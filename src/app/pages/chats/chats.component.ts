@@ -91,10 +91,10 @@ export class ChatsComponent {
 
   openChatDialog(chat: any) {
     if (chat) {
-      this.chatDataService.selectedChat = {}; // Hier wird der ausgewählte Chat zurückgesetzt
+      this.chatDataService.selectedChat = {}; 
   
       if (chat.groupName) {
-        this.chatDataService.selectedChat = { ...chat }; // Hier setzt du den ausgewählten Gruppenchat
+        this.chatDataService.selectedChat = { ...chat };
         this.router.navigate(['/chat-dialog', chat.groupName]);
         console.log('Öffne Gruppenchat:', chat.groupName);
       } else if (chat.users) {
@@ -105,10 +105,8 @@ export class ChatsComponent {
     }
   }
   
-  
-  
   async navigateToChatDialog(chatId: string) {
-    this.chat = this.chatDataService.selectedChat; // Aktualisiere den Chat aus dem Service
+    this.chat = this.chatDataService.selectedChat;
     this.router.navigate(['/chat-dialog', chatId]);
     console.log('Öffne Einzelchat mit User:', this.username);
   }

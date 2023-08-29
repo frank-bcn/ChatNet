@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ChatService } from 'src/app/service/chat-service.service';
 import { ChatDataService } from 'src/app/service/chat-data.service';
@@ -21,11 +21,12 @@ export class ChatDialogComponent implements OnInit {
   loggedInUserId: string = '';
   usernamesLoaded: boolean = false;
   showChatTitle: boolean = false;
-  
+  chats: any[] = [];
+  chatUsernames: { [chatId: string]: string } = {};
+
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute,
     private afAuth: AngularFireAuth,
     public chatService: ChatService,
     public chatDataService: ChatDataService,
@@ -33,31 +34,33 @@ export class ChatDialogComponent implements OnInit {
 
   ) {
     this.username = '';
-    
-   }
 
-   async ngOnInit() {
+  }
+
+  async ngOnInit() {
     this.afAuth.authState.subscribe(async user => {
       if (user) {
         this.loggedInUserId = user.uid;
         const selectedChat = this.chatDataService.selectedChat;
-        this.chat = selectedChat ? { ...selectedChat } : {}; 
-
+        this.chat = selectedChat ? { ...selectedChat } : {};
+        
         if (this.chat.groupName) {
           this.showChatTitle = true;
           this.usernamesLoaded = true;
           this.loadUsernames();
+          
         } else if (this.chat.users || this.chat.selectedContacts) {
           this.showChatTitle = false;
-          this.usernamesLoaded = true; 
+          this.usernamesLoaded = true;
         } else {
           this.showChatTitle = false;
-          this.usernamesLoaded = false; // Set to false
+          this.usernamesLoaded = false;
+          await this.loadUserName(this.loggedInUserId); 
         }
       }
     });
   }
-  
+
   getChatTitle(): string {
     if (this.chat?.groupName) {
       return this.chat.groupName;
@@ -70,12 +73,33 @@ export class ChatDialogComponent implements OnInit {
     }
     return 'Unbekannt';
   }
+
+  async loadUserName(loggedInUserId: string) {
+    console.log('Initializing chats...');
+    await this.chatService.initializeChats(loggedInUserId);
+    console.log('Chats initialized:', this.chatService.chats);
   
+    this.chats = await Promise.all(this.chatService.chats.map(async chat => {
+      if (chat.groupName) {
+        return { ...chat, displayName: chat.groupName };
+      } else {
+        const otherUserId = chat.users && chat.users.find((uid: string) => uid !== loggedInUserId);
+        if (otherUserId) {
+          const username = await this.getUsernameForUid(otherUserId);
+          this.chatUsernames[chat.id] = username;
+          return { ...chat };
+        } else {
+          return chat;
+        }
+      }
+    }));
+  }
+
   async getUsernameForUid(otherUserId: string): Promise<string> {
-    const username = await this.getUsernameForUid(otherUserId)
+    const username = await this.getUsername(otherUserId);
     return username || '';
   }
-  
+
   async loadUsernames() {
     for (const uid of this.chat.selectedContacts) {
       const username = await this.getUsername(uid);
@@ -97,15 +121,14 @@ export class ChatDialogComponent implements OnInit {
 
   goToMainPage() {
     this.usernamesLoaded = false;
-    this.showChatTitle = false; 
+    this.showChatTitle = false;
     console.log('usernamesLoaded:', this.usernamesLoaded);
-    console.log('showChatTitle:', this.showChatTitle); 
-    
+    console.log('showChatTitle:', this.showChatTitle);
+
     this.router.navigate(['/chats']);
   }
-  
 
   sendMessage() {
-    
+
   }
 }
