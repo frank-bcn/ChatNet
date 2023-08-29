@@ -13,8 +13,8 @@
         </div>
         <div class="containerInformation">
           <div class="information">
-            <div class="UserName">{{ chat.displayName }}</div>
-            <div class="onlineStatus" [ngClass]="{'online': isOnline, 'offline': !isOnline}"></div>
+            <div class="UserName">{{ chat.displayName || chatUsernames[chat.id] }}</div>
+            <div class="onlineStatus" [ngClass]="{'online': chat.isOnline, 'offline': !chat.isOnline}"></div>
           </div>
           <div class="informationChat">
             <div class="lastMessageText">Letzter gesendeter Text hier anzeigen</div>
@@ -22,6 +22,6 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>    
   </div>
 </div>

@@ -5,6 +5,6 @@ import { Injectable } from '@angular/core';
 })
 export class ChatDataService {
   selectedChat: any;
-
+  usernames: { [uid: string]: string } = {};
   
 }

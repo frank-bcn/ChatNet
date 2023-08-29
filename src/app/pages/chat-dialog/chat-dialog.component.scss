@@ -16,7 +16,21 @@
     display: flex;
     justify-self: center;
     font-size: 30px;
-    font-weight: 700; 
+    font-weight: 700;
+}
+
+.usernames-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.username {
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+    margin-top: 30px;
 }
 
 .contentSide {

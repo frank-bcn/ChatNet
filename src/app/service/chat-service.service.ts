@@ -7,13 +7,13 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class ChatService {
-
   loggedInUserId: string = '';
   selectedUser: User | null = null;
   chats: any[] = [];
 
   constructor(private firestore: Firestore, private router: Router) { }
 
+  // Initialisiert die Chat-Liste für den angemeldeten Benutzer.
   async initializeChats(loggedInUserId: string) {
     this.loggedInUserId = loggedInUserId; 
     const chatsCollectionRef = collection(this.firestore, 'chats');
@@ -22,6 +22,7 @@ export class ChatService {
     this.chats = chatsSnapshot.docs.map(doc => doc.data());
   }
   
+  // Ruft die Daten eines bestimmten Chats anhand der Chat-ID ab.
   async getChatData(chatId: string) {
     const chatDocRef = doc(this.firestore, 'chats', chatId);
     const chatDocSnapshot = await getDoc(chatDocRef);
@@ -33,6 +34,7 @@ export class ChatService {
     return null;
   }
   
+  // Holt den Benutzernamen anhand der Benutzer-ID aus der Datenbank.
   async getUsername(uid: string): Promise<string> {
     const userDocRef = doc(collection(this.firestore, 'users'), uid);
     const userDocSnapshot = await getDoc(userDocRef);
@@ -45,6 +47,7 @@ export class ChatService {
     return '';
   }
   
+  // Speichert Chat-Daten in der Datenbank.
   async saveChatToDatabase(chatData: any) {
     try {
       const chatsCollectionRef = collection(this.firestore, 'chats');
@@ -55,6 +58,7 @@ export class ChatService {
     }
   }
 
+  // Fügt einen neuen Chat hinzu oder gibt die ID eines bestehenden Chats zurück.
   async addOrGetChat(user1Id: string, user2Id: string) {
     const chatId = user1Id + '_' + user2Id;
 
@@ -72,11 +76,13 @@ export class ChatService {
     return chatId;
   }
 
+  // Navigiert zu einem Chat-Dialog mit einer bestimmten Chat-ID.
   async navigateToChatDialog(chatId: string) {
     console.log('Navigiere zum Chat-Dialog mit Chat-ID:', chatId);
     this.router.navigate(['/chat-dialog', chatId]);
   }
 
+  // Erstellt einen Gruppenchat mit ausgewählten Kontakten.
   async createGroupChat(groupName: string, loggedInUserId: string, selectedContactUids: string[]): Promise<string | null> {
     try {
       const chatId = loggedInUserId + '_' + groupName;

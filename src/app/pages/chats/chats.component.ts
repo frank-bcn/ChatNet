@@ -13,7 +13,7 @@ import { ChatDataService } from 'src/app/service/chat-data.service';
   styleUrls: ['./chats.component.scss']
 })
 export class ChatsComponent {
-
+  chat: any = { groupName: '' };
   username: string;
   email: any;
   showSuccessMessage: boolean = false;
@@ -21,6 +21,8 @@ export class ChatsComponent {
   contacts: any[] = [];
   selectedUser: User | null = null;
   chats: any[] = [];
+  loggedInUserId: string = '';
+  chatUsernames: { [chatId: string]: string } = {};
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -53,18 +55,30 @@ export class ChatsComponent {
   
     this.chats = await Promise.all(this.chatService.chats.map(async chat => {
       if (chat.groupName) {
-        
         return { ...chat, displayName: chat.groupName };
       } else {
         const otherUserId = chat.users && chat.users.find((uid: string) => uid !== loggedInUserId);
         if (otherUserId) {
           const username = await this.getUsernameForUid(otherUserId);
-          return { ...chat, displayName: username };
+          this.chatUsernames[chat.id] = username;
+          return { ...chat };
         } else {
           return chat;
         }
       }
     }));
+  }
+
+  async getUsernameForChat(chat: any): Promise<string> {
+    if (chat.groupName) {
+      return chat.groupName;
+    } else if (chat.users) {
+      const otherUserId = chat.users.find((uid: string) => uid !== this.loggedInUserId);
+      if (otherUserId) {
+        return await this.getUsernameForUid(otherUserId);
+      }
+    }
+    return '';
   }
   
   async getUsernameForUid(uid: string): Promise<string> {
@@ -75,14 +89,28 @@ export class ChatsComponent {
     this.router.navigate(['/main-page']);
   }
 
-  // In ChatsComponent
-openChatDialog(chat: any) {
-  if (chat && chat.groupName) {
-    this.chatDataService.selectedChat = chat;
-    this.router.navigate(['/chat-dialog', chat.groupName]);
-  } else {
-    console.error('Ungültiger Chat.');
+  openChatDialog(chat: any) {
+    if (chat) {
+      this.chatDataService.selectedChat = {}; // Hier wird der ausgewählte Chat zurückgesetzt
+  
+      if (chat.groupName) {
+        this.chatDataService.selectedChat = { ...chat }; // Hier setzt du den ausgewählten Gruppenchat
+        this.router.navigate(['/chat-dialog', chat.groupName]);
+        console.log('Öffne Gruppenchat:', chat.groupName);
+      } else if (chat.users) {
+        const individualChatId = chat.users.join('_');
+        this.navigateToChatDialog(individualChatId);
+        console.log('Öffne Einzelchat mit User:', individualChatId);
+      }
+    }
   }
-}
-
+  
+  
+  
+  async navigateToChatDialog(chatId: string) {
+    this.chat = this.chatDataService.selectedChat; // Aktualisiere den Chat aus dem Service
+    this.router.navigate(['/chat-dialog', chatId]);
+    console.log('Öffne Einzelchat mit User:', this.username);
+  }
+   
 }
