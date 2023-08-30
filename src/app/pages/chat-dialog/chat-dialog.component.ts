@@ -75,7 +75,9 @@ export class ChatDialogComponent implements OnInit {
   }
 
   async loadUserName(loggedInUserId: string) {
+    console.log('Initializing chats...');
     await this.chatService.initializeChats(loggedInUserId);
+    console.log('Chats initialized:', this.chatService.chats);
   
     this.chats = await Promise.all(this.chatService.chats.map(async chat => {
       if (chat.groupName) {
