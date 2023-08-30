@@ -13,7 +13,7 @@
         </div>
         <div class="containerInformation">
           <div class="information">
-            <div class="UserName">{{ chat.displayName || chatUsernames[chat.id] }}</div>
+            <div class="UserName">{{ chat.displayName || chatUsernames[chatDataService.chatId] }}</div>
             <div class="onlineStatus" [ngClass]="{'online': chat.isOnline, 'offline': !chat.isOnline}"></div>
           </div>
           <div class="informationChat">

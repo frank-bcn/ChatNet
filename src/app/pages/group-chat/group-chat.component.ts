@@ -3,7 +3,8 @@ import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Firestore, collection, getDocs, doc, getDoc, where, query} from '@angular/fire/firestore';
 import { User } from 'src/app/models/signUpUserdata';
-import { ChatService } from 'src/app/service/chat-service.service';
+import { ChatDataService } from 'src/app/service/chat-data.service';
+
 
 @Component({
   selector: 'app-group-chat',
@@ -26,7 +27,8 @@ export class GroupChatComponent {
     private afAuth: AngularFireAuth,
     private firestore: Firestore,
     private router: Router,
-    private chatService: ChatService,
+    public chatDataService: ChatDataService
+   
   ) {
     this.username = '';
     this.email = '';
@@ -94,7 +96,7 @@ export class GroupChatComponent {
   
   async createGroupChat(groupName: string, selectedContactUids: string[]) {
     const loggedInUserUid = this.loggedInUserId;
-    return await this.chatService.createGroupChat(groupName, loggedInUserUid, selectedContactUids);
+    return await this.chatDataService.createGroupChat(groupName, loggedInUserUid, selectedContactUids);
   }
   
   handleChatCreationResult(createdChatId: string | null) {

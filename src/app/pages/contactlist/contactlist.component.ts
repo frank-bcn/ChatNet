@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Firestore, doc, updateDoc, getDoc } from '@angular/fire/firestore';
+import { Firestore, doc, updateDoc, getDoc, collection, setDoc } from '@angular/fire/firestore';
 import { OnlineStatusService } from 'src/app/service/online-status.service';
-import { ChatService } from 'src/app/service/chat-service.service';
+import { ChatDataService } from 'src/app/service/chat-data.service';
 import { User } from 'src/app/models/signUpUserdata';
 
 @Component({
@@ -18,14 +18,13 @@ export class ContactlistComponent implements OnInit {
   showSuccessMessage: boolean = false;
   isOnline: boolean = false;
   contacts: any[] = [];
-  loggedInUserId: string = '';
 
   constructor(
     private afAuth: AngularFireAuth,
     private firestore: Firestore,
     private router: Router,
     private onlineStatusService: OnlineStatusService,
-    public chatService: ChatService,
+    private chatDataService: ChatDataService
 
   ) {
     this.username = '';
@@ -37,9 +36,9 @@ export class ContactlistComponent implements OnInit {
       if (user) {
         this.username = user.displayName || '';
         this.email = user.email || '';
-        this.loggedInUserId = user.uid;
+        this.chatDataService.loggedUserId = user.uid;
 
-        this.loadContactList(this.loggedInUserId);
+        this.loadContactList(this.chatDataService.loggedUserId);
       }
     });
   }
@@ -89,7 +88,7 @@ export class ContactlistComponent implements OnInit {
     }
   }
 
-  async addContactToChat(contact: any) {
+  async createSingleChat(contact: any) {
     try {
       const loggedInUser = await this.afAuth.currentUser;
       if (loggedInUser) {
@@ -98,11 +97,14 @@ export class ContactlistComponent implements OnInit {
         const sortedUids = [loggedInUserId, userToAdd.uid].sort();
         const chatId = sortedUids.join('_');
   
-        const chatExists = await this.checkIfChatExists(chatId);
+        const chatCollectionRef = collection(this.firestore, 'chats');
+        const chatDocRef = doc(chatCollectionRef, chatId);
   
-        if (!chatExists) {
-          await this.chatService.addOrGetChat(loggedInUserId, userToAdd.uid);
-          console.log('Navigiere zum Chat-Dialog mit Chat-ID:', chatId);
+        const chatDocSnapshot = await getDoc(chatDocRef);
+        if (!chatDocSnapshot.exists()) {
+          const chatData = { users: sortedUids };
+          await setDoc(chatDocRef, chatData);
+          console.log('Chat erstellt:', chatId);
         } else {
           console.log('Chat existiert bereits:', chatId);
         }
@@ -114,7 +116,8 @@ export class ContactlistComponent implements OnInit {
     }
   }
   
-  async checkIfChatExists(chatId: string): Promise<boolean> {
+  
+  async checkChatExists(chatId: string): Promise<boolean> {
     try {
       const chatDocRef = doc(this.firestore, 'chats', chatId);
       const chatDocSnapshot = await getDoc(chatDocRef);

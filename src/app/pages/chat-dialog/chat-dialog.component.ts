@@ -41,7 +41,7 @@ export class ChatDialogComponent implements OnInit {
     this.afAuth.authState.subscribe(async user => {
       if (user) {
         this.loggedInUserId = user.uid;
-        const selectedChat = this.chatDataService.selectedChat;
+        const selectedChat = this.chatDataService.currentChatDetails;
         this.chat = selectedChat ? { ...selectedChat } : {};
         
         if (this.chat.groupName) {
@@ -76,10 +76,10 @@ export class ChatDialogComponent implements OnInit {
 
   async loadUserName(loggedInUserId: string) {
     console.log('Initializing chats...');
-    await this.chatService.initializeChats(loggedInUserId);
-    console.log('Chats initialized:', this.chatService.chats);
+    await this.chatDataService.loadUserContactlist(loggedInUserId);
+    console.log('Chats initialized:', this.chatDataService.chats);
   
-    this.chats = await Promise.all(this.chatService.chats.map(async chat => {
+    this.chats = await Promise.all(this.chatDataService.chats.map(async chat => {
       if (chat.groupName) {
         return { ...chat, displayName: chat.groupName };
       } else {
