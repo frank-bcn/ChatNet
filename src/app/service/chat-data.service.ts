@@ -5,6 +5,8 @@ import { Firestore, collection, doc, setDoc, getDocs, getDoc } from '@angular/fi
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class ChatDataService {
   currentChatDetails: any;
   usernames: { [uid: string]: string } = {};
@@ -15,6 +17,8 @@ export class ChatDataService {
   groupName: string ='';
   showChatTitle: boolean = false;
   usernamesLoaded: boolean = false;
+  username: string = '';
+  greeting: string = '';
 
   
   constructor(private firestore: Firestore) { }

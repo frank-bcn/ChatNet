@@ -8,6 +8,7 @@ import { OnlineStatusService } from 'src/app/service/online-status.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
+
 export class LoginComponent {
   email: any;
   password: any;
@@ -19,13 +20,14 @@ export class LoginComponent {
     private onlineStatusService: OnlineStatusService
   ) {}
 
+  // registiert den neuen user
   async loginUser() {
     try {
       const userCredential = await this.afAuth.signInWithEmailAndPassword(this.email, this.password);
       const userId = userCredential.user?.uid;
       
       if (userId) {
-        await this.onlineStatusService.setOnlineStatus(userId, true);
+        await this.onlineStatusService.updateUserOnlineStatus(userId, true);
         this.router.navigate(['/main-page']);
       }
     } catch (error) {
@@ -33,16 +35,8 @@ export class LoginComponent {
     }
   }  
 
+  // naviegiert den user zur signup
   navigateToSignUp() {
     this.router.navigate(['/signup']);
-  }
-
-  toggleDarkMode() {
-    const body = document.getElementsByTagName('body')[0];
-    if (this.darkMode) {
-      body.classList.add('dark-mode');
-    } else {
-      body.classList.remove('dark-mode');
-    }
   }
 }

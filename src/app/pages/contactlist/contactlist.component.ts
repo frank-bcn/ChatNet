@@ -51,7 +51,7 @@ export class ContactlistComponent implements OnInit {
       const userContacts = userDocSnapshot.data()['contactList'] || [];
 
       for (const contact of userContacts) {
-        const isContactOnline = await this.onlineStatusService.getOnlineStatus(contact.uid);
+        const isContactOnline = await this.onlineStatusService.checkUserOnlineStatus(contact.uid);
         contact.online = isContactOnline;
       }
 

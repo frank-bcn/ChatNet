@@ -59,7 +59,7 @@ export class MainPageComponent implements OnInit {
   }
   
   async loadOnlineStatus(useruid: string) {
-    this.isOnline = await this.onlineStatusService.getOnlineStatus(useruid);
+    this.isOnline = await this.onlineStatusService.checkUserOnlineStatus(useruid);
   }
 
   getFilteredResults(): User[] {
@@ -174,7 +174,7 @@ export class MainPageComponent implements OnInit {
       const user = await this.afAuth.currentUser;
   
       if (user) {
-        await this.onlineStatusService.setOnlineStatus(user.uid, false);
+        await this.onlineStatusService.updateUserOnlineStatus(user.uid, false);
         await this.afAuth.signOut();
         
       } else {
