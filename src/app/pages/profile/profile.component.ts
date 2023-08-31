@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Firestore, doc, setDoc, getDoc, updateDoc} from '@angular/fire/firestore';
+import { Firestore, doc, setDoc, getDoc, updateDoc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-profile',
@@ -28,28 +28,17 @@ export class ProfileComponent {
     });
   }
 
+  // naviegiert zur mainpage
   goToMainPage() {
     this.router.navigate(['/main-page']);
   }
 
+  //ruft den aktuellen user ab und ruft dann die Funktion updateUserDetails auf, um die userdaten zu aktualisieren.
   updateUserData() {
     this.afAuth.currentUser
-      .then(async user => {
+      .then(user => {
         if (user) {
-          await this.updateUserProfile(user);
-          await this.updateUserEmail(user);
-  
-          const userData = {
-            username: this.username,
-            email: this.email
-          };
-          await this.updateUserInFirestore(user, userData);
-          await this.updateContactList(user, userData);
-  
-          this.showSuccessMessage = true;
-          setTimeout(() => {
-            this.showSuccessMessage = false;
-          }, 3000);
+          this.updateUserDetails(user);
         } else {
           console.error('Benutzer nicht gefunden.');
         }
@@ -58,8 +47,30 @@ export class ProfileComponent {
         console.error('Fehler beim Abrufen des aktuellen Benutzers:', error);
       });
   }
-  
-  async updateUserProfile(user: any) {
+
+  // aktualisiert die userdaten
+  async updateUserDetails(user: any) {
+    await this.updateUserName(user);
+    await this.updateUserEmail(user);
+    const userData = {
+      username: this.username,
+      email: this.email
+    };
+    await this.updateUserDataFirestoreAndContactList(user, userData);
+    this.showSuccessMessage = true;
+    setTimeout(() => {
+      this.showSuccessMessage = false;
+    }, 3000);
+  }
+
+  // aktualisiert die userdaten in firestore und kontaktlist
+  async updateUserDataFirestoreAndContactList(user: any, userData: any) {
+    await this.updateUserInFirestore(user, userData);
+    await this.updateContactList(user, userData);
+  }
+
+  // akzualisiert den anzeige namen
+  async updateUserName(user: any) {
     try {
       await user.updateProfile({
         displayName: this.username,
@@ -68,9 +79,9 @@ export class ProfileComponent {
       console.error('Fehler beim Aktualisieren des Benutzernamens:', error);
     }
   }
-  
+
+  // aktualisiert die email
   async updateUserEmail(user: any) {
-    const newEmail = this.email;
     try {
       await user.updateEmail(this.email);
     } catch (error) {
@@ -78,6 +89,7 @@ export class ProfileComponent {
     }
   }
   
+// aktualisiert die userdaten in Firestore
   async updateUserInFirestore(user: any, userData: any) {
     try {
       const userRef = doc(this.firestore, 'users', user.uid);
@@ -86,15 +98,14 @@ export class ProfileComponent {
       console.error('Fehler beim Aktualisieren der Benutzerdaten in Firestore:', error);
     }
   }
-  
+
+  // aktualisiert die kontaktlist
   async updateContactList(user: any, userData: any) {
     try {
       const userContactListRef = doc(this.firestore, 'contactlist', user.uid);
       const userContactListSnapshot = await getDoc(userContactListRef);
-  
       if (userContactListSnapshot.exists()) {
         const userContacts = userContactListSnapshot.data()?.['contactList'] || [];
-  
         for (const contact of userContacts) {
           await this.updateContact(user, contact, userData);
         }
@@ -103,25 +114,35 @@ export class ProfileComponent {
       console.error('Fehler beim Aktualisieren der Kontaktliste:', error);
     }
   }
-  
+
+  // aktualisiert ein user in der firestore
   async updateContact(user: any, contact: any, userData: any) {
     try {
       const contactRef = doc(this.firestore, 'contactlist', contact.uid);
       const contactSnapshot = await getDoc(contactRef);
   
       if (contactSnapshot.exists()) {
-        const updatedContactList = contactSnapshot.data()?.['contactList'] || [];
-        const updatedContacts = updatedContactList.map((c: any) => {
-          if (c.uid === user.uid) {
-            return { ...c, username: userData.username, email: userData.email };
-          }
-          return c;
-        });
+        const updatedContacts = this.updateContactsData(contactSnapshot.data()?.['contactList'], user, userData);
   
-        await updateDoc(contactRef, { ['contactList']: updatedContacts });
+        await this.updateContactsInFirestore(contactRef, updatedContacts);
       }
     } catch (error) {
       console.error('Fehler beim Aktualisieren des Kontakts:', error);
     }
+  }
+  
+  // aktualisiert die kontakte bei änderungen
+  updateContactsData(existingContacts: any[], user: any, userData: any): any[] {
+    return existingContacts.map((c: any) => {
+      if (c.uid === user.uid) {
+        return { ...c, username: userData.username, email: userData.email };
+      }
+      return c;
+    });
+  }
+  
+  // aktualisiert die kontakt daten in der kontaktlist
+  async updateContactsInFirestore(contactRef: any, updatedContacts: any[]) {
+    await updateDoc(contactRef, { ['contactList']: updatedContacts });
   }
 }

@@ -3,6 +3,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { User } from 'src/app/models/signUpUserdata';
+import { ChatDataService } from 'src/app/service/chat-data.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -10,7 +11,6 @@ import { User } from 'src/app/models/signUpUserdata';
   styleUrls: ['./sign-up.component.scss']
 })
 export class SignUpComponent {
-  username: string = '';
   email: any;
   password: any;
   showSuccessMessage: boolean = false;
@@ -19,24 +19,25 @@ export class SignUpComponent {
   constructor(
     private afAuth: AngularFireAuth,
     private router: Router,
-    private firestore: Firestore
+    private firestore: Firestore,
+    public chatDataService: ChatDataService,
   ) { }
 
+  //erstellt einen neuen user und aktualiesiert sein profile
   registerUser() {
     this.afAuth.createUserWithEmailAndPassword(this.email, this.password)
       .then(userCredential => {
         userCredential.user?.updateProfile({
-          displayName: this.username
+          displayName: this.chatDataService.username
         }).then(() => {
-          this.saveSignUpUserData(userCredential.user?.uid, this.email, this.username);
-          this.addUidToContactList(userCredential.user?.uid);
+          this.saveSignUpUserData(userCredential.user?.uid, this.email, this.chatDataService.username);
+          this.saveUidContactlist(userCredential.user?.uid);
           this.showSuccessMessage = true;
           setTimeout(() => {
             this.showSuccessMessage = false;
             this.router.navigate(['']);
           }, 3000);
-        }).catch(error => {
-          
+        }).catch(error => {    
         });
       })
       .catch(error => {
@@ -44,31 +45,28 @@ export class SignUpComponent {
       });
   }
 
+  // speichert die Benutzerdaten (UID, E-Mail, Benutzername) in der Firestore-Datenbank.
   saveSignUpUserData(uid: any, email: any, username: any): void {
     this.user.uid = uid;
     this.user.email = email;
     this.user.username = username;
-
     const docRef = doc(this.firestore, 'users', uid);
     setDoc(docRef, this.user.toJson())
-      .then(() => {
-        
+      .then(() => { 
       })
       .catch(error => {
         console.log('Save user failed', error);
       });
   }
 
-  addUidToContactList(uid: any): void {
+  // speichert die uid des users in contactlist database
+  saveUidContactlist(uid: any): void {
     const contactListDocRef = doc(this.firestore, 'contactlist', uid);
-    
     const data = {
       uid: uid
-    };
-    
+    }; 
     setDoc(contactListDocRef, data)
-      .then(() => {
-        
+      .then(() => { 
       })
       .catch(error => {
         console.log('Speichern des Benutzers fehlgeschlagen', error);

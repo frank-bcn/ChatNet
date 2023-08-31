@@ -1,12 +1,12 @@
 <div class="page">
   <div class="headlineProfile">
-    <span class="profileName"><b>{{ username }}</b></span>
+    <span class="profileName"><b>{{ chatDataService.username }}</b></span>
     <button class="menuButton" type="button" (click)="goToMainPage()">
       <img src="./assets/img/arrow.png">
     </button>
   </div>
   <div class="content">
-    <div class="containerUser" *ngFor="let contact of contacts">
+    <div class="containerUser" *ngFor="let contact of chatDataService.contacts">
       <div class="userImage">
         <img src="./assets/img/pic.png">
       </div>

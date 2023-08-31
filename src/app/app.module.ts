@@ -8,7 +8,7 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { environment } from 'src/environments/environment';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
-import { RegisterSuccessDialogComponent } from 'src/app/pages/register-success-dialog/register-success-dialog.component';
+import { RegisterSuccessDialogComponent } from 'src/app/pages/sign-up/register-success-dialog/register-success-dialog.component';
 import { LoginComponent } from 'src/app/pages/login/login.component';
 import { SignUpComponent } from 'src/app/pages/sign-up/sign-up.component';
 import { MainPageComponent } from 'src/app/pages/main-page/main-page.component';

@@ -3,7 +3,7 @@
     <app-header></app-header>
 
     <div class="containerSearch">
-      <input type="text" id="" class="userSearch" placeholder="Search User" [(ngModel)]="searchQuery"
+      <input type="text" id="" class="userSearch" placeholder="Search User" [(ngModel)]="chatDataService.searchQuery"
         (input)="searchUsers()" (click)="toggleDropdown()">
     </div>
 
@@ -16,17 +16,17 @@
       </div>
     </div>
 
-    <div *ngIf="getFilteredResults().length > 0" class="userListContainer">
+    <div *ngIf="FilteredResults().length > 0" class="userListContainer">
       <ul class="userList" style="list-style-type: none;">
-        <li *ngFor="let user of getFilteredResults(); let i = index" class="userItem"
+        <li *ngFor="let user of FilteredResults(); let i = index" class="userItem"
           [ngClass]="{'searchDesignOne': i % 2 === 0, 'searchDesignTwo': i % 2 !== 0}">
           <div class="profilImage">
             <img src="./assets/img/pic.png">
           </div>
-          <ng-container *ngIf="searchQuery.startsWith('@')">
+          <ng-container *ngIf="chatDataService.searchQuery.startsWith('@')">
             {{ user.email }}
           </ng-container>
-          <ng-container *ngIf="!searchQuery.startsWith('@')">
+          <ng-container *ngIf="!chatDataService.searchQuery.startsWith('@')">
             {{ user.username }}
           </ng-container>
           <button class="menuButton" type="button" (click)="addToContactList(user.uid, user.email, user.username, user.img, user.online)">

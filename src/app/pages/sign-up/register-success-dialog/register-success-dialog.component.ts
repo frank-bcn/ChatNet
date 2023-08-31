@@ -6,6 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   templateUrl: './register-success-dialog.component.html',
 })
 export class RegisterSuccessDialogComponent {
+
   constructor(
     public dialogRef: MatDialogRef<RegisterSuccessDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
