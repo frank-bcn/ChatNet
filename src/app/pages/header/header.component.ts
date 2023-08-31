@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Firestore, deleteDoc, doc } from '@angular/fire/firestore';
+import { ChatDataService } from 'src/app/service/chat-data.service';
 
 @Component({
   selector: 'app-header',
@@ -18,7 +19,8 @@ export class HeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private afAuth: AngularFireAuth,
-    private firestore: Firestore
+    private firestore: Firestore,
+    public chatDataService: ChatDataService,
   ) {
     this.username = '';
     this.greeting = this.getGreeting();

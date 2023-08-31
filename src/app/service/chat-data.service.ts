@@ -12,15 +12,18 @@ export class ChatDataService {
   selectedUser: User | null = null;
   chats: any[] = [];
   chatId: string = '';
+  groupName: string ='';
+  showChatTitle: boolean = false;
+  usernamesLoaded: boolean = false;
 
+  
   constructor(private firestore: Firestore) { }
 
-  // läd die kontaktliste für den angemeldeten Benutzer.
+  // läd die kontaktliste für den angemeldeten User.
   async loadUserContactlist(loggedUserId: string) {
     this.loggedUserId = loggedUserId;
     const chatsCollectionRef = collection(this.firestore, 'chats');
     const chatsQuerySnapshot = await getDocs(chatsCollectionRef);
-
     this.chats = chatsQuerySnapshot.docs.map(doc => doc.data());
   }
 
@@ -28,24 +31,20 @@ export class ChatDataService {
   async loadChatData(chatId: string) {
     const chatDocumentReference = doc(this.firestore, 'chats', chatId);
     const chatDocumentSnapshot = await getDoc(chatDocumentReference);
-
     if (chatDocumentSnapshot.exists()) {
       return chatDocumentSnapshot.data();
     }
-
     return null;
   }
-
+  
   // Holt den Benutzernamen anhand der Benutzer-UID aus der Datenbank.
   async loadUsernameViaUID(uid: string): Promise<string> {
     const userDocumentRef = doc(collection(this.firestore, 'users'), uid);
     const userDocumentSnapshot = await getDoc(userDocumentRef);
-
     if (userDocumentSnapshot.exists()) {
       const userData = userDocumentSnapshot.data() as User;
       return userData.username || '';
     }
-
     return '';
   }
 
@@ -64,15 +63,12 @@ export class ChatDataService {
   async createGroupChat(groupName: string, loggedUserId: string, selectedContactUids: string[]): Promise<string | null> {
     try {
       const chatId = loggedUserId + '_' + groupName;
-
       const chatCollectionRef = collection(this.firestore, 'chats');
       const chatDocRef = doc(chatCollectionRef, chatId);
-
       const chatDocSnapshot = await getDoc(chatDocRef);
       if (chatDocSnapshot.exists()) {
         return null;
       }
-
       const chatData = {
         groupName: groupName,
         selectedContacts: selectedContactUids,
@@ -87,4 +83,3 @@ export class ChatDataService {
     }
   }
 }
-

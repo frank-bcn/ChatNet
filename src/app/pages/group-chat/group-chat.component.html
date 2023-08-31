@@ -13,7 +13,7 @@
     <div class="fields">
         <div class="username">
             <label>
-                <input type="text" name="text" placeholder="Group name" [(ngModel)]="groupName">
+                <input type="text" name="text" placeholder="Group name" [(ngModel)]="this.chatDataService.groupName">
 
             </label>
         </div>
@@ -37,7 +37,7 @@
                         </div>
                     </div>
                 </div>
-                <button class="menuButton" type="button" (click)="toggleContact(contact)">
+                <button class="menuButton" type="button" (click)="addUserToChat(contact)">
                     <div class="square" [ngClass]="{'checked': contact.isSelected}">
                         <div *ngIf="contact.isSelected" class="checkmark">&#10003;</div>
                     </div>

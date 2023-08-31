@@ -14,13 +14,13 @@ import { Firestore, collection, doc, getDoc } from '@angular/fire/firestore';
 })
 export class ChatDialogComponent implements OnInit {
   chat: any = { groupName: '' };
-  groupName: string = '';
+  
   loadedUsernames: { [uid: string]: string } = {};
-  chatTitle: string = '';
+  
   username: string;
   loggedInUserId: string = '';
-  usernamesLoaded: boolean = false;
-  showChatTitle: boolean = false;
+  
+  
   chats: any[] = [];
   chatUsernames: { [chatId: string]: string } = {};
 
@@ -45,16 +45,16 @@ export class ChatDialogComponent implements OnInit {
         this.chat = selectedChat ? { ...selectedChat } : {};
         
         if (this.chat.groupName) {
-          this.showChatTitle = true;
-          this.usernamesLoaded = true;
+          /*this.showChatTitle = true;
+          this.usernamesLoaded = true;*/
           this.loadUsernames();
           
         } else if (this.chat.users || this.chat.selectedContacts) {
-          this.showChatTitle = false;
-          this.usernamesLoaded = true;
+          /*this.showChatTitle = false;
+          this.usernamesLoaded = true;*/
         } else {
-          this.showChatTitle = false;
-          this.usernamesLoaded = false;
+          /*this.showChatTitle = false;
+          this.usernamesLoaded = false;*/
           await this.loadUserName(this.loggedInUserId); 
         }
       }
@@ -76,10 +76,12 @@ export class ChatDialogComponent implements OnInit {
 
   async loadUserName(loggedInUserId: string) {
     console.log('Initializing chats...');
+    console.log(this.chatDataService.groupName);
     await this.chatDataService.loadUserContactlist(loggedInUserId);
     console.log('Chats initialized:', this.chatDataService.chats);
   
     this.chats = await Promise.all(this.chatDataService.chats.map(async chat => {
+      console.log(this.chat);
       if (chat.groupName) {
         return { ...chat, displayName: chat.groupName };
       } else {
@@ -120,10 +122,7 @@ export class ChatDialogComponent implements OnInit {
   }
 
   goToMainPage() {
-    this.usernamesLoaded = false;
-    this.showChatTitle = false;
-    console.log('usernamesLoaded:', this.usernamesLoaded);
-    console.log('showChatTitle:', this.showChatTitle);
+    
 
     this.router.navigate(['/chats']);
   }
