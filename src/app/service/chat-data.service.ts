@@ -6,7 +6,6 @@ import { Firestore, collection, doc, setDoc, getDocs, getDoc } from '@angular/fi
   providedIn: 'root'
 })
 
-
 export class ChatDataService {
 
   currentChatDetails: any;
@@ -20,11 +19,12 @@ export class ChatDataService {
   usernamesLoaded: boolean = false;
   username: string = '';
   greeting: string = '';
-  isOnline: boolean = false;
   contacts: any[] = [];
   contactList: User[] = [];
   searchResults: User[] = [];
   searchQuery: string = '';
+  chatUsernames:any= [];
+  loadedUsernames: { [uid: string]: string } = {};
 
   
   constructor(private firestore: Firestore) { }

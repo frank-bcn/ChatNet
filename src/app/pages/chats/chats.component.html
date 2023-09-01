@@ -1,20 +1,23 @@
 <div class="page">
   <div class="headlineProfile">
-    <span class="profileName"><b>{{ username }}</b></span>
+    <span class="profileName"><b>{{ chatDataService.username }}</b></span>
     <button class="menuButton" type="button" (click)="goToMainPage()">
       <img src="./assets/img/arrow.png">
     </button>
   </div>
-  <div class="chatList" *ngIf="chats.length > 0">
-    <div class="containerPreview" *ngFor="let chat of chats" (click)="openChatDialog(chat)">
+  <div class="containerTitle">
+    <div class="title">Chats</div>
+  </div>
+  <div class="chatList" *ngIf="chatDataService.chats.length > 0">
+    <div class="containerPreview" *ngFor="let chat of chatDataService.chats" (click)="openChatDialog(chat)">
       <div class="container">
         <div class="userImage">
           <img src="./assets/img/pic.png">
         </div>
         <div class="containerInformation">
           <div class="information">
-            <div class="UserName">{{ chat.displayName || chatUsernames[chatDataService.chatId] }}</div>
-            <div class="onlineStatus" [ngClass]="{'online': chat.isOnline, 'offline': !chat.isOnline}"></div>
+            <div class="UserName">{{ chat.displayName || chatDataService.chatUsernames[chatDataService.chatId] }}</div>
+            <div class="onlineStatus" [ngClass]="{'online': chat.online, 'offline': !chat.online}"></div>
           </div>
           <div class="informationChat">
             <div class="lastMessageText">Letzter gesendeter Text hier anzeigen</div>

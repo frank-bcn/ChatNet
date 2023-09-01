@@ -8,15 +8,20 @@
   <div class="chatTitle">
     <div class="title">{{ chat.groupName }}</div>
   </div>
-</div>
-<div class="contentSide">
-  <div class="message">
-    <div class="messageItem">
-      <div></div>
+  <div class="contentSide">
+    <div class="messageItem usernames-container">
+      <ng-container *ngIf="chat.selectedContacts">
+        <div *ngFor="let contactUid of chat.selectedContacts" [ngStyle]="{ 'border': '1px solid #02c8db', 'border-radius': '5px' }">
+          <div>{{ chatDataService.chatUsernames[contactUid] }}</div>
+        </div>
+      </ng-container>
+    </div>
+    <div class="message">
+
     </div>
   </div>
-</div>
-<div class="container">
-  <input type="text" class="userSearch" placeholder="Nachricht eingeben...">
-  <!--<button (click)="sendMessage()" class="menuButton"><img src="./assets/img/send.png"></button>-->
+  <div class="container">
+    <input type="text" class="userSearch" placeholder="Nachricht eingeben...">
+    <button (click)="sendMessage()" class="menuButton"><img src="./assets/img/send.png"></button>
+  </div>
 </div>

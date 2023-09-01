@@ -12,17 +12,6 @@ import { ChatDataService } from 'src/app/service/chat-data.service';
   styleUrls: ['./chats.component.scss']
 })
 export class ChatsComponent {
-  chat: any = { groupName: '' };
-  username: string;
-  email: any;
-  showSuccessMessage: boolean = false;
-  isOnline: boolean = false;
-  contacts: any[] = [];
-  selectedUser: User | null = null;
-  chats: any[] = [];
-  loggedInUserId: string = '';
-  chatUsernames:any= [];
-
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -30,78 +19,63 @@ export class ChatsComponent {
     private router: Router,
     private onlineStatusService: OnlineStatusService,
     public chatDataService: ChatDataService
-  ) {
-    this.username = '';
-    this.email = '';
-  }
+  ) { }
 
   async ngOnInit() {
-    // Wird aufgerufen, wenn die Komponente initialisiert wird
     this.afAuth.authState.subscribe(async user => {
       if (user) {
-        this.username = user.displayName || '';
-        this.email = user.email || '';
-        console.log(this.chatUsernames);
         await this.loadChats(user.uid);
       }
     });
   }
 
+  // initialisiert die Chat-Daten für den eingeloggten user
   async loadChats(loggedInUserId: string) {
-    // Lädt die Chat-Daten für den Benutzer
-    console.log('Initialisiere Chats...');
-    await this.chatDataService.loadUserContactlist(loggedInUserId);
-    console.log('Chats initialisiert:', this.chatDataService.chats);
-
-    this.chats = await Promise.all(this.chatDataService.chats.map(async chat => {
-      if (chat.groupName) {
-        return { ...chat, displayName: chat.groupName };
+    await this.chatDataService.loadUserContactlist(this.chatDataService.loggedUserId);
+    this.chatDataService.chats = await Promise.all(this.chatDataService.chats.map(async chat => {
+      const otherUserId = chat.users ? chat.users.find((uid: string) => uid !== loggedInUserId) : null;
+      if (otherUserId) {
+        const username = await this.loadUsernameUid(otherUserId);
+        const isOtherUserOnline = await this.onlineStatusService.checkUserOnlineStatus(otherUserId);
+        chat.online = isOtherUserOnline;
+        chat.displayName = username;
+        return chat;
+      } else if (chat.groupName) {
+        chat.displayName = chat.groupName;
+        return chat;
       } else {
-        const otherUserId = chat.users && chat.users.find((uid: string) => uid !== loggedInUserId);
-        if (otherUserId) {
-          const username = await this.getUsernameForUid(otherUserId);
-          /*this.chatUsernames[chat.id] += username;
-          this.chatUsernames.push(username);*/
-          
-          console.log(this.chatDataService.chatId);
-          
-          this.chatUsernames.push({[this.chatDataService.chatId]:username});
-          return { ...chat };
-        } else {
-          return chat;
-        }
+        return chat;
       }
     }));
   }
 
-  async getUsernameForChat(chat: any): Promise<string> {
-    // Gibt den Benutzernamen für einen Chat zurück
+  // ermittelt den Benutzernamen für einen Chat, sei es ein Gruppenchat oder ein Einzelchat
+  async UsernameChat(chat: any): Promise<string> {
     if (chat.groupName) {
       return chat.groupName;
     } else if (chat.users) {
-      const otherUserId = chat.users.find((uid: string) => uid !== this.loggedInUserId);
+      const otherUserId = chat.users.find((uid: string) => uid !== this.chatDataService.loggedUserId);
       if (otherUserId) {
-        return await this.getUsernameForUid(otherUserId);
+        return await this.loadUsernameUid(otherUserId);
       }
     }
     return '';
   }
 
-  async getUsernameForUid(uid: string): Promise<string> {
-    // Gibt den Benutzernamen für eine gegebene Benutzer-ID zurück
+  // gibt den usernamen für eine gegebene userid zurück
+  async loadUsernameUid(uid: string): Promise<string> {
     return this.chatDataService.loadUsernameViaUID(uid);
   }
 
+  // naviegiert zur mainpage
   goToMainPage() {
-    // Navigiert zur Hauptseite
     this.router.navigate(['/main-page']);
   }
 
+  // öffnet einen Chat.Ein Gruppenchat oder ein Einzelchat
   openChatDialog(chat: any) {
-    // Öffnet einen ausgewählten Chat
     if (chat) {
       this.chatDataService.currentChatDetails = {};
-
       if (chat.groupName) {
         this.chatDataService.currentChatDetails = { ...chat };
         this.router.navigate(['/chat-dialog', chat.groupName]);
@@ -114,11 +88,10 @@ export class ChatsComponent {
     }
   }
 
+  // öffnet den chat
   async navigateToChatDialog(chatId: string) {
-    // Navigiert zum Chat-Dialog
-    this.chat = this.chatDataService.currentChatDetails;
+    this.chatDataService.currentChatDetails;
     this.router.navigate(['/chat-dialog', chatId]);
-    console.log('Öffne Einzelchat mit User:', this.username);
+    console.log('Öffne Einzelchat mit User:', this.chatDataService.username);
   }
-
 }

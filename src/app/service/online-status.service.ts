@@ -8,6 +8,8 @@ import { User } from 'src/app/models/signUpUserdata';
 
 export class OnlineStatusService {
 
+  isOnline: boolean = false;
+
   constructor(private firestore: Firestore) {}
 
   //aktualisiert den Online-Status eines Users 

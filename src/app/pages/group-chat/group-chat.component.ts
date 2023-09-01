@@ -38,6 +38,7 @@ export class GroupChatComponent {
         this.email = user.email || '';
         this.chatDataService.loggedUserId = user.uid;
         this.loadContactList(this.chatDataService.loggedUserId);
+        this.chatTitle = '';
       }
     });
   }

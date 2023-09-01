@@ -14,7 +14,6 @@ import { SignUpComponent } from 'src/app/pages/sign-up/sign-up.component';
 import { MainPageComponent } from 'src/app/pages/main-page/main-page.component';
 import { HeaderComponent } from 'src/app/pages/header/header.component';
 import { ProfileComponent } from 'src/app/pages/profile/profile.component';
-import { ChatProfilePreviewComponent } from 'src/app/pages/chat-profile-preview/chat-profile-preview.component';
 import { ChatDialogComponent } from 'src/app/pages/chat-dialog/chat-dialog.component';
 import { provideFirestore,getFirestore } from '@angular/fire/firestore';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
@@ -34,8 +33,7 @@ import { GroupChatComponent } from './pages/group-chat/group-chat.component';
     SignUpComponent,
     MainPageComponent,
     HeaderComponent,
-    ProfileComponent,
-    ChatProfilePreviewComponent,
+    ProfileComponent,  
     ChatDialogComponent,
     ContactlistComponent,
     ChatsComponent,

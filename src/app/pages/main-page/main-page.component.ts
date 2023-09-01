@@ -70,7 +70,7 @@ export class MainPageComponent implements OnInit {
 
   // lädt den Online-Status für den angegebenen user anhand seiner userid,
   async loadOnlineStatus(useruid: string) {
-    this.chatDataService.isOnline = await this.onlineStatusService.checkUserOnlineStatus(useruid);
+    this.onlineStatusService.isOnline = await this.onlineStatusService.checkUserOnlineStatus(useruid);
   }
 
   // gibt eine Liste von user zurück, die in den Suchergebnissen enthalten sind, wobei der aktuell angemeldete user ausgeschlossen wird.
