@@ -5,6 +5,7 @@ import { Firestore } from '@angular/fire/firestore';
 import { OnlineStatusService } from 'src/app/service/online-status.service';
 import { User } from 'src/app/models/signUpUserdata';
 import { ChatDataService } from 'src/app/service/chat-data.service';
+import { ChatService } from 'src/app/service/chat-service.service';
 
 @Component({
   selector: 'app-chats',
@@ -18,7 +19,8 @@ export class ChatsComponent {
     private firestore: Firestore,
     private router: Router,
     private onlineStatusService: OnlineStatusService,
-    public chatDataService: ChatDataService
+    public chatDataService: ChatDataService,
+    public chatService: ChatService,
   ) { }
 
   async ngOnInit() {
@@ -74,18 +76,7 @@ export class ChatsComponent {
 
   // öffnet einen Chat.Ein Gruppenchat oder ein Einzelchat
   openChatDialog(chat: any) {
-    if (chat) {
-      this.chatDataService.currentChatDetails = {};
-      if (chat.groupName) {
-        this.chatDataService.currentChatDetails = { ...chat };
-        this.router.navigate(['/chat-dialog', chat.groupName]);
-        console.log('Öffne Gruppenchat:', chat.groupName);
-      } else if (chat.users) {
-        const individualChatId = chat.users.join('_');
-        this.navigateToChatDialog(individualChatId);
-        console.log('Öffne Einzelchat mit User:', individualChatId);
-      }
-    }
+    this.chatService.openChatDialog(chat);
   }
 
   // öffnet den chat

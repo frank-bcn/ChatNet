@@ -24,6 +24,7 @@ export class ChatDialogComponent implements OnInit {
       if (user) {
         const selectedChat = this.chatDataService.currentChatDetails;
         this.chat = selectedChat ? { ...selectedChat } : {};
+        this.chatDataService.setAdminUid(this.chat.admin);
         if (this.chat.selectedContacts) {
           for (const contactUid of this.chat.selectedContacts) {
             const username = await this.chatDataService.loadUsernameViaUID(contactUid);
@@ -34,8 +35,15 @@ export class ChatDialogComponent implements OnInit {
     });
   }
 
+  isAdmin(contactUid: string): boolean {
+    return contactUid === this.chatDataService.admin;
+  }
+  
+  
+
   // naviegiert zur mainpage
   goToMainPage() {
+    this.chatDataService.groupName = '';
     this.router.navigate(['/chats']);
   }
 

@@ -1,7 +1,6 @@
 <div class="page">
   <div class="headlineProfile">
     <div class="profilImage">
-      <img src="./assets/img/profile+.png">
     </div>
     <button class="menuButton" type="button" (click)="goToMainPage()"><img src="./assets/img/arrow.png"></button>
   </div>
@@ -12,12 +11,15 @@
     <div class="messageItem usernames-container">
       <ng-container *ngIf="chat.selectedContacts">
         <div *ngFor="let contactUid of chat.selectedContacts" [ngStyle]="{ 'border': '1px solid #02c8db', 'border-radius': '5px' }">
-          <div>{{ chatDataService.chatUsernames[contactUid] }}</div>
+          <div>
+            <img *ngIf="isAdmin(contactUid)" src="./assets/img/admin.png" class="admin-img" style="width: 15px; height: 15px;">
+            <div class="admin-tooltip">Admin</div>
+            {{ chatDataService.chatUsernames[contactUid] }}
+          </div>
         </div>
       </ng-container>
     </div>
     <div class="message">
-
     </div>
   </div>
   <div class="container">

@@ -4,22 +4,19 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Firestore, collection, getDocs, doc, getDoc, where, query } from '@angular/fire/firestore';
 import { User } from 'src/app/models/signUpUserdata';
 import { ChatDataService } from 'src/app/service/chat-data.service';
+import { ChatService } from 'src/app/service/chat-service.service';
 
 
 @Component({
   selector: 'app-group-chat',
   templateUrl: './group-chat.component.html',
   styleUrls: ['./group-chat.component.scss']
+  
 })
 export class GroupChatComponent {
 
-  username: string = '';
-  email: any;
   showSuccessMessage: boolean = false;
   showErrorMessage: boolean = false;
-  contacts: any[] = [];
-  selectedContacts: User[] = [];
-  chatTitle: string = '';
   showContactList: boolean = false;
 
 
@@ -28,17 +25,16 @@ export class GroupChatComponent {
     private firestore: Firestore,
     private router: Router,
     public chatDataService: ChatDataService,
+    public chatService: ChatService,
 
   ) {}
 
   ngOnInit() {
     this.afAuth.authState.subscribe(user => {
       if (user) {
-        this.username = user.displayName || '';
-        this.email = user.email || '';
+        this.chatDataService.username = user.displayName || '';
         this.chatDataService.loggedUserId = user.uid;
         this.loadContactList(this.chatDataService.loggedUserId);
-        this.chatTitle = '';
       }
     });
   }
@@ -50,7 +46,7 @@ export class GroupChatComponent {
 
     if (userDocSnapshot.exists()) {
       const userContacts = userDocSnapshot.data()['contactList'] || [];
-      this.contacts = userContacts;
+      this.chatDataService.contacts = userContacts;
     }
   }
 
@@ -67,12 +63,14 @@ export class GroupChatComponent {
     }
     const selectedContactUids = this.generateGroupUserIds();
     const chatId = this.createChatId(selectedContactUids);
+    console.log('ChatID, die erstellt werden soll:', chatId);
+    console.log(this.chatDataService.groupName);
     this.checkExistingChat(chatId, selectedContactUids);
   }
 
   //prüft ob genügend User im Chat vorhanden sind
   checkEnoughUsers(): boolean {
-    return this.selectedContacts.length < 2;
+    return this.chatDataService.selectedContacts.length < 2;
   }
 
   // lässt das popup erstellt/zuwenig User erscheinen beim erstellen des gruppenchats 
@@ -86,7 +84,7 @@ export class GroupChatComponent {
   // gerneriert und sortiert die uid des gruppenchat und des admin
   generateGroupUserIds(): string[] {
     const adminUid = this.chatDataService.loggedUserId;
-    return this.selectedContacts.map(contact => contact.uid).concat(adminUid).sort();
+    return this.chatDataService.selectedContacts.map(contact => contact.uid).concat(adminUid).sort();
   }
 
   //generiert eine eindeutige ChatID, die aus dem Gruppennamen und den UserIDs der ausgewählten Kontakte besteht. 
@@ -102,12 +100,13 @@ export class GroupChatComponent {
       const chatQuery = query(chatCollectionRef, where('chatId', '==', chatId));
       const querySnapshot = await getDocs(chatQuery);
       const chatExists = !querySnapshot.empty;
-
+  
       if (chatExists) {
         console.log('Der Chat mit der ID', chatId, 'existiert bereits.');
-        this.navigateToChatDialog(chatId);
+        this.openChatDialog(chatId); 
       } else {
         const createdChatId = await this.chatDataService.createGroupChat(this.chatDataService.groupName, this.chatDataService.loggedUserId, selectedContactUids);
+        console.log('Chat erstellt mit ID:', createdChatId);
         this.showChatStatus(createdChatId);
       }
     } catch (error) {
@@ -121,7 +120,8 @@ export class GroupChatComponent {
       this.showSuccessMessage = true;
       setTimeout(() => {
         this.showSuccessMessage = false;
-        this.navigateToChatDialog(createdChatId);
+        /*this.navigateToChatDialog(createdChatId);  */  
+        this.openChatDialog(createdChatId);    
       }, 3000);
     } else {
       this.showErrorMessage = true;
@@ -131,20 +131,26 @@ export class GroupChatComponent {
     }
   }
 
-  //öffnet den erstellten chat
-  navigateToChatDialog(chatId: string) {
+  // öffnet einen Chat.Ein Gruppenchat oder ein Einzelchat
+  openChatDialog(chatId: string) {
+    // Pass the chat ID as the route parameter
     this.router.navigate(['/chat-dialog', chatId]);
-}
+  }
+  
+  //öffnet den erstellten chat
+ /* navigateToChatDialog(chatId: string) {
+    this.router.navigate(['/chat-dialog', chatId]);
+}*/
 
   // fügt die ausgewählten kontakte zum chat hinzu
   addUserToChat(contact: any) {
     contact.isSelected = !contact.isSelected;
     if (contact.isSelected) {
-      this.selectedContacts.push(contact);
+      this.chatDataService.selectedContacts.push(contact);
     } else {
-      const index = this.selectedContacts.findIndex(selectedContact => selectedContact.uid === contact.uid);
+      const index = this.chatDataService.selectedContacts.findIndex(selectedContact => selectedContact.uid === contact.uid);
       if (index !== -1) {
-        this.selectedContacts.splice(index, 1);
+        this.chatDataService.selectedContacts.splice(index, 1);
       }
     }
   }

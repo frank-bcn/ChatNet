@@ -5,6 +5,7 @@ import { Firestore, doc, updateDoc, getDoc, collection, setDoc } from '@angular/
 import { DocumentReference } from 'firebase/firestore';
 import { OnlineStatusService } from 'src/app/service/online-status.service';
 import { ChatDataService } from 'src/app/service/chat-data.service';
+import { ChatService } from 'src/app/service/chat-service.service';
 import { User } from 'src/app/models/signUpUserdata';
 
 @Component({
@@ -19,7 +20,8 @@ export class ContactlistComponent implements OnInit {
     private firestore: Firestore,
     private router: Router,
     private onlineStatusService: OnlineStatusService,
-    public chatDataService: ChatDataService
+    public chatDataService: ChatDataService,
+    public chatService: ChatService,
 
   ) { }
 
@@ -131,7 +133,7 @@ export class ContactlistComponent implements OnInit {
     const sortedUids = [loggedInUserId, userToAddUid].sort();
     const chatId = sortedUids.join('_');
     await this.createUpdateChatDocument(chatId, sortedUids, userToAddUsername);
-    this.navigateToChatDialog(chatId);
+    this.openChatDialog({ users: sortedUids, groupName: userToAddUsername });
   }
 
   // erstellt oder aktualisiert die funktion einen Chat. Dabei wird überprüft, ob das Dokument bereits existiert
@@ -151,9 +153,8 @@ export class ContactlistComponent implements OnInit {
     }
   }
 
-  // navigiert zu chat dialog
-  navigateToChatDialog(chatId: string) {
-    this.router.navigate(['/chat-dialog', chatId]);
+  openChatDialog(chat: any) {
+    this.chatService.openChatDialog(chat);
   }
 
   // prüft ob ein chat existiert und gibt entwerder true oder false wieder

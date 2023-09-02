@@ -25,6 +25,8 @@ export class ChatDataService {
   searchQuery: string = '';
   chatUsernames:any= [];
   loadedUsernames: { [uid: string]: string } = {};
+  selectedContacts: User[] = [];
+  admin: string | null = null;
 
   
   constructor(private firestore: Firestore) { }
@@ -91,5 +93,9 @@ export class ChatDataService {
       console.error('Fehler beim Erstellen des Gruppenchats:', error);
       return null;
     }
+  }
+
+  setAdminUid(uid: string) {
+    this.admin = uid;
   }
 }

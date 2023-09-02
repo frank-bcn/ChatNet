@@ -1,6 +1,6 @@
 <div class="page">
     <div class="headlineProfile">
-        <span class="profileName"><b>{{ username }}</b></span>
+        <span class="profileName"><b>{{ chatDataService.username }}</b></span>
         <button class="menuButton" type="button" (click)="goToMainPage()">
             <img src="./assets/img/arrow.png">
         </button>
@@ -25,7 +25,7 @@
     </div>
     <div class="userListContainer">
         <ul class="userList" *ngIf="showContactList">
-            <li class="contact-item" *ngFor="let contact of contacts; let i = index"
+            <li class="contact-item" *ngFor="let contact of chatDataService.contacts; let i = index"
                 [ngClass]="{'searchDesignOne': i % 2 === 0, 'searchDesignTwo': i % 2 !== 0}">
                 <div class="userImage">
                     <img src="./assets/img/pic.png">
