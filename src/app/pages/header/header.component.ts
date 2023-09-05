@@ -111,6 +111,9 @@ export class HeaderComponent implements OnInit {
             const contactListDocRef = doc(this.firestore, 'contactlist', userUid);
             deleteDoc(contactListDocRef)
               .then(() => {
+                return deleteDoc(doc(this.firestore, 'contactlist', userUid));
+              })
+              .then(() => {
                 return currentUser.delete();
               })
               .then(() => {
@@ -127,4 +130,5 @@ export class HeaderComponent implements OnInit {
       }
     }
   }
+  
 }

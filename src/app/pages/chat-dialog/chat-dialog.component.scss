@@ -20,17 +20,59 @@
 }
 
 .usernames-container {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;   
+    overflow-x: auto;
+    white-space: nowrap;
+    max-width: 100%;
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 30px;
+}
+
+.usernames-container.scrollbar-visible {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0;
+}
+
+.usernames-container>div:first-child {
+    margin-left: 0px;
+    margin-bottom: 10px;
+}
+
+.usernames-container.more-than-three > div:first-child {
+    margin-left: 80px;
+    margin-bottom: 10px;
+  }
+
+.usernames-scroll-container {
+    display: inline-block;
+}
+
+.usernames-container::-webkit-scrollbar {
+    height: 3px;
+}
+
+.usernames-container::-webkit-scrollbar-thumb {
+    background-color: #02c8db;
+}
+
+.usernames-container::-webkit-scrollbar-track {
+    background-color: transparent;
 }
 
 .username {
-    border: 1px solid #ccc;
-    padding: 5px;
+    display: inline-block;
+    border: 1px solid #02c8db;
     border-radius: 5px;
-    margin-top: 30px;
+    padding: 3px;
+    margin-right: 10px;
+    white-space: nowrap;
+    background-color: #fff;
 }
 
 .contentSide {
@@ -107,12 +149,6 @@
     display: flex;
     flex-direction: column;
     margin-left: 20px;
-}
-
-.messageItem {
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
 }
 
 .messageReceived {
@@ -206,8 +242,8 @@
     padding: 5px;
     border-radius: 5px;
     z-index: 1;
-  }
-  
-  .admin-img:hover + .admin-tooltip {
+}
+
+.admin-img:hover+.admin-tooltip {
     display: block;
-  }
+}

@@ -11,12 +11,18 @@ import { ChatDataService } from 'src/app/service/chat-data.service';
 })
 export class ChatDialogComponent implements OnInit {
   chat: any = {};
+  chatUsernames: { [uid: string]: string } = {};
+  hasManySelectedContacts(): boolean {
+    return this.chat.selectedContacts && this.chat.selectedContacts.length > 3;
+  }
+  
+  
 
   constructor(
     private afAuth: AngularFireAuth,
     private router: Router,
     public chatService: ChatService,
-    public chatDataService: ChatDataService
+    public chatDataService: ChatDataService,
   ) { }
 
   async ngOnInit() {
@@ -34,13 +40,12 @@ export class ChatDialogComponent implements OnInit {
       }
     });
   }
-
+  
+  // gibt true zurück, wenn contactUid mit dem Admin übereinstimmt, andernfalls gibt sie false zurück
   isAdmin(contactUid: string): boolean {
     return contactUid === this.chatDataService.admin;
   }
   
-  
-
   // naviegiert zur mainpage
   goToMainPage() {
     this.chatDataService.groupName = '';

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from 'src/app/models/signUpUserdata';
-import { Firestore, collection, doc, setDoc, getDocs, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, doc, setDoc, getDocs, getDoc, updateDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +23,7 @@ export class ChatDataService {
   contactList: User[] = [];
   searchResults: User[] = [];
   searchQuery: string = '';
-  chatUsernames:any= [];
+  chatUsernames: { [uid: string]: string } = {};
   loadedUsernames: { [uid: string]: string } = {};
   selectedContacts: User[] = [];
   admin: string | null = null;
@@ -37,6 +37,12 @@ export class ChatDataService {
     const chatsCollectionRef = collection(this.firestore, 'chats');
     const chatsQuerySnapshot = await getDocs(chatsCollectionRef);
     this.chats = chatsQuerySnapshot.docs.map(doc => doc.data());
+  
+    // Nachdem Sie die Kontakte geladen haben, rufen Sie die Benutzernamen für diese Kontakte ab und speichern sie direkt in selectedContacts.
+    for (const contact of this.contacts) {
+      const username = await this.loadUsernameViaUID(contact.uid);
+      contact.username = username;
+    }
   }
 
   // Ruft die Daten eines bestimmten Chats anhand der Chat-ID ab.

@@ -94,25 +94,27 @@ export class GroupChatComponent {
   }
 
   //überprüft ob ein Gruppenchat existiert. Wenn er existiert, wird der User zum Chat weitergeleitet. Andernfalls wird ein neuer Gruppenchat erstellt.
-  async checkExistingChat(chatId: string, selectedContactUids: string[]) {
-    try {
-      const chatCollectionRef = collection(this.firestore, 'chats');
-      const chatQuery = query(chatCollectionRef, where('chatId', '==', chatId));
-      const querySnapshot = await getDocs(chatQuery);
-      const chatExists = !querySnapshot.empty;
-  
-      if (chatExists) {
-        console.log('Der Chat mit der ID', chatId, 'existiert bereits.');
-        this.openChatDialog(chatId); 
-      } else {
-        const createdChatId = await this.chatDataService.createGroupChat(this.chatDataService.groupName, this.chatDataService.loggedUserId, selectedContactUids);
-        console.log('Chat erstellt mit ID:', createdChatId);
-        this.showChatStatus(createdChatId);
-      }
-    } catch (error) {
-      console.error('Fehler beim Verarbeiten des Chats:', error);
+  // Überprüfen Sie, ob ein Gruppenchat existiert. Wenn er existiert, wird der Benutzer zum Chat weitergeleitet.
+// Andernfalls wird ein neuer Gruppenchat erstellt.
+async checkExistingChat(chatId: string, selectedContactUids: string[]) {
+  try {
+    const chatCollectionRef = collection(this.firestore, 'chats');
+    const chatQuery = query(chatCollectionRef, where('chatId', '==', chatId));
+    const querySnapshot = await getDocs(chatQuery);
+    const chatExists = !querySnapshot.empty;
+
+    if (chatExists) {
+      console.log('Der Chat mit der ID', chatId, 'existiert bereits.');
+    } else {
+      const createdChatId = await this.chatDataService.createGroupChat(this.chatDataService.groupName, this.chatDataService.loggedUserId, selectedContactUids);
+      console.log('Chat erstellt mit ID:', createdChatId);
+      this.chatDataService.selectedContacts = [];
+      this.showChatStatus(createdChatId);
     }
+  } catch (error) {
+    console.error('Fehler beim Verarbeiten des Chats:', error);
   }
+}
 
   //setzt die variablen auf true oder false, wenn eine Chat erstellt wurde. Dann wird die Erfolgsmeldung angezeigt.
   showChatStatus(createdChatId: string | null) {
@@ -120,8 +122,11 @@ export class GroupChatComponent {
       this.showSuccessMessage = true;
       setTimeout(() => {
         this.showSuccessMessage = false;
-        /*this.navigateToChatDialog(createdChatId);  */  
-        this.openChatDialog(createdChatId);    
+        const chat = {
+          groupName: this.chatDataService.groupName,
+        };
+        this.openChatDialog(chat);
+        this.openChatDialog(chat);
       }, 3000);
     } else {
       this.showErrorMessage = true;
@@ -132,15 +137,9 @@ export class GroupChatComponent {
   }
 
   // öffnet einen Chat.Ein Gruppenchat oder ein Einzelchat
-  openChatDialog(chatId: string) {
-    // Pass the chat ID as the route parameter
-    this.router.navigate(['/chat-dialog', chatId]);
+  openChatDialog(chat: any) {
+    this.chatService.openChatDialog(chat);
   }
-  
-  //öffnet den erstellten chat
- /* navigateToChatDialog(chatId: string) {
-    this.router.navigate(['/chat-dialog', chatId]);
-}*/
 
   // fügt die ausgewählten kontakte zum chat hinzu
   addUserToChat(contact: any) {
@@ -152,6 +151,13 @@ export class GroupChatComponent {
       if (index !== -1) {
         this.chatDataService.selectedContacts.splice(index, 1);
       }
+    }
+  } 
+
+  async loadChatUsernames(selectedContactUids: string[]) {
+    for (const contactUid of selectedContactUids) {
+      const username = await this.chatDataService.loadUsernameViaUID(contactUid);
+      this.chatDataService.chatUsernames[contactUid] = username;
     }
   }
 }
