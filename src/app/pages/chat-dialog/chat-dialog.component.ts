@@ -12,11 +12,10 @@ import { ChatDataService } from 'src/app/service/chat-data.service';
 export class ChatDialogComponent implements OnInit {
   chat: any = {};
   chatUsernames: { [uid: string]: string } = {};
+  isDropdownOpen: boolean = false;
   hasManySelectedContacts(): boolean {
     return this.chat.selectedContacts && this.chat.selectedContacts.length > 3;
   }
-  
-  
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -40,16 +39,30 @@ export class ChatDialogComponent implements OnInit {
       }
     });
   }
-  
-  // gibt true zurück, wenn contactUid mit dem Admin übereinstimmt, andernfalls gibt sie false zurück
+
+//dient dazu, zu überprüfen, ob ein bestimmter User der Administrator eines Chats ist.
   isAdmin(contactUid: string): boolean {
     return contactUid === this.chatDataService.admin;
   }
-  
-  // naviegiert zur mainpage
+
+  // navigiert zur mainPaige
   goToMainPage() {
     this.chatDataService.groupName = '';
     this.router.navigate(['/chats']);
+  }
+
+  // öffnet das menu
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+    const button = document.querySelector('.menuButton');
+    if (button) {
+      button.classList.toggle('open', this.isDropdownOpen);
+    }
+  }
+
+  // schließt das menu
+  closeDropdown() {
+    this.isDropdownOpen = false;
   }
 
   sendMessage() {

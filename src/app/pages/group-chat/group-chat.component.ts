@@ -11,7 +11,7 @@ import { ChatService } from 'src/app/service/chat-service.service';
   selector: 'app-group-chat',
   templateUrl: './group-chat.component.html',
   styleUrls: ['./group-chat.component.scss']
-  
+
 })
 export class GroupChatComponent {
 
@@ -27,7 +27,7 @@ export class GroupChatComponent {
     public chatDataService: ChatDataService,
     public chatService: ChatService,
 
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.afAuth.authState.subscribe(user => {
@@ -95,26 +95,26 @@ export class GroupChatComponent {
 
   //überprüft ob ein Gruppenchat existiert. Wenn er existiert, wird der User zum Chat weitergeleitet. Andernfalls wird ein neuer Gruppenchat erstellt.
   // Überprüfen Sie, ob ein Gruppenchat existiert. Wenn er existiert, wird der Benutzer zum Chat weitergeleitet.
-// Andernfalls wird ein neuer Gruppenchat erstellt.
-async checkExistingChat(chatId: string, selectedContactUids: string[]) {
-  try {
-    const chatCollectionRef = collection(this.firestore, 'chats');
-    const chatQuery = query(chatCollectionRef, where('chatId', '==', chatId));
-    const querySnapshot = await getDocs(chatQuery);
-    const chatExists = !querySnapshot.empty;
+  // Andernfalls wird ein neuer Gruppenchat erstellt.
+  async checkExistingChat(chatId: string, selectedContactUids: string[]) {
+    try {
+      const chatCollectionRef = collection(this.firestore, 'chats');
+      const chatQuery = query(chatCollectionRef, where('chatId', '==', chatId));
+      const querySnapshot = await getDocs(chatQuery);
+      const chatExists = !querySnapshot.empty;
 
-    if (chatExists) {
-      console.log('Der Chat mit der ID', chatId, 'existiert bereits.');
-    } else {
-      const createdChatId = await this.chatDataService.createGroupChat(this.chatDataService.groupName, this.chatDataService.loggedUserId, selectedContactUids);
-      console.log('Chat erstellt mit ID:', createdChatId);
-      this.chatDataService.selectedContacts = [];
-      this.showChatStatus(createdChatId);
+      if (chatExists) {
+        console.log('Der Chat mit der ID', chatId, 'existiert bereits.');
+      } else {
+        const createdChatId = await this.chatDataService.createGroupChat(this.chatDataService.groupName, this.chatDataService.loggedUserId, selectedContactUids);
+        console.log('Chat erstellt mit ID:', createdChatId);
+        this.chatDataService.selectedContacts = [];
+        this.showChatStatus(createdChatId);
+      }
+    } catch (error) {
+      console.error('Fehler beim Verarbeiten des Chats:', error);
     }
-  } catch (error) {
-    console.error('Fehler beim Verarbeiten des Chats:', error);
   }
-}
 
   //setzt die variablen auf true oder false, wenn eine Chat erstellt wurde. Dann wird die Erfolgsmeldung angezeigt.
   showChatStatus(createdChatId: string | null) {
@@ -152,8 +152,9 @@ async checkExistingChat(chatId: string, selectedContactUids: string[]) {
         this.chatDataService.selectedContacts.splice(index, 1);
       }
     }
-  } 
+  }
 
+  //lädt die usernamen für eine Liste von ausgewählten Kontakten im Chat und speichert sie im array chatUsernames
   async loadChatUsernames(selectedContactUids: string[]) {
     for (const contactUid of selectedContactUids) {
       const username = await this.chatDataService.loadUsernameViaUID(contactUid);

@@ -10,11 +10,18 @@
   </div>
   <div class="contentSide">
     <div class="usernames-container" [ngClass]="{'more-than-three': hasManySelectedContacts()}">
+      <button class="menuButton visible-button" type="button"
+        [ngClass]="{'hidden-button': !isAdmin(chatDataService.loggedUserId) || !isAdmin(chat.admin)}"
+        (click)="toggleDropdown()">
+        <img src="./assets/img/menu.png">
+      </button>
       <ng-container *ngIf="chat.selectedContacts && chat.selectedContacts.length > 0">
         <div class="usernames-scroll-container">
-          <div *ngFor="let contactUid of chat.selectedContacts" class="username" [ngStyle]="{ 'border': '1px solid #02c8db', 'border-radius': '5px', 'padding': '3px' }">
-            <div>
-              <img *ngIf="isAdmin(contactUid)" src="./assets/img/admin.png" class="admin-img" style="width: 15px; height: 15px;">
+          <div *ngFor="let contactUid of chat.selectedContacts" class="username"
+            [ngStyle]="{ 'border': '1px solid #02c8db', 'border-radius': '5px', 'padding': '3px' }">
+            <div class="admin-container">
+              <img *ngIf="isAdmin(contactUid)" src="./assets/img/admin.png" class="admin-img"
+                style="width: 15px; height: 15px;">
               <div class="admin-tooltip">Admin</div>
               {{ chatDataService.chatUsernames[contactUid] }}
             </div>
@@ -22,8 +29,11 @@
         </div>
       </ng-container>
     </div>
-    
     <div class="message">
+      <div class="dropdown-content" *ngIf="isDropdownOpen">
+        <div class="titleAdminMenu">Admin menu</div>
+        <button class="menuButtonProfile" type="button"><a>Einstellungen</a></button>
+      </div>
     </div>
   </div>
   <div class="container">

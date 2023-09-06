@@ -101,6 +101,7 @@ export class ChatDataService {
     }
   }
 
+  //weist denn admin den übergebenen Wert zu, wodurch der Administrator für den aktuellen Chat festgelegt wird
   setAdminUid(uid: string) {
     this.admin = uid;
   }

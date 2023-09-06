@@ -29,7 +29,7 @@
     max-width: 100%;
     margin-left: 50px;
     margin-right: 50px;
-    margin-top: 30px;
+    height: 74px;
 }
 
 .usernames-container.scrollbar-visible {
@@ -44,10 +44,10 @@
     margin-bottom: 10px;
 }
 
-.usernames-container.more-than-three > div:first-child {
+.usernames-container.more-than-three>div:first-child {
     margin-left: 80px;
     margin-bottom: 10px;
-  }
+}
 
 .usernames-scroll-container {
     display: inline-block;
@@ -196,42 +196,7 @@
     padding: 5px 15px;
     outline: none !important;
     color: #535D74;
-}
-
-.menuButton img {
-    max-width: 50%;
-    max-height: 50%;
-}
-
-.menuButton {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    width: 50px;
-    height: 50px;
-    position: relative;
-    border: none;
-    border-radius: 40px;
-    margin-left: 20px;
-    color: #6D7587;
-    background-color: var(--back-color);
-    box-shadow: 7px 7px 15px rgba(55, 84, 170, .15),
-        -7px -7px 20px rgba(255, 255, 255, 1),
-        inset 0px 0px 4px rgba(255, 255, 255, .2),
-        inset 7px 7px 15px rgba(55, 84, 170, 0),
-        inset -7px -7px 20px rgba(255, 255, 255, 0),
-        0px 0px 4px rgba(255, 255, 255, 0) !important;
-    transition: box-shadow .25s ease !important;
-}
-
-.menuButton:active {
-    box-shadow: 7px 7px 15px rgba(55, 84, 170, .15),
-        -7px -7px 20px rgba(255, 255, 255, 1),
-        inset 0px 0px 4px rgba(255, 255, 255, 0),
-        inset 7px 7px 15px rgba(55, 84, 170, .15),
-        inset -7px -7px 20px rgba(255, 255, 255, 1),
-        0px 0px 4px rgba(255, 255, 255, .2) !important;
+    margin-right: 20px;
 }
 
 .admin-tooltip {
@@ -246,4 +211,72 @@
 
 .admin-img:hover+.admin-tooltip {
     display: block;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    position: absolute;
+    border-radius: 30px;
+    width: 314px;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    overflow: hidden;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    transition: transform 0.3s ease-in-out;
+}
+
+.menuButtonProfile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    margin-left: 15px;
+    margin-right: 15px;
+    border: none;
+    border-radius: 40px;
+    color: #6D7587;
+    cursor: pointer;
+    background-color: var(--back-color);
+    box-shadow: 7px 7px 15px rgba(55, 84, 170, .15),
+        -7px -7px 20px rgba(255, 255, 255, 1),
+        inset 0px 0px 4px rgba(255, 255, 255, .2),
+        inset 7px 7px 15px rgba(55, 84, 170, 0),
+        inset -7px -7px 20px rgba(255, 255, 255, 0),
+        0px 0px 4px rgba(255, 255, 255, 0) !important;
+    transition: box-shadow .25s ease !important;
+}
+
+.menuButtonProfile:active {
+    box-shadow: 7px 7px 15px rgba(55, 84, 170, .15),
+        -7px -7px 20px rgba(255, 255, 255, 1),
+        inset 0px 0px 4px rgba(255, 255, 255, 0),
+        inset 7px 7px 15px rgba(55, 84, 170, .15),
+        inset -7px -7px 20px rgba(255, 255, 255, 1),
+        0px 0px 4px rgba(255, 255, 255, .2) !important;
+}
+
+.titleAdminMenu {
+    display: flex;
+    font-size: 30px;
+    font-weight: 700;
+    margin-left: 75px;
+    margin-top: 20px;
+}
+
+.hidden-button {
+    display: none;
 }
