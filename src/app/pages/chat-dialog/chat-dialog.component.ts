@@ -49,9 +49,9 @@ export class ChatDialogComponent implements OnInit {
       }
     });
   }
-  
 
-//dient dazu, zu überprüfen, ob ein bestimmter User der Administrator eines Chats ist.
+
+  //dient dazu, zu überprüfen, ob ein bestimmter User der Administrator eines Chats ist.
   isAdmin(contactUid: string): boolean {
     return contactUid === this.chatDataService.admin;
   }
@@ -76,47 +76,83 @@ export class ChatDialogComponent implements OnInit {
     this.isDropdownOpen = false;
   }
 
-
-
+  // öffnet das popup
   toggleEmojiPopup() {
     this.showEmojiPopup = !this.showEmojiPopup;
   }
-  
+
+  //fügt das smiley in das input feld
   insertSmiley(smiley: string) {
     this.messageText += smiley;
-    this.showEmojiPopup = false; 
+    this.showEmojiPopup = false;
   }
 
+  //sendet Narichten und überprüft ob das das inputfeld 
   async sendMessage() {
-    if (this.messageText.trim() === '') {
-      return; 
+    if (this.isMessageEmpty()) {
+      return;
     }
-  
     try {
-      const user = await this.afAuth.currentUser;
+      const user = await this.getCurrentUser();
       if (user) {
-        const message: Message = {
-          chatId: this.chat.chatId,
-          timestamp: Date.now(),
-          senderId: user.uid,
-          text: this.messageText,
-        };
-  
-        const messagesCollectionRef = collection(this.firestore, 'messages');
-        await addDoc(messagesCollectionRef, message);
-        this.messageText = ''; // Nachrichtenfeld leeren
+        const message = this.createMessage(user.uid);
+        await this.sendMessageToFirestore(message);
+        this.clearMessageText();
       } else {
-        console.error('Benutzer ist nicht angemeldet.');
+        this.handleUserNotLoggedIn();
       }
     } catch (error) {
-      console.error('Fehler beim Senden der Nachricht:', error);
+      this.handleSendMessageError(error);
     }
   }
 
+  //prüft das keine leeren Nachrichten gesendet werden können
+  isMessageEmpty(): boolean {
+    return this.messageText.trim() === '';
+  }
+
+  //ruft den angemeldeten user ab
+  async getCurrentUser(): Promise<any> {
+    const user = await this.afAuth.currentUser;
+    return user;
+  }
+
+  //erstellt die Nachricht und die Informationen über den Chat, den Zeitstempel, den Absender und den Text der Nachricht
+  createMessage(senderId: string): Message {
+    return {
+      chatId: this.chat.chatId,
+      timestamp: Date.now(),
+      senderId: senderId,
+      text: this.messageText,
+    };
+  }
+
+  //speichert die Nachricht in database
+  async sendMessageToFirestore(message: Message) {
+    const messagesCollectionRef = collection(this.firestore, 'messages');
+    await addDoc(messagesCollectionRef, message);
+  }
+
+  // leert das inputfeld
+  clearMessageText() {
+    this.messageText = '';
+  }
+
+  //error message
+  handleUserNotLoggedIn() {
+    console.error('Benutzer ist nicht angemeldet.');
+  }
+
+  //error message
+  handleSendMessageError(error: any) {
+    console.error('Fehler beim Senden der Nachricht:', error);
+  }
+
+  // lädt Chat-Nachrichten asynchron
   async loadChatMessages() {
     const chatId = this.chat.chatId;
     const messages = await this.chatDataService.loadMessages(chatId, 10); // Hier können Sie die Anzahl der Nachrichten anpassen
     this.messages = messages;
   }
-  
+
 }  
