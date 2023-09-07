@@ -130,6 +130,9 @@ export class ContactlistComponent implements OnInit {
 
   // erstellt einen chat zwischen dem eingeloggten user und einem hinzugefügten Kontakt. Dabei wird die user-ID des eingeloggten users und die user-ID des hinzugefügten Kontakts sowie der username des hinzugefügten users hinzugefügten 
   async generateChatDataId(loggedInUserId: string, userToAddUid: string, userToAddUsername: string) {
+    // Setzen Sie den Chat-Namen auf den Benutzernamen des anderen Benutzers.
+    this.chatDataService.groupName = userToAddUsername;
+  
     const sortedUids = [loggedInUserId, userToAddUid].sort();
     const chatId = sortedUids.join('_');
     await this.createUpdateChatDocument(chatId, sortedUids, userToAddUsername);
@@ -137,22 +140,26 @@ export class ContactlistComponent implements OnInit {
   }
 
   // erstellt oder aktualisiert die funktion einen Chat. Dabei wird überprüft, ob das Dokument bereits existiert
-  async createUpdateChatDocument(chatId: string, sortedUids: string[], userToAddUsername: string) {
-    const chatCollectionRef = collection(this.firestore, 'chats');
-    const chatDocRef = doc(chatCollectionRef, chatId);
+  // erstellt oder aktualisiert die funktion einen Chat. Dabei wird überprüft, ob das Dokument bereits existiert
+async createUpdateChatDocument(chatId: string, sortedUids: string[], userToAddUsername: string) {
+  const chatCollectionRef = collection(this.firestore, 'chats');
+  const chatDocRef = doc(chatCollectionRef, chatId);
 
-    const chatDocSnapshot = await getDoc(chatDocRef);
-    if (!chatDocSnapshot.exists()) {
-      const chatData = {
-        users: sortedUids,
-        groupName: userToAddUsername
-      };
-      await setDoc(chatDocRef, chatData);
-    } else {
-      console.log('Chat existiert bereits:', chatId);
-    }
+  const chatDocSnapshot = await getDoc(chatDocRef);
+  if (!chatDocSnapshot.exists()) {
+    const chatData = {
+      users: sortedUids,
+      groupName: userToAddUsername,
+      chatId: chatId // Fügt die chatId dem Chat-Datenobjekt hinzu
+    };
+    await setDoc(chatDocRef, chatData);
+  } else {
+    console.log('Chat existiert bereits:', chatId);
   }
+}
 
+
+  // öffnet den chat
   openChatDialog(chat: any) {
     this.chatService.openChatDialog(chat);
   }

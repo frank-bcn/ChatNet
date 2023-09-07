@@ -81,8 +81,9 @@ export class ChatsComponent {
 
   // öffnet den chat
   async navigateToChatDialog(chatId: string) {
-    this.chatDataService.currentChatDetails;
+    this.chatDataService.currentChatDetails = {}; // Setzen Sie die aktuellen Chat-Details zurück, falls erforderlich
+    console.log('Öffne Einzelchat mit Chat-ID:', chatId);
     this.router.navigate(['/chat-dialog', chatId]);
-    console.log('Öffne Einzelchat mit User:', this.chatDataService.username);
   }
+  
 }

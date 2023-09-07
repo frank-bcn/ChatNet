@@ -6,7 +6,7 @@
     <button class="menuButton" type="button" (click)="goToMainPage()"><img src="./assets/img/arrow.png"></button>
   </div>
   <div class="chatTitle">
-    <div class="title">{{ chat.groupName }}</div>
+    <div class="title">{{ chat.displayName || chatDataService.chatUsernames[chatDataService.chatId] }}</div>
   </div>
   <div class="contentSide">
     <div class="usernames-container" [ngClass]="{'more-than-three': hasManySelectedContacts()}">
@@ -34,10 +34,25 @@
         <div class="titleAdminMenu">Admin menu</div>
         <button class="menuButtonProfile" type="button"><a>Einstellungen</a></button>
       </div>
+      <div class="chat-messages">
+        <div *ngFor="let message of messages" [ngClass]="{'messageSend': message.isCurrentUser, 'messageReceived': !message.isCurrentUser}">
+          <div>{{ message.text }}</div>
+          <div class="messageTime">{{ message.timestamp | date:'HH:mm' }}</div>
+        </div>
+      </div>
+      
     </div>
   </div>
   <div class="container">
-    <input type="text" class="userSearch" placeholder="Nachricht eingeben...">
-    <button (click)="sendMessage()" class="menuButton"><img src="./assets/img/send.png"></button>
+    <div class="input-container">
+      <input type="text" class="userSearch" placeholder="Nachricht eingeben..." [(ngModel)]="messageText">
+      <button (click)="toggleEmojiPopup()" class="emoji-button">
+        <img src="/assets/img/smiley.png">
+      </button>
+      <button (click)="sendMessage()" class="menuButton"><img src="./assets/img/send.png"></button>
+    </div>
+    <div class="emoji-popup" *ngIf="showEmojiPopup">
+      <span *ngFor="let smiley of chatService.smileys" (click)="insertSmiley(smiley)">{{ smiley }}</span>
+    </div>
   </div>
 </div>

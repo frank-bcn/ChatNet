@@ -62,9 +62,7 @@ export class GroupChatComponent {
       return;
     }
     const selectedContactUids = this.generateGroupUserIds();
-    const chatId = this.createChatId(selectedContactUids);
-    console.log('ChatID, die erstellt werden soll:', chatId);
-    console.log(this.chatDataService.groupName);
+    const chatId = this.chatDataService.createChatId(selectedContactUids);
     this.checkExistingChat(chatId, selectedContactUids);
   }
 
@@ -87,11 +85,7 @@ export class GroupChatComponent {
     return this.chatDataService.selectedContacts.map(contact => contact.uid).concat(adminUid).sort();
   }
 
-  //generiert eine eindeutige ChatID, die aus dem Gruppennamen und den UserIDs der ausgewählten Kontakte besteht. 
-  //Die Methode join('_') fügt die Benutzer-IDs im Array durch Unterstriche getrennt zu einer einzigen Zeichenkette zusammen.
-  createChatId(selectedContactUids: string[]): string {
-    return `${this.chatDataService.groupName}_${selectedContactUids.join('_')}`;
-  }
+ 
 
   //überprüft ob ein Gruppenchat existiert. Wenn er existiert, wird der User zum Chat weitergeleitet. Andernfalls wird ein neuer Gruppenchat erstellt.
   // Überprüfen Sie, ob ein Gruppenchat existiert. Wenn er existiert, wird der Benutzer zum Chat weitergeleitet.
