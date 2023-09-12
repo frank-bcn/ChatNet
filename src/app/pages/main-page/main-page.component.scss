@@ -1,9 +1,8 @@
 .page {
   overflow: hidden;
-  width: 100vw;
-  height: 100vh;
+  width: 360px;
+  height: 650px;
   border-radius: 30px;
-  margin: 25px auto;
   box-shadow: 12px 12px 50px 5px rgba(0, 0, 0, .2);
 }
 
@@ -225,12 +224,6 @@
   background-color: gray;
 }
 
-.malSchauen {
-  display: flex;
-    height: 363px;
-    width: 100%;
-}
-
 .signin-button {
   display: flex;
   justify-content: center;
@@ -251,4 +244,31 @@
   background-color: #02c8db;
   box-shadow: 3px 3px 8px #b1b1b1, -3px -3px 8px #fff;
   transition: all 0.5s;
+}
+
+.favoriteChats {
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+}
+
+h2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.container {
+  display: flex;
+}
+
+@media (max-width: 540px) {
+  .page {
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 30px;
+    box-shadow: 12px 12px 50px 5px rgba(0, 0, 0, .2);
+  }
 }

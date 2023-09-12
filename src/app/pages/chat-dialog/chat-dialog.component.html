@@ -8,6 +8,11 @@
   <div class="chatTitle">
     <div class="title">{{ chat.displayName || chatDataService.chatUsernames[chatDataService.chatId] }}</div>
   </div>
+  <button class="menuButtonFavorite" (click)="toggleFavorite()">
+    <div class="square" [class.checked]="isFavorite">
+      <div class="checkmark">&#10003;</div>
+    </div>
+  </button>
   <div class="contentSide">
     <div class="usernames-container" [ngClass]="{'more-than-three': hasManySelectedContacts()}">
       <button class="menuButton visible-button" type="button"
@@ -35,9 +40,12 @@
         <button class="menuButtonProfile" type="button"><a>Einstellungen</a></button>
       </div>
       <div class="chat-messages">
-        <div *ngFor="let message of messages" [ngClass]="{'messageSend': message.isCurrentUser, 'messageReceived': !message.isCurrentUser}">
-          <div>{{ message.text }}</div>
-          <div class="messageTime">{{ message.timestamp | date:'HH:mm' }}</div>
+        <div *ngFor="let message of messages"
+          [ngClass]="{'messageSend': message.isCurrentUser, 'messageReceived': !message.isCurrentUser}">
+          <div class="messageContainer">
+            <div class="messageTextDisplay">{{ message.text }}</div>
+            <div class="messageTime">{{ message.timestamp | date:'HH:mm' }}</div>
+          </div>
         </div>
       </div>
     </div>

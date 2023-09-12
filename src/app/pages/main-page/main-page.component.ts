@@ -13,9 +13,11 @@ import { ChatDataService } from 'src/app/service/chat-data.service';
   styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent implements OnInit {
-
+  userChats: any[] = [];
+  favoriteChats: any[] = [];
   DropdownMenu: boolean = false;
   showChatList: boolean = true;
+
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -32,6 +34,12 @@ export class MainPageComponent implements OnInit {
         this.chatDataService.loggedUserId = user.uid;
         this.chatDataService.selectedUser;
         this.loadOnlineStatus(user.uid);
+
+        // Laden Sie hier die Chat-Daten und speichern Sie sie in userChats
+        this.loadChatDataForUser(user.uid);
+
+        // Laden Sie die favorisierten Chats für den Benutzer
+        this.loadFavoriteChats(user.uid);
       }
     });
   }
@@ -247,6 +255,75 @@ export class MainPageComponent implements OnInit {
       this.router.navigate(['']);
     } catch (error) {
       console.error('Fehler beim Abmelden:', error);
+    }
+  }
+
+   // Lädt die favorisierten Chats für den eingeloggten Benutzer
+   async loadFavoriteChats(userId: string) {
+    try {
+      // Erstellen Sie eine Referenz auf die favoritelist des Benutzers
+      const userFavoritesRef = doc(this.firestore, 'favoritelist', userId);
+      const userFavoritesSnapshot = await getDoc(userFavoritesRef);
+
+      if (userFavoritesSnapshot.exists()) {
+        const userFavoritesData = userFavoritesSnapshot.data();
+        const chatIds = userFavoritesData['chatIds'] || [];
+
+        // Laden Sie die Chat-Daten basierend auf den Chat-IDs
+        this.favoriteChats = await this.loadChatDataForChatIds(chatIds);
+      }
+    } catch (error) {
+      console.error('Fehler beim Laden der favorisierten Chats:', error);
+    }
+  }
+
+  // Lädt die Chat-Daten für eine Liste von Chat-IDs
+  async loadChatDataForChatIds(chatIds: string[]): Promise<any[]> {
+    const chatData: any[] = [];
+  
+    for (const chatId of chatIds) {
+      try {
+        console.log('Lade Chat-Daten für Chat-ID', chatId);
+  
+        // Erstellen Sie eine Referenz auf das Dokument mit der Chat-ID in der Firestore-Datenbank
+        const chatDocRef = doc(this.firestore, 'chats', chatId);
+  
+        // Rufen Sie die Daten aus Firestore für das Chat-Dokument ab
+        const chatDocSnapshot = await getDoc(chatDocRef);
+  
+        // Überprüfen Sie, ob das Dokument vorhanden ist
+        if (chatDocSnapshot.exists()) {
+          // Extrahieren Sie die Daten aus dem Dokument
+          const chatInfo = chatDocSnapshot.data();
+          chatData.push(chatInfo);
+        } else {
+          console.error('Chat-Dokument mit Chat-ID', chatId, 'existiert nicht.');
+        }
+      } catch (error) {
+        console.error('Fehler beim Laden von Chat-Daten für Chat-ID', chatId, error);
+      }
+    }
+  
+    console.log('Geladene Chat-Daten:', chatData);
+  
+    return chatData;
+  }
+  
+
+  async loadChatDataForUser(userId: string) {
+    try {
+      // Erstellen Sie eine Referenz auf die Sammlung "userChats" für den Benutzer
+      const userChatsRef = collection(this.firestore, `chats/${userId}/userChats`);
+      
+      // Laden Sie die Chat-Daten für den Benutzer
+      const querySnapshot = await getDocs(userChatsRef);
+      
+      // Extrahieren Sie die Daten aus der Abfrage und speichern Sie sie in this.userChats
+      this.userChats = querySnapshot.docs.map((doc) => doc.data());
+  
+      console.log('Geladene Chat-Daten für Benutzer:', this.userChats);
+    } catch (error) {
+      console.error('Fehler beim Laden der Chat-Daten:', error);
     }
   }
 }

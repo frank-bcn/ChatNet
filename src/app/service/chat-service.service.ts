@@ -30,4 +30,5 @@ export class ChatService {
       this.router.navigate(['/chat-dialog', chat.groupName], { state: { selectedContacts: this.chatDataService.selectedContacts } });
     }
   }
+  
 }    

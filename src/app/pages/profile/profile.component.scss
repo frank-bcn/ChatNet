@@ -1,10 +1,9 @@
 .page {
   display: flex;
   overflow: hidden;
-  width: 100vw;
-  height: 100vh;
+  width: 360px;
+  height: 650px;
   border-radius: 30px;
-  margin: 25px auto;
   box-shadow: 12px 12px 50px 5px rgba(0, 0, 0, .2);
   position: relative;
   flex-direction: column;
@@ -25,6 +24,7 @@
   margin-left: 33px;
   font-size: 30px;
 }
+
 .menuButton {
   display: flex;
   justify-content: center;
@@ -37,11 +37,11 @@
   color: #6D7587;
   background-color: var(--back-color);
   box-shadow: 7px 7px 15px rgba(55, 84, 170, .15),
-              -7px -7px 20px rgba(255, 255, 255, 1),
-              inset 0px 0px 4px rgba(255, 255, 255, .2),
-              inset 7px 7px 15px rgba(55, 84, 170, 0),
-              inset -7px -7px 20px rgba(255, 255, 255, 0),
-              0px 0px 4px rgba(255, 255, 255, 0) !important;
+    -7px -7px 20px rgba(255, 255, 255, 1),
+    inset 0px 0px 4px rgba(255, 255, 255, .2),
+    inset 7px 7px 15px rgba(55, 84, 170, 0),
+    inset -7px -7px 20px rgba(255, 255, 255, 0),
+    0px 0px 4px rgba(255, 255, 255, 0) !important;
   transition: box-shadow .25s ease !important;
 }
 
@@ -52,11 +52,11 @@
 
 .menuButton:active {
   box-shadow: 7px 7px 15px rgba(55, 84, 170, .15),
-              -7px -7px 20px rgba(255, 255, 255, 1),
-              inset 0px 0px 4px rgba(255, 255, 255, 0),
-              inset 7px 7px 15px rgba(55, 84, 170, .15),
-              inset -7px -7px 20px rgba(255, 255, 255, 1),
-              0px 0px 4px rgba(255, 255, 255, .2) !important;
+    -7px -7px 20px rgba(255, 255, 255, 1),
+    inset 0px 0px 4px rgba(255, 255, 255, 0),
+    inset 7px 7px 15px rgba(55, 84, 170, .15),
+    inset -7px -7px 20px rgba(255, 255, 255, 1),
+    0px 0px 4px rgba(255, 255, 255, .2) !important;
 }
 
 .userContent {
@@ -82,19 +82,19 @@
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  padding: 0 15px; 
+  padding: 0 15px;
 }
 
 .fields label {
   display: flex;
-  align-items: center; 
+  align-items: center;
   margin-bottom: 30px;
   border-radius: 25px;
   box-shadow: inset 8px 8px 8px #cbced1, inset -8px -8px 8px #fff;
-  
+
   margin-left: 0;
   margin-right: 0;
-  padding-left: 15px; 
+  padding-left: 15px;
 }
 
 .fields input {
@@ -103,9 +103,9 @@
   background: none;
   font-size: 18px;
   color: #555;
-  
+
   padding: 20px 10px 20px 5px;
-  width: 100%; 
+  width: 100%;
 }
 
 .labelText {
@@ -145,4 +145,14 @@
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 540px) {
+  .page {
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 30px;
+    box-shadow: 12px 12px 50px 5px rgba(0, 0, 0, .2);
+  }
 }

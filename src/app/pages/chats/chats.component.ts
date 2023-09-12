@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Firestore } from '@angular/fire/firestore';
 import { OnlineStatusService } from 'src/app/service/online-status.service';
-import { User } from 'src/app/models/signUpUserdata';
+import { FavoriteService } from 'src/app/service/favoriten-service.service';
 import { ChatDataService } from 'src/app/service/chat-data.service';
 import { ChatService } from 'src/app/service/chat-service.service';
 
@@ -21,12 +21,14 @@ export class ChatsComponent {
     private onlineStatusService: OnlineStatusService,
     public chatDataService: ChatDataService,
     public chatService: ChatService,
+    private favoriteService: FavoriteService
   ) { }
 
   async ngOnInit() {
     this.afAuth.authState.subscribe(async user => {
       if (user) {
         await this.loadChats(user.uid);
+        await this.loadLastMessages();
       }
     });
   }
@@ -76,6 +78,7 @@ export class ChatsComponent {
 
   // öffnet einen Chat.Ein Gruppenchat oder ein Einzelchat
   openChatDialog(chat: any) {
+    chat.unreadCount = 0;
     this.chatService.openChatDialog(chat);
   }
 
@@ -85,5 +88,17 @@ export class ChatsComponent {
     console.log('Öffne Einzelchat mit Chat-ID:', chatId);
     this.router.navigate(['/chat-dialog', chatId]);
   }
-  
+
+  //läd die letzte Nachricht aus dem Chat
+  async loadLastMessages() {
+    for (const chat of this.chatDataService.chats) {
+      const lastMessage = await this.chatDataService.loadLastMessage(chat.chatId);
+      if (lastMessage) {
+        chat.lastMessage = lastMessage;
+        if (lastMessage.senderId !== this.chatDataService.loggedUserId && !lastMessage.isRead) {
+          chat.unreadCount = chat.unreadCount ? chat.unreadCount + 1 : 1;
+        }
+      }
+    }
+  }
 }

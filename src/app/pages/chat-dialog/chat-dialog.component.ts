@@ -4,8 +4,8 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ChatService } from 'src/app/service/chat-service.service';
 import { ChatDataService } from 'src/app/service/chat-data.service';
 import { Message } from 'src/app/service/message.model';
-import { Firestore, collection, query, where, orderBy, getDocs, addDoc } from '@angular/fire/firestore';
-import { User } from 'src/app/models/signUpUserdata';
+import { Firestore, collection, addDoc } from '@angular/fire/firestore';
+import { FavoriteService } from 'src/app/service/favoriten-service.service';
 
 @Component({
   selector: 'app-chat-dialog',
@@ -18,8 +18,8 @@ export class ChatDialogComponent implements OnInit {
   isDropdownOpen: boolean = false;
   messageText: string = '';
   showEmojiPopup: boolean = false;
-  currentUser: User | null = null;
   messages: Message[] = [];
+  isFavorite: boolean = false;
   hasManySelectedContacts(): boolean {
     return this.chat.selectedContacts && this.chat.selectedContacts.length > 3;
   }
@@ -29,27 +29,40 @@ export class ChatDialogComponent implements OnInit {
     private router: Router,
     public chatService: ChatService,
     public chatDataService: ChatDataService,
-    private firestore: Firestore
+    private firestore: Firestore,
+    private favoriteService: FavoriteService
   ) { }
 
   async ngOnInit() {
     this.afAuth.authState.subscribe(async (user) => {
       if (user) {
-        const selectedChat = this.chatDataService.currentChatDetails;
-        this.chat = selectedChat ? { ...selectedChat } : {};
-        this.chatDataService.setAdminUid(this.chat.admin);
-        if (this.chat.selectedContacts) {
-          for (const contactUid of this.chat.selectedContacts) {
-            const username = await this.chatDataService.loadUsernameViaUID(contactUid);
-            this.chatDataService.chatUsernames[contactUid] = username;
-          }
-        }
-        await this.loadChatMessages(); // Hier rufen Sie die Methode auf, um Nachrichten zu laden
+        this.initializeChat(user);
+        this.isFavorite = await this.favoriteService.ChatFavorites(user.uid, this.chat.chatId);
+        await this.loadChatMessages();
         console.log(this.chat);
       }
     });
   }
 
+  //setzt den aktuellen Chat basierend auf den ausgewählten Details und dem Benutzer und lädt die Benutzernamen für die ausgewählten Chat-Kontakte, sofern vorhanden.
+  async initializeChat(user: any) {
+    const selectedChat = this.chatDataService.currentChatDetails;
+    this.chat = selectedChat ? { ...selectedChat } : {};
+    this.chatDataService.setAdminUid(this.chat.admin);
+    this.chatDataService.chatUsernames = {};
+
+    if (this.chat.selectedContacts) {
+      await this.loadUsernamesForSelectedContacts(user.uid);
+    }
+  }
+
+  // lädt die Benutzernamen für die ausgewählten Chat-Kontakte
+  async loadUsernamesForSelectedContacts(userId: string) {
+    for (const contactUid of this.chat.selectedContacts) {
+      const username = await this.chatDataService.loadUsernameViaUID(contactUid);
+      this.chatDataService.chatUsernames[contactUid] = username;
+    }
+  }
 
   //dient dazu, zu überprüfen, ob ein bestimmter User der Administrator eines Chats ist.
   isAdmin(contactUid: string): boolean {
@@ -97,6 +110,7 @@ export class ChatDialogComponent implements OnInit {
       if (user) {
         const message = this.createMessage(user.uid);
         await this.sendMessageToFirestore(message);
+        await this.loadChatMessages();
         this.clearMessageText();
       } else {
         this.handleUserNotLoggedIn();
@@ -151,8 +165,19 @@ export class ChatDialogComponent implements OnInit {
   // lädt Chat-Nachrichten asynchron
   async loadChatMessages() {
     const chatId = this.chat.chatId;
-    const messages = await this.chatDataService.loadMessages(chatId, 10); // Hier können Sie die Anzahl der Nachrichten anpassen
+    const messages = await this.chatDataService.loadMessages(chatId, 10);
     this.messages = messages;
   }
 
-}  
+  // ändert den Favoritenstatus eines Chats
+  toggleFavorite() {
+    this.isFavorite = !this.isFavorite;
+    this.chatDataService.loggedUserId;
+    const chatId = this.chat.chatId;
+    if (this.isFavorite) {
+      this.favoriteService.addToFavorites(this.chatDataService.loggedUserId, chatId);
+    } else {
+      this.favoriteService.removeFavorites(this.chatDataService.loggedUserId, chatId);
+    }
+  }
+}

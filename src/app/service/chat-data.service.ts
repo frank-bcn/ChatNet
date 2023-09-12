@@ -29,6 +29,8 @@ export class ChatDataService {
   loadedUsernames: { [uid: string]: string } = {};
   selectedContacts: User[] = [];
   admin: string | null = null;
+  messages: Message[] = [];
+  
 
   
   constructor(
@@ -121,37 +123,50 @@ async createGroupChat(groupName: string, loggedUserId: string, selectedContactUi
     this.admin = uid;
   }
 
+// 
+async loadMessages(chatId: string, limitCount: number = 10): Promise<Message[]> {
+  try {
+    const user = await this.afAuth.currentUser;
+    if (!user) throw new Error('Benutzer ist nicht angemeldet.');
 
-  async loadMessages(chatId: string, limitCount: number = 10): Promise<Message[]> {
+    const messagesQuery = query(
+      collection(this.firestore, 'messages'),
+      where('chatId', '==', chatId),
+      orderBy('timestamp', 'desc'),
+      limit(limitCount)
+    );
+
+    const messagesQuerySnapshot = await getDocs(messagesQuery);
+
+    const messages = messagesQuerySnapshot.docs.map((doc) => {
+      const message = doc.data() as Message;
+      if (message.senderId === user.uid) message.isCurrentUser = true;
+      return message;
+    });
+
+    return messages.reverse();
+  } catch (error) {
+    console.error('Fehler beim Laden der Nachrichten:', error);
+    return [];
+  }
+}
+
+
+  // filtert die letzte nachricht aus dem Chat
+  async loadLastMessage(chatId: string): Promise<Message | null> {
     try {
-      const user = await this.afAuth.currentUser;
-      if (!user) {
-        throw new Error('Benutzer ist nicht angemeldet.');
-      }
-
       const messagesQuery = query(
         collection(this.firestore, 'messages'),
         where('chatId', '==', chatId),
-        orderBy('timestamp', 'desc'), // Umgekehrte Reihenfolge, um die neuesten Nachrichten zuerst zu erhalten
-        limit(limitCount) // Hier wird die limit-Bedingung korrekt verwendet
+        orderBy('timestamp', 'desc'),
+        limit(1) 
       );
-
       const messagesQuerySnapshot = await getDocs(messagesQuery);
-      const messages: Message[] = [];
-
-      messagesQuerySnapshot.forEach((doc) => {
-        const message = doc.data() as Message;
-        // Filtern Sie die Nachrichten basierend auf dem eingeloggten Benutzer (senderId)
-        if (message.senderId === user.uid) {
-          message.isCurrentUser = true;
-        }
-        messages.push(message);
-      });
-
-      return messages.reverse(); // Kehren Sie die Reihenfolge um, um die neuesten Nachrichten zuerst anzuzeigen
+      if (messagesQuerySnapshot.empty) return null;
+      return messagesQuerySnapshot.docs[0].data() as Message;
     } catch (error) {
-      console.error('Fehler beim Laden der Nachrichten:', error);
-      return [];
+      console.error('Fehler beim Laden der letzten Nachricht:', error);
+      return null;
     }
   }
 }

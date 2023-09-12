@@ -35,10 +35,29 @@
         </li>
       </ul>
     </div>
-    <div class="malSchauen">
-
-      
+    <div class="favoriteChats">
+      <div class="favoriteChats">
+        <h2>Favorite Chats</h2>
+        <ul>
+          <li *ngFor="let chat of favoriteChats">
+            <div class="container">
+              <div class="userImage">
+                <img src="./assets/img/pic.png">
+              </div>
+              <div class="containerInformationFavoriteChats">
+                <div class="information">
+                  <div class="UserName">{{ chat.groupName }}</div>
+                  <div class="lastMessageText"></div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
+    
+    
+    
     <button class="signin-button" (click)="logout()">Ausloggen</button>
   </div>
 </div>

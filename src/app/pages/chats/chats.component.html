@@ -20,11 +20,11 @@
             <div class="onlineStatus" [ngClass]="{'online': chat.online, 'offline': !chat.online}"></div>
           </div>
           <div class="informationChat">
-            <div class="lastMessageText">Letzter gesendeter Text hier anzeigen</div>
-            <div class="lastMessageUnreaded">1</div>
+            <div class="lastMessageText">{{ chat.lastMessage?.text || 'Keine Nachrichten' }}</div>
+            <div class="lastMessageUnreaded"></div>
           </div>
         </div>
       </div>
-    </div>    
+    </div>
   </div>
 </div>
