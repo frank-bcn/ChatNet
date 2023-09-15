@@ -55,14 +55,14 @@ export class SignUpComponent {
         
       })
       .catch(error => {
-        console.log('Save user failed', error);
+        /*console.log('Save user failed', error);*/
       });
   }
 
   addUidToContactList(uid: any): void {
-    const contactListDocRef = doc(this.firestore, 'contactlist', uid);
+    let contactListDocRef = doc(this.firestore, 'contactlist', uid);
     
-    const data = {
+    let data = {
       uid: uid
     };
     
@@ -71,7 +71,7 @@ export class SignUpComponent {
         
       })
       .catch(error => {
-        console.log('Speichern des Benutzers fehlgeschlagen', error);
+       /* console.log('Speichern des Benutzers fehlgeschlagen', error);*/
       });
   }
 }

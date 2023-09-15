@@ -20,8 +20,10 @@
             <div class="onlineStatus" [ngClass]="{'online': contact.online, 'offline': !contact.online}"></div>
           </div>
         </div>
-        <button class="sendMessage menuButton" (click)="createSingleChat(contact)"><img src="/assets/img/send.png"></button>
-        <button class="trash menuButton" (click)="deleteContactFromList(contact)"><img class="trash" src="/assets/img/trash.png"></button>
+        <button class="sendMessage menuButton" (click)="createSingleChat(contact)"><img
+            src="/assets/img/send.png"></button>
+        <button class="trash menuButton" (click)="deleteContactFromList(contact)"><img class="trash"
+            src="/assets/img/trash.png"></button>
       </div>
     </div>
   </div>

@@ -52,7 +52,7 @@ export class ProfileComponent {
   async updateUserDetails(user: any) {
     await this.updateUserName(user);
     await this.updateUserEmail(user);
-    const userData = {
+    let userData = {
       username: this.username,
       email: this.email
     };
@@ -92,7 +92,7 @@ export class ProfileComponent {
 // aktualisiert die userdaten in Firestore
   async updateUserInFirestore(user: any, userData: any) {
     try {
-      const userRef = doc(this.firestore, 'users', user.uid);
+      let userRef = doc(this.firestore, 'users', user.uid);
       await setDoc(userRef, userData, { merge: true });
     } catch (error) {
       console.error('Fehler beim Aktualisieren der Benutzerdaten in Firestore:', error);
@@ -102,10 +102,10 @@ export class ProfileComponent {
   // aktualisiert die kontaktlist
   async updateContactList(user: any, userData: any) {
     try {
-      const userContactListRef = doc(this.firestore, 'contactlist', user.uid);
-      const userContactListSnapshot = await getDoc(userContactListRef);
+      let userContactListRef = doc(this.firestore, 'contactlist', user.uid);
+      let userContactListSnapshot = await getDoc(userContactListRef);
       if (userContactListSnapshot.exists()) {
-        const userContacts = userContactListSnapshot.data()?.['contactList'] || [];
+        let userContacts = userContactListSnapshot.data()?.['contactList'] || [];
         for (const contact of userContacts) {
           await this.updateContact(user, contact, userData);
         }
@@ -118,11 +118,11 @@ export class ProfileComponent {
   // aktualisiert ein user in der firestore
   async updateContact(user: any, contact: any, userData: any) {
     try {
-      const contactRef = doc(this.firestore, 'contactlist', contact.uid);
-      const contactSnapshot = await getDoc(contactRef);
+      let contactRef = doc(this.firestore, 'contactlist', contact.uid);
+      let contactSnapshot = await getDoc(contactRef);
   
       if (contactSnapshot.exists()) {
-        const updatedContacts = this.updateContactsData(contactSnapshot.data()?.['contactList'], user, userData);
+        let updatedContacts = this.updateContactsData(contactSnapshot.data()?.['contactList'], user, userData);
   
         await this.updateContactsInFirestore(contactRef, updatedContacts);
       }

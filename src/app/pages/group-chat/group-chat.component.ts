@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Firestore, collection, getDocs, doc, getDoc, where, query } from '@angular/fire/firestore';
-import { User } from 'src/app/models/signUpUserdata';
 import { ChatDataService } from 'src/app/service/chat-data.service';
 import { ChatService } from 'src/app/service/chat-service.service';
 
@@ -41,11 +40,11 @@ export class GroupChatComponent {
 
   // Läd die Kontaktliste eines User aus der Firestore-Datenbank für den Gruppenchat. 
   async loadContactList(loggedInUserId: string) {
-    const userDocRef = doc(this.firestore, 'contactlist', loggedInUserId);
-    const userDocSnapshot = await getDoc(userDocRef);
+    let userDocRef = doc(this.firestore, 'contactlist', loggedInUserId);
+    let userDocSnapshot = await getDoc(userDocRef);
 
     if (userDocSnapshot.exists()) {
-      const userContacts = userDocSnapshot.data()['contactList'] || [];
+      let userContacts = userDocSnapshot.data()['contactList'] || [];
       this.chatDataService.contacts = userContacts;
     }
   }
@@ -61,8 +60,8 @@ export class GroupChatComponent {
       this.showMessage(3000);
       return;
     }
-    const selectedContactUids = this.generateGroupUserIds();
-    const chatId = this.chatDataService.createChatId(selectedContactUids);
+    let selectedContactUids = this.generateGroupUserIds();
+    let chatId = this.chatDataService.createChatId(selectedContactUids);
     this.checkExistingChat(chatId, selectedContactUids);
   }
 
@@ -81,27 +80,25 @@ export class GroupChatComponent {
 
   // gerneriert und sortiert die uid des gruppenchat und des admin
   generateGroupUserIds(): string[] {
-    const adminUid = this.chatDataService.loggedUserId;
+    let adminUid = this.chatDataService.loggedUserId;
     return this.chatDataService.selectedContacts.map(contact => contact.uid).concat(adminUid).sort();
   }
 
  
 
   //überprüft ob ein Gruppenchat existiert. Wenn er existiert, wird der User zum Chat weitergeleitet. Andernfalls wird ein neuer Gruppenchat erstellt.
-  // Überprüfen Sie, ob ein Gruppenchat existiert. Wenn er existiert, wird der Benutzer zum Chat weitergeleitet.
-  // Andernfalls wird ein neuer Gruppenchat erstellt.
   async checkExistingChat(chatId: string, selectedContactUids: string[]) {
     try {
-      const chatCollectionRef = collection(this.firestore, 'chats');
-      const chatQuery = query(chatCollectionRef, where('chatId', '==', chatId));
-      const querySnapshot = await getDocs(chatQuery);
-      const chatExists = !querySnapshot.empty;
+      let chatCollectionRef = collection(this.firestore, 'chats');
+      let chatQuery = query(chatCollectionRef, where('chatId', '==', chatId));
+      let querySnapshot = await getDocs(chatQuery);
+      let chatExists = !querySnapshot.empty;
 
       if (chatExists) {
-        console.log('Der Chat mit der ID', chatId, 'existiert bereits.');
+        /*console.log('Der Chat mit der ID', chatId, 'existiert bereits.');*/
       } else {
-        const createdChatId = await this.chatDataService.createGroupChat(this.chatDataService.groupName, this.chatDataService.loggedUserId, selectedContactUids);
-        console.log('Chat erstellt mit ID:', createdChatId);
+        let createdChatId = await this.chatDataService.createGroupChat(this.chatDataService.groupName, this.chatDataService.loggedUserId, selectedContactUids);
+        /*console.log('Chat erstellt mit ID:', createdChatId);*/
         this.chatDataService.selectedContacts = [];
         this.showChatStatus(createdChatId);
       }
@@ -116,7 +113,7 @@ export class GroupChatComponent {
       this.showSuccessMessage = true;
       setTimeout(() => {
         this.showSuccessMessage = false;
-        const chat = {
+        let chat = {
           groupName: this.chatDataService.groupName,
         };
         this.openChatDialog(chat);
@@ -141,7 +138,7 @@ export class GroupChatComponent {
     if (contact.isSelected) {
       this.chatDataService.selectedContacts.push(contact);
     } else {
-      const index = this.chatDataService.selectedContacts.findIndex(selectedContact => selectedContact.uid === contact.uid);
+      let index = this.chatDataService.selectedContacts.findIndex(selectedContact => selectedContact.uid === contact.uid);
       if (index !== -1) {
         this.chatDataService.selectedContacts.splice(index, 1);
       }
@@ -151,7 +148,7 @@ export class GroupChatComponent {
   //lädt die usernamen für eine Liste von ausgewählten Kontakten im Chat und speichert sie im array chatUsernames
   async loadChatUsernames(selectedContactUids: string[]) {
     for (const contactUid of selectedContactUids) {
-      const username = await this.chatDataService.loadUsernameViaUID(contactUid);
+      let username = await this.chatDataService.loadUsernameViaUID(contactUid);
       this.chatDataService.chatUsernames[contactUid] = username;
     }
   }

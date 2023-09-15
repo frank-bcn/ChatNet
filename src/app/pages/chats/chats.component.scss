@@ -88,8 +88,8 @@
   justify-content: center;
   align-items: center;
   padding: 0;
-  width: 30px;
-  height: 30px;
+  width: 60px;
+  height: 60px;
   position: relative;
   border: none;
   border-radius: 40px;
@@ -128,13 +128,13 @@
 }
 
 .containerPreview {
-  margin-left: -5px;
-  max-height: 580px;
-  margin-right: 15px;
+  display: flex;
+  width: 100%;
 }
 
 .container {
   display: flex;
+  width: 100%;
   margin-left: 15px;
   padding: 10px 5px;
   border-radius: 5px;
@@ -147,34 +147,39 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 54px;
-  height: 54px;
+  width: 70px;
+  height: 70px;
   border-radius: 54px;
   border: 2px solid white;
   box-shadow: 5px 5px 10px rgba(55, 84, 170, .2), -3px -3px 5px rgba(255, 255, 255, 1), 0px 0px 4px rgba(255, 255, 255, .2);
 }
 
 .containerInformation {
-  height: 65px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
   overflow: hidden;
-  margin-bottom: -10px;
   margin-left: 19px;
   width: 77%;
 }
 
 .information {
   display: flex;
-  margin-top: 5px;
+  height: 100%;
+  align-items: center;
 }
 
 .UserName {
   display: flex;
-  color: #3C475A;
-  font-size: 18px;
-  text-align: start;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    color: #3C475A;
+    font-size: 26px;
+    text-align: start;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 100%;
+    align-items: center;
 }
 
 .time {
@@ -187,6 +192,8 @@
 
 .informationChat {
   display: flex;
+    height: 100%;
+    align-items: center;
 }
 
 .lastMessageUnreaded {
@@ -205,12 +212,10 @@
 
 .lastMessageText {
   color: #838B99;
-  font-size: 16px;
+  font-size: 20px;
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
   text-align: start;
-  flex-grow: 1;
 }
 
 .onlineStatus {

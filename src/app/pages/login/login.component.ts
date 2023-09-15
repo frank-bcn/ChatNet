@@ -23,8 +23,8 @@ export class LoginComponent {
   // registiert den neuen user
   async loginUser() {
     try {
-      const userCredential = await this.afAuth.signInWithEmailAndPassword(this.email, this.password);
-      const userId = userCredential.user?.uid;
+      let userCredential = await this.afAuth.signInWithEmailAndPassword(this.email, this.password);
+      let userId = userCredential.user?.uid;
       
       if (userId) {
         await this.onlineStatusService.updateUserOnlineStatus(userId, true);

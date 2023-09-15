@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Firestore, collection, query, orderBy, startAt, endAt, getDocs, doc, setDoc, getDoc, where } from '@angular/fire/firestore';
+import { Firestore, collection, query, orderBy, startAt, endAt, getDocs, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { User } from 'src/app/models/signUpUserdata';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { OnlineStatusService } from 'src/app/service/online-status.service';
@@ -44,7 +44,7 @@ export class MainPageComponent implements OnInit {
   // Fügt einen neuen Kontakt zur Kontaktliste hinzu, sofern er nicht bereits vorhanden ist
   addToContactList(uid: string, email: string, username: string, img: string, online: boolean) {
     if (!this.contactExistscontactList(uid)) {
-      const newContact = this.createContact(uid, email, username, img, online);
+      let newContact = this.createContact(uid, email, username, img, online);
       this.addContactContactList(newContact);
       this.updateContactListDatabase();
     }
@@ -99,8 +99,8 @@ export class MainPageComponent implements OnInit {
   // Erstellt eine Suchanfrage für die Firestore-Datenbank, basierend auf den aktuellen Suchkriterien
   createSearchQuery(): any {
     if (this.SearchQueryValid()) {
-      const queryField = this.determineQueryField();
-      const queryValue = this.QueryValue();
+      let queryField = this.determineQueryField();
+      let queryValue = this.QueryValue();
       return this.buildFirestoreQuery(queryField, queryValue);
     }
   }
@@ -117,7 +117,7 @@ export class MainPageComponent implements OnInit {
 
   // Analysiert die Suchanfrage und gibt entweder den Teil nach '@' in Kleinbuchstaben zurück oder das erste Zeichen der Suchanfrage
   QueryValue(): string {
-    const firstChar = this.chatDataService.searchQuery.charAt(0).toLowerCase();
+    let firstChar = this.chatDataService.searchQuery.charAt(0).toLowerCase();
     return this.chatDataService.searchQuery.startsWith('@')
       ? this.chatDataService.searchQuery.substring(1).toLowerCase()
       : firstChar;
@@ -140,7 +140,7 @@ export class MainPageComponent implements OnInit {
         return querySnapshot.docs.map((doc) => doc.data() as User);
       })
       .catch((error) => {
-        console.log('Fehler beim Suchen von Benutzern', error);
+        /*console.log('Fehler beim Suchen von Benutzern', error);*/
         return [];
       });
   }
@@ -157,7 +157,7 @@ export class MainPageComponent implements OnInit {
 
   // Koordiniert also den Ablauf der Benutzersuche
   searchUsers() {
-    const searchQuery = this.createSearchQuery();
+    let searchQuery = this.createSearchQuery();
     if (searchQuery) {
       this.performSearch(searchQuery);
     } else {
@@ -168,8 +168,8 @@ export class MainPageComponent implements OnInit {
   // Durchführung der Benutzersuche mit Berücksichtigung der Kontaktliste
   async performSearch(searchQuery: any) {
     try {
-      const results = await this.loadSearchResults(searchQuery);
-      const filteredResults = this.filterSearchResults(results);
+      let results = await this.loadSearchResults(searchQuery);
+      let filteredResults = this.filterSearchResults(results);
       this.chatDataService.searchResults = this.filterSearchResults(filteredResults);
       this.openUserList(false);
     } catch (error) {
@@ -197,9 +197,9 @@ export class MainPageComponent implements OnInit {
   // Aktualisiert die kontaktliste in der Datenbank
   async updateContactListDatabase() {
     try {
-      const userRef = doc(this.firestore, 'contactlist', this.chatDataService.loggedUserId);
-      const existingContactList = await this.fetchExistingContactList(userRef);
-      const updatedContactList = this.updateContactList(existingContactList);
+      let userRef = doc(this.firestore, 'contactlist', this.chatDataService.loggedUserId);
+      let existingContactList = await this.fetchExistingContactList(userRef);
+      let updatedContactList = this.updateContactList(existingContactList);
       await this.saveUpdatedContactList(userRef, updatedContactList);
       this.resetSearchResults();
     } catch (error) {
@@ -209,14 +209,14 @@ export class MainPageComponent implements OnInit {
 
   // Lädt die vorhandene Kontaktliste eines Benutzers aus der Datenbank und stellt sicher, dass das Ergebnis immer ein Array ist
   async fetchExistingContactList(userRef: any): Promise<any[]> {
-    const docSnap = await getDoc(userRef);
-    const existingData: any = docSnap.data();
+    let docSnap = await getDoc(userRef);
+    let existingData: any = docSnap.data();
     return existingData ? existingData['contactList'] || [] : [];
   }
 
   // Aktualisiert die kontaktliste
   updateContactList(existingContactList: any[]): any[] {
-    const updatedContactList = [...existingContactList];
+    let updatedContactList = [...existingContactList];
     for (const newContact of this.chatDataService.contactList) {
       if (!updatedContactList.some(contact => contact.uid === newContact.uid)) {
         updatedContactList.push(newContact.toJson());
@@ -244,7 +244,7 @@ export class MainPageComponent implements OnInit {
   // Loggt den Benutzer aus
   async logout() {
     try {
-      const user = await this.afAuth.currentUser;
+      let user = await this.afAuth.currentUser;
       if (user) {
         await this.onlineStatusService.updateUserOnlineStatus(user.uid, false);
         await this.afAuth.signOut();
@@ -257,13 +257,13 @@ export class MainPageComponent implements OnInit {
 
   // Lädt die Chat-Daten für eine Liste von Chat-IDs
   async loadChatDataForChatIds(chatIds: string[]): Promise<any[]> {
-    const chatData: any[] = [];
+    let chatData: any[] = [];
     for (const chatId of chatIds) {
       try {
-        const chatDocRef = doc(this.firestore, 'chats', chatId);
-        const chatDocSnapshot = await getDoc(chatDocRef);
+        let chatDocRef = doc(this.firestore, 'chats', chatId);
+        let chatDocSnapshot = await getDoc(chatDocRef);
         if (chatDocSnapshot.exists()) {
-          const chatInfo = chatDocSnapshot.data();
+          let chatInfo = chatDocSnapshot.data();
           chatData.push(chatInfo);
         } else {
           console.error('Chat-Dokument mit Chat-ID', chatId, 'existiert nicht.');
@@ -272,17 +272,17 @@ export class MainPageComponent implements OnInit {
         console.error('Fehler beim Laden von Chat-Daten für Chat-ID', chatId, error);
       }
     }
-    console.log('Geladene Chat-Daten:', chatData);
+   /* console.log('Geladene Chat-Daten:', chatData);*/
     return chatData;
   }
 
   //lädt die Chat-Daten eines users aus der Firestore-Datenbank und speichert sie in this.userChats
   async loadChatDataForUser(userId: string) {
     try {
-      const userChatsRef = collection(this.firestore, `chats/${userId}/userChats`);
-      const querySnapshot = await getDocs(userChatsRef);
+      let userChatsRef = collection(this.firestore, `chats/${userId}/userChats`);
+      let querySnapshot = await getDocs(userChatsRef);
       this.userChats = querySnapshot.docs.map((doc) => doc.data());
-      console.log('Geladene Chat-Daten für Benutzer:', this.userChats);
+      /*console.log('Geladene Chat-Daten für Benutzer:', this.userChats);*/
     } catch (error) {
       console.error('Fehler beim Laden der Chat-Daten:', error);
     }
@@ -303,7 +303,7 @@ export class MainPageComponent implements OnInit {
     if (chat.groupName) {
       return chat.groupName;
     } else if (chat.users) {
-      const otherUserId = chat.users.find((uid: string) => uid !== this.chatDataService.loggedUserId);
+      let otherUserId = chat.users.find((uid: string) => uid !== this.chatDataService.loggedUserId);
       if (otherUserId) {
         return await this.loadUsernameUid(otherUserId);
       }

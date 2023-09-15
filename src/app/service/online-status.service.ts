@@ -9,13 +9,12 @@ import { User } from 'src/app/models/signUpUserdata';
 export class OnlineStatusService {
 
   isOnline: boolean = false;
-  
 
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore) { }
 
   //aktualisiert den Online-Status eines Users 
   async updateUserOnlineStatus(userId: string, online: boolean) {
-    const userDocRef = doc(this.firestore, 'users', userId);
+    let userDocRef = doc(this.firestore, 'users', userId);
     await updateDoc(userDocRef, {
       online
     });
@@ -23,9 +22,9 @@ export class OnlineStatusService {
 
   // ruft den Online-Status eines Users aus der Firestore-Datenbank ab und gibt diesen Status zurück
   async checkUserOnlineStatus(userId: string): Promise<boolean> {
-    const userDocRef = doc(this.firestore, 'users', userId);
-    const userDocSnap = await getDoc(userDocRef);
-    const userData = userDocSnap.data() as User;
+    let userDocRef = doc(this.firestore, 'users', userId);
+    let userDocSnap = await getDoc(userDocRef);
+    let userData = userDocSnap.data() as User;
 
     return userData ? userData.online : false;
   }

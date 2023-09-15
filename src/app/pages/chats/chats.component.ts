@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Firestore } from '@angular/fire/firestore';
 import { OnlineStatusService } from 'src/app/service/online-status.service';
 import { ChatDataService } from 'src/app/service/chat-data.service';
 import { ChatService } from 'src/app/service/chat-service.service';
@@ -14,8 +13,7 @@ import { ChatService } from 'src/app/service/chat-service.service';
 export class ChatsComponent {
 
   constructor(
-    private afAuth: AngularFireAuth,
-    private firestore: Firestore,
+    private afAuth: AngularFireAuth, 
     private router: Router,
     private onlineStatusService: OnlineStatusService,
     public chatDataService: ChatDataService,
@@ -32,13 +30,13 @@ export class ChatsComponent {
   }
 
   // initialisiert die Chat-Daten für den eingeloggten user
-  async loadChats(loggedInUserId: string) {
+ async loadChats(loggedInUserId: string) {
     await this.chatDataService.loadUserContactlist(this.chatDataService.loggedUserId);
     this.chatDataService.chats = await Promise.all(this.chatDataService.chats.map(async chat => {
-      const otherUserId = chat.users ? chat.users.find((uid: string) => uid !== loggedInUserId) : null;
+      let otherUserId = chat.users ? chat.users.find((uid: string) => uid !== loggedInUserId) : null;
       if (otherUserId) {
-        const username = await this.loadUsernameUid(otherUserId);
-        const isOtherUserOnline = await this.onlineStatusService.checkUserOnlineStatus(otherUserId);
+        let username = await this.loadUsernameUid(otherUserId);
+        let isOtherUserOnline = await this.onlineStatusService.checkUserOnlineStatus(otherUserId);
         chat.online = isOtherUserOnline;
         chat.displayName = username;
         return chat;
@@ -56,7 +54,7 @@ export class ChatsComponent {
     if (chat.groupName) {
       return chat.groupName;
     } else if (chat.users) {
-      const otherUserId = chat.users.find((uid: string) => uid !== this.chatDataService.loggedUserId);
+      let otherUserId = chat.users.find((uid: string) => uid !== this.chatDataService.loggedUserId);
       if (otherUserId) {
         return await this.loadUsernameUid(otherUserId);
       }
@@ -83,14 +81,14 @@ export class ChatsComponent {
   // öffnet den chat
   async navigateToChatDialog(chatId: string) {
     this.chatDataService.currentChatDetails = {};
-    console.log('Öffne Einzelchat mit Chat-ID:', chatId);
+    /*console.log('Öffne Einzelchat mit Chat-ID:', chatId);*/
     this.router.navigate(['/chat-dialog', chatId]);
   }
 
   //läd die letzte Nachricht aus dem Chat
   async loadLastMessages() {
     for (const chat of this.chatDataService.chats) {
-      const lastMessage = await this.chatDataService.loadLastMessage(chat.chatId);
+      let lastMessage = await this.chatDataService.loadLastMessage(chat.chatId);
       if (lastMessage) {
         chat.lastMessage = lastMessage;
         if (lastMessage.senderId !== this.chatDataService.loggedUserId && !lastMessage.isRead) {

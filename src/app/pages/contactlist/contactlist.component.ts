@@ -37,12 +37,12 @@ export class ContactlistComponent implements OnInit {
 
   // läd die kontaktliste des users
   async loadContactList(loggedInUserId: string) {
-    const userDocRef = doc(this.firestore, 'contactlist', loggedInUserId);
-    const userDocSnapshot = await getDoc(userDocRef);
+    let userDocRef = doc(this.firestore, 'contactlist', loggedInUserId);
+    let userDocSnapshot = await getDoc(userDocRef);
     if (userDocSnapshot.exists()) {
-      const userContacts = userDocSnapshot.data()['contactList'] || [];
+      let userContacts = userDocSnapshot.data()['contactList'] || [];
       for (const contact of userContacts) {
-        const isContactOnline = await this.onlineStatusService.checkUserOnlineStatus(contact.uid);
+        let isContactOnline = await this.onlineStatusService.checkUserOnlineStatus(contact.uid);
         contact.online = isContactOnline;
       }
       this.chatDataService.contacts = userContacts;
@@ -57,12 +57,12 @@ export class ContactlistComponent implements OnInit {
   // entfernt einen kontakt aus der kontaktliste
   async deleteContactFromList(contact: any) {
     try {
-      const loggedInUser = await this.afAuth.currentUser;
+      let loggedInUser = await this.afAuth.currentUser;
       if (loggedInUser) {
-        const loggedInUserId = loggedInUser.uid;
-        const userContacts = await this.fetchUserContacts(loggedInUserId);
-        const updatedContacts = userContacts.filter((c: any) => c.uid !== contact.uid);
-        const userDocRef = doc(this.firestore, 'contactlist', loggedInUserId);
+        let loggedInUserId = loggedInUser.uid;
+        let userContacts = await this.fetchUserContacts(loggedInUserId);
+        let updatedContacts = userContacts.filter((c: any) => c.uid !== contact.uid);
+        let userDocRef = doc(this.firestore, 'contactlist', loggedInUserId);
         await this.updateUserContacts(userDocRef, updatedContacts);
         await this.loadContactList(loggedInUserId);
       }
@@ -73,8 +73,8 @@ export class ContactlistComponent implements OnInit {
 
   // ruft die Kontaktliste des angemeldeten user aus der Firestore-Datenbank ab und gibt sie zurück.
   async fetchUserContacts(loggedInUserId: string) {
-    const userDocRef = doc(this.firestore, 'contactlist', loggedInUserId);
-    const userDocSnapshot = await getDoc(userDocRef);
+    let userDocRef = doc(this.firestore, 'contactlist', loggedInUserId);
+    let userDocSnapshot = await getDoc(userDocRef);
     return userDocSnapshot.exists() ? userDocSnapshot.data()?.['contactList'] || [] : [];
   }
 
@@ -86,9 +86,9 @@ export class ContactlistComponent implements OnInit {
   // erstellt den einzel chat
   async createSingleChat(contact: any) {
     try {
-      const loggedInUser = await this.afAuth.currentUser;
+      let loggedInUser = await this.afAuth.currentUser;
       if (loggedInUser) {
-        const userToAdd: User = contact;
+        let userToAdd: User = contact;
         this.chatDataService.groupName = userToAdd.username;
         await this.ChatCreation(loggedInUser, contact);
       }
@@ -98,11 +98,11 @@ export class ContactlistComponent implements OnInit {
 
   // koordiniert die erstellung eines einzelchats mit einem ausgewählten Kontakt, indem sie die userdaten abruft
   async ChatCreation(loggedInUser: any, contact: any) {
-    const loggedInUserId = loggedInUser.uid;
-    const userToAdd: User = contact;
-    const userToAddUid = userToAdd.uid;
+    let loggedInUserId = loggedInUser.uid;
+    let userToAdd: User = contact;
+    let userToAddUid = userToAdd.uid;
     try {
-      const userToAddUsername = await this.usernameByUserId(userToAddUid);
+      let userToAddUsername = await this.usernameByUserId(userToAddUid);
       if (userToAddUsername) {
         await this.generateChatDataId(loggedInUserId, userToAddUid, userToAddUsername);
       } else {
@@ -115,11 +115,11 @@ export class ContactlistComponent implements OnInit {
   // holt den username eines users aus der Firestore-Datenbank und gibt seinen usernamen zurück
   async usernameByUserId(userUid: string): Promise<string | null> {
     try {
-      const userToAddDocRef = doc(this.firestore, 'users', userUid);
-      const userToAddDocSnapshot = await getDoc(userToAddDocRef);
+      let userToAddDocRef = doc(this.firestore, 'users', userUid);
+      let userToAddDocSnapshot = await getDoc(userToAddDocRef);
 
       if (userToAddDocSnapshot.exists()) {
-        const userToAddData = userToAddDocSnapshot.data();
+        let userToAddData = userToAddDocSnapshot.data();
         return userToAddData['username'] || 'Unbekannter Benutzer';
       }
       return null;
@@ -130,30 +130,28 @@ export class ContactlistComponent implements OnInit {
 
   // erstellt einen chat zwischen dem eingeloggten user und einem hinzugefügten Kontakt. Dabei wird die user-ID des eingeloggten users und die user-ID des hinzugefügten Kontakts sowie der username des hinzugefügten users hinzugefügten 
   async generateChatDataId(loggedInUserId: string, userToAddUid: string, userToAddUsername: string) {
-    // Setzen Sie den Chat-Namen auf den Benutzernamen des anderen Benutzers.
     this.chatDataService.groupName = userToAddUsername;
-
-    const sortedUids = [loggedInUserId, userToAddUid].sort();
-    const chatId = sortedUids.join('_');
+    let sortedUids = [loggedInUserId, userToAddUid].sort();
+    let chatId = sortedUids.join('_');
     await this.createUpdateChatDocument(chatId, sortedUids, userToAddUsername);
     this.openChatDialog({ users: sortedUids, groupName: userToAddUsername });
   }
 
   // erstellt oder aktualisiert die funktion einen Chat. Dabei wird überprüft, ob das Dokument bereits existiert
   async createUpdateChatDocument(chatId: string, sortedUids: string[], userToAddUsername: string) {
-    const chatCollectionRef = collection(this.firestore, 'chats');
-    const chatDocRef = doc(chatCollectionRef, chatId);
+    let chatCollectionRef = collection(this.firestore, 'chats');
+    let chatDocRef = doc(chatCollectionRef, chatId);
 
-    const chatDocSnapshot = await getDoc(chatDocRef);
+    let chatDocSnapshot = await getDoc(chatDocRef);
     if (!chatDocSnapshot.exists()) {
-      const chatData = {
+      let chatData = {
         users: sortedUids,
         groupName: userToAddUsername,
-        chatId: chatId // Fügt die chatId dem Chat-Datenobjekt hinzu
+        chatId: chatId,
       };
       await setDoc(chatDocRef, chatData);
     } else {
-      console.log('Chat existiert bereits:', chatId);
+      /*console.log('Chat existiert bereits:', chatId);*/
     }
   }
 
@@ -165,7 +163,7 @@ export class ContactlistComponent implements OnInit {
   // prüft ob ein chat existiert und gibt entwerder true oder false wieder
   async checkChatExists(chatId: string): Promise<boolean> {
     try {
-      const chatExists = await this.checkRegularChat(chatId);
+      let chatExists = await this.checkRegularChat(chatId);
       if (chatExists) {
         return true;
       }
@@ -178,17 +176,17 @@ export class ContactlistComponent implements OnInit {
 
   // prüft ob derselbe chat existiert
   async checkRegularChat(chatId: string): Promise<boolean> {
-    const chatDocRef = doc(this.firestore, 'chats', chatId);
-    const chatDocSnapshot = await getDoc(chatDocRef);
+    let chatDocRef = doc(this.firestore, 'chats', chatId);
+    let chatDocSnapshot = await getDoc(chatDocRef);
     return chatDocSnapshot.exists();
   }
 
   // prüft ob der umgekehr selbe chat exestiert
   async checkReversedChat(chatId: string): Promise<boolean> {
-    const uids = chatId.split('_');
-    const reverseChatId = `${uids[1]}_${uids[0]}`;
-    const reverseChatDocRef = doc(this.firestore, 'chats', reverseChatId);
-    const reverseChatDocSnapshot = await getDoc(reverseChatDocRef);
+    let uids = chatId.split('_');
+    let reverseChatId = `${uids[1]}_${uids[0]}`;
+    let reverseChatDocRef = doc(this.firestore, 'chats', reverseChatId);
+    let reverseChatDocSnapshot = await getDoc(reverseChatDocRef);
     return reverseChatDocSnapshot.exists();
   }
 }

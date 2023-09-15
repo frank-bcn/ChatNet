@@ -14,7 +14,6 @@
         <div class="username">
             <label>
                 <input type="text" name="text" placeholder="Group name" [(ngModel)]="this.chatDataService.groupName">
-
             </label>
         </div>
         <div class="email">
@@ -42,7 +41,6 @@
                         <div *ngIf="contact.isSelected" class="checkmark">&#10003;</div>
                     </div>
                 </button>
-
             </li>
         </ul>
     </div>
@@ -50,7 +48,6 @@
     <div *ngIf="showSuccessMessage" class="popup">
         <div class="message">You have successfully created the group chat!</div>
     </div>
-    
     <div *ngIf="showErrorMessage" class="popup">
         <div class="message">There are too few participants for a group. Please add more contacts.</div>
     </div>

@@ -4,8 +4,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ChatService } from 'src/app/service/chat-service.service';
 import { ChatDataService } from 'src/app/service/chat-data.service';
 import { Message } from 'src/app/service/message.model';
-import { Firestore, collection, addDoc, doc, getDoc, setDoc } from '@angular/fire/firestore';
-import { OnlineStatusService } from 'src/app/service/online-status.service';
+import { Firestore, collection, addDoc } from '@angular/fire/firestore';
 
 
 @Component({
@@ -30,36 +29,35 @@ export class ChatDialogComponent implements OnInit {
     public chatService: ChatService,
     public chatDataService: ChatDataService,
     private firestore: Firestore,
-    private onlineStatusService: OnlineStatusService,
 
   ) { }
 
   async ngOnInit() {
     this.afAuth.authState.subscribe(async (user) => {
       if (user) {
-        this.initializeChat(user);
+        this.initializeChat();
         await this.loadChatMessages();
-        console.log(this.chat);
+        /*console.log(this.chat);*/
       }
     });
   }
 
   //setzt den aktuellen Chat basierend auf den ausgewählten Details und dem Benutzer und lädt die Benutzernamen für die ausgewählten Chat-Kontakte, sofern vorhanden.
-  async initializeChat(user: any) {
-    const selectedChat = this.chatDataService.currentChatDetails;
+  async initializeChat() {
+    let selectedChat = this.chatDataService.currentChatDetails;
     this.chat = selectedChat ? { ...selectedChat } : {};
     this.chatDataService.setAdminUid(this.chat.admin);
     this.chatDataService.chatUsernames = {};
 
     if (this.chat.selectedContacts) {
-      await this.loadUsernamesForSelectedContacts(user.uid);
+      await this.loadUsernamesForSelectedContacts();
     }
   }
 
   // lädt die Benutzernamen für die ausgewählten Chat-Kontakte
-  async loadUsernamesForSelectedContacts(userId: string) {
+  async loadUsernamesForSelectedContacts() {
     for (const contactUid of this.chat.selectedContacts) {
-      const username = await this.chatDataService.loadUsernameViaUID(contactUid);
+      let username = await this.chatDataService.loadUsernameViaUID(contactUid);
       this.chatDataService.chatUsernames[contactUid] = username;
     }
   }
@@ -143,7 +141,7 @@ export class ChatDialogComponent implements OnInit {
 
   //speichert die Nachricht in database
   async sendMessageToFirestore(message: Message) {
-    const messagesCollectionRef = collection(this.firestore, 'messages');
+    let messagesCollectionRef = collection(this.firestore, 'messages');
     await addDoc(messagesCollectionRef, message);
   }
 
@@ -164,8 +162,8 @@ export class ChatDialogComponent implements OnInit {
 
   // lädt Chat-Nachrichten asynchron
   async loadChatMessages() {
-    const chatId = this.chat.chatId;
-    const messages = await this.chatDataService.loadMessages(chatId, 10);
+    let chatId = this.chat.chatId;
+    let messages = await this.chatDataService.loadMessages(chatId, 10);
     this.messages = messages;
   }
 

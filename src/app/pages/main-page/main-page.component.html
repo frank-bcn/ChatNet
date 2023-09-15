@@ -1,12 +1,10 @@
 <div class="page">
-  <div class="app mainpage">
+  <div class="appMainpage">
     <app-header></app-header>
-
     <div class="containerSearch">
       <input type="text" id="" class="userSearch" placeholder="Search User" [(ngModel)]="chatDataService.searchQuery"
         (input)="searchUsers()" (click)="toggleDropdown()">
     </div>
-
     <div class="containerContactChat">
       <div class="chats">
         <button class="menuButtonContainer" type="button" (click)="navigateToChats()">Chats</button>
@@ -15,7 +13,6 @@
         <button class="menuButtonContainer" type="button" (click)="navigateToContactList()">Contactlist</button>
       </div>
     </div>
-
     <div *ngIf="FilteredResults().length > 0" class="userListContainer">
       <ul class="userList" style="list-style-type: none;">
         <li *ngFor="let user of FilteredResults(); let i = index" class="userItem"
@@ -37,21 +34,9 @@
       </ul>
     </div>
     <div class="favoriteChats">
-      <!--<h2>Favorite Chats</h2>
-      <div class="favoriteChatList">
-        <div *ngFor="let favorite of favoriteChats" class="container">
-          <div class="userImage">
-            <img src="./assets/img/personAdd.png">
-          </div>
-          <div class="containerInformationFavoriteChats">
-            <div class="informationFavorite">
-              <div class="UserName">
-                <div class="onlineStatus" [ngClass]="{'online': favorite.online, 'offline': !favorite.online}"></div>
-              </div>
-              <div class="lastMessageText">{{ favorite.lastMessageText }}</div>
-            </div>
-          </div>
-        </div>
-      </div>-->
+
+
     </div>
     <button class="signin-button" (click)="logout()">Ausloggen</button>
+  </div>
+</div>

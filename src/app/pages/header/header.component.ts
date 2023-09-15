@@ -35,7 +35,7 @@ export class HeaderComponent implements OnInit {
 
   // grüßt den User
   getGreeting(): string {
-    const currentHour = new Date().getHours();
+    let currentHour = new Date().getHours();
     if (currentHour >= 5 && currentHour < 12) {
       return 'Good morning';
     } else if (currentHour >= 12 && currentHour < 18) {
@@ -59,7 +59,7 @@ export class HeaderComponent implements OnInit {
   // öffnet das menu
   toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
-    const button = document.querySelector('.menuButton');
+    let button = document.querySelector('.menuButton');
     if (button) {
       button.classList.toggle('open', this.isDropdownOpen);
     }
@@ -84,13 +84,13 @@ export class HeaderComponent implements OnInit {
 
   //öffnet das popup zur bestätigung des löschvorgangs
   openConfirmation() {
-    console.log("openConfirmation called");
+    /* console.log("openConfirmation called");*/
     this.showConfirmation = true;
   }
 
   // bricht den löschvorgang ab
   cancelDelete() {
-    console.log("cancelDelete called");
+    /*console.log("cancelDelete called");*/
     this.showConfirmation = false;
   }
 
@@ -103,12 +103,12 @@ export class HeaderComponent implements OnInit {
   // löscht den user aus beiden datenbanken
   deleteAccount() {
     if (this.chatDataService.loggedUserId) {
-      const user = this.afAuth.currentUser;
+      let user = this.afAuth.currentUser;
       if (user) {
         user.then(currentUser => {
           if (currentUser) {
-            const userUid = currentUser.uid;
-            const contactListDocRef = doc(this.firestore, 'contactlist', userUid);
+            let userUid = currentUser.uid;
+            let contactListDocRef = doc(this.firestore, 'contactlist', userUid);
             deleteDoc(contactListDocRef)
               .then(() => {
                 return deleteDoc(doc(this.firestore, 'contactlist', userUid));
@@ -130,5 +130,4 @@ export class HeaderComponent implements OnInit {
       }
     }
   }
-  
 }
