@@ -17,7 +17,7 @@
         <div class="containerInformation">
           <div class="information">
             <div class="UserName">{{ chat.displayName || chatDataService.chatUsernames[chatDataService.chatId] }}</div>
-            <div class="onlineStatus" [ngClass]="{'online': chat.online, 'offline': !chat.online}"></div>
+            <div *ngIf="shouldDisplayOnlineStatus(chat)" class="onlineStatus" [ngClass]="{'online': chat.online, 'offline': !chat.online}"></div>
           </div>
           <div class="informationChat">
             <div class="lastMessageText">{{ chat.lastMessage?.text || 'Keine Nachrichten' }}</div>

@@ -217,7 +217,7 @@
 }
 
 .online {
-  background-color: green;
+  background-color: #02c8db;
 }
 
 .offline {
@@ -259,9 +259,46 @@ h2 {
   margin-top: 15px;
 }
 
-.container {
+.containerInformationFavoriteChats {
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+.container {
+  margin-right: 50px;
+  display: flex;
+  margin-bottom: 20px;
+  margin-left: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 54px;
+  height: 54px;
+  margin-right: 20px;
+  border-radius: 54px;
+  border: 2px solid white;
+  box-shadow: 5px 5px 10px rgba(55, 84, 170, .2), -3px -3px 5px rgba(255, 255, 255, 1), 0px 0px 4px rgba(255, 255, 255, .2);
+}
+
+.informationFavorite {
+  display: flex;
+  flex-direction: column;
+}
+
+.lastMessageText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  width: 100%; 
+}
+
 
 @media (max-width: 540px) {
   .page {

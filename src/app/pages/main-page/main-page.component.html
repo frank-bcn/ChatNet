@@ -29,35 +29,29 @@
           <ng-container *ngIf="!chatDataService.searchQuery.startsWith('@')">
             {{ user.username }}
           </ng-container>
-          <button class="menuButton" type="button" (click)="addToContactList(user.uid, user.email, user.username, user.img, user.online)">
+          <button class="menuButton" type="button"
+            (click)="addToContactList(user.uid, user.email, user.username, user.img, user.online)">
             <img src="./assets/img/personAdd.png">
           </button>
         </li>
       </ul>
     </div>
     <div class="favoriteChats">
-      <div class="favoriteChats">
-        <h2>Favorite Chats</h2>
-        <ul>
-          <li *ngFor="let chat of favoriteChats">
-            <div class="container">
-              <div class="userImage">
-                <img src="./assets/img/pic.png">
+      <!--<h2>Favorite Chats</h2>
+      <div class="favoriteChatList">
+        <div *ngFor="let favorite of favoriteChats" class="container">
+          <div class="userImage">
+            <img src="./assets/img/personAdd.png">
+          </div>
+          <div class="containerInformationFavoriteChats">
+            <div class="informationFavorite">
+              <div class="UserName">
+                <div class="onlineStatus" [ngClass]="{'online': favorite.online, 'offline': !favorite.online}"></div>
               </div>
-              <div class="containerInformationFavoriteChats">
-                <div class="information">
-                  <div class="UserName">{{ chat.groupName }}</div>
-                  <div class="lastMessageText"></div>
-                </div>
-              </div>
+              <div class="lastMessageText">{{ favorite.lastMessageText }}</div>
             </div>
-          </li>
-        </ul>
-      </div>
+          </div>
+        </div>
+      </div>-->
     </div>
-    
-    
-    
     <button class="signin-button" (click)="logout()">Ausloggen</button>
-  </div>
-</div>

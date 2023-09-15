@@ -6,13 +6,15 @@
     <button class="menuButton" type="button" (click)="goToMainPage()"><img src="./assets/img/arrow.png"></button>
   </div>
   <div class="chatTitle">
-    <div class="title">{{ chat.displayName || chatDataService.chatUsernames[chatDataService.chatId] }}</div>
+    <div class="title">{{ chat.displayName || chatDataService.chatUsernames[chatDataService.chatId]|| chat.groupName }}</div>
+    <div *ngIf="shouldDisplayOnlineStatus()" class="onlineStatus" [ngClass]="{'online': chat.online, 'offline': !chat.online}"></div>
   </div>
-  <button class="menuButtonFavorite" (click)="toggleFavorite()">
+  <!--<button class="menuButtonFavorite">
     <div class="square" [class.checked]="isFavorite">
       <div class="checkmark">&#10003;</div>
     </div>
-  </button>
+  </button>-->
+  
   <div class="contentSide">
     <div class="usernames-container" [ngClass]="{'more-than-three': hasManySelectedContacts()}">
       <button class="menuButton visible-button" type="button"

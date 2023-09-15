@@ -369,19 +369,19 @@
     background-color: #fff;
     border-radius: 20px;
     transition: background-color 0.3s, border-color 0.3s;
-  }
-  
-  .square.checked {
+}
+
+.square.checked {
     background-color: #02c8db !important;
     border-color: #02c8db !important;
-  }
-  
-  .checkmark {
+}
+
+.checkmark {
     color: #fff;
     font-size: 20px;
-  }
+}
 
-  .menuButtonFavorite {
+.menuButtonFavorite {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -400,9 +400,9 @@
         inset -7px -7px 20px rgba(255, 255, 255, 0),
         0px 0px 4px rgba(255, 255, 255, 0) !important;
     transition: box-shadow .25s ease !important;
-  }
+}
 
-  .menuButtonFavorite:active {
+.menuButtonFavorite:active {
     box-shadow: 7px 7px 15px rgba(55, 84, 170, .15),
         -7px -7px 20px rgba(255, 255, 255, 1),
         inset 0px 0px 4px rgba(255, 255, 255, 0),
@@ -410,7 +410,22 @@
         inset -7px -7px 20px rgba(255, 255, 255, 1),
         0px 0px 4px rgba(255, 255, 255, .2) !important;
 }
-  
+
+.onlineStatus {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-left: 8px;
+}
+
+.online {
+    background-color:#02c8db;
+}
+
+.offline {
+    background-color: gray;
+}
+
 
 @media (max-width: 540px) {
     .page {

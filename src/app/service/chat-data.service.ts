@@ -16,7 +16,7 @@ export class ChatDataService {
   selectedUser: User | null = null;
   chats: any[] = [];
   chatId: string = '';
-  groupName: string ='';
+  groupName: string = '';
   showChatTitle: boolean = false;
   usernamesLoaded: boolean = false;
   username: string = '';
@@ -30,13 +30,13 @@ export class ChatDataService {
   selectedContacts: User[] = [];
   admin: string | null = null;
   messages: Message[] = [];
-  
 
-  
+
+
   constructor(
     private firestore: Firestore,
     public afAuth: AngularFireAuth,
-    ) { }
+  ) { }
 
   // läd die kontaktliste für den angemeldeten User.
   async loadUserContactlist(loggedUserId: string) {
@@ -44,7 +44,7 @@ export class ChatDataService {
     const chatsCollectionRef = collection(this.firestore, 'chats');
     const chatsQuerySnapshot = await getDocs(chatsCollectionRef);
     this.chats = chatsQuerySnapshot.docs.map(doc => doc.data());
-  
+
     // Nachdem Sie die Kontakte geladen haben, rufen Sie die Benutzernamen für diese Kontakte ab und speichern sie direkt in selectedContacts.
     for (const contact of this.contacts) {
       const username = await this.loadUsernameViaUID(contact.uid);
@@ -61,7 +61,7 @@ export class ChatDataService {
     }
     return null;
   }
-  
+
   // Holt den Benutzernamen anhand der Benutzer-UID aus der Datenbank.
   async loadUsernameViaUID(uid: string): Promise<string> {
     const userDocumentRef = doc(collection(this.firestore, 'users'), uid);
@@ -84,34 +84,34 @@ export class ChatDataService {
     }
   }
 
-// Erstellt einen Gruppenchat mit ausgewählten Kontakten.
-async createGroupChat(groupName: string, loggedUserId: string, selectedContactUids: string[]): Promise<string | null> {
-  try {
-    const chatId = this.createChatId(selectedContactUids);
-    const chatCollectionRef = collection(this.firestore, 'chats');
-    const chatDocRef = doc(chatCollectionRef, chatId);
-    const chatDocSnapshot = await getDoc(chatDocRef);
+  // Erstellt einen Gruppenchat mit ausgewählten Kontakten.
+  async createGroupChat(groupName: string, loggedUserId: string, selectedContactUids: string[]): Promise<string | null> {
+    try {
+      const chatId = this.createChatId(selectedContactUids);
+      const chatCollectionRef = collection(this.firestore, 'chats');
+      const chatDocRef = doc(chatCollectionRef, chatId);
+      const chatDocSnapshot = await getDoc(chatDocRef);
 
-    if (chatDocSnapshot.exists()) {
+      if (chatDocSnapshot.exists()) {
+        return null;
+      }
+
+      const chatData = {
+        groupName: groupName,
+        selectedContacts: selectedContactUids,
+        admin: loggedUserId,
+        chatId: chatId,
+      };
+
+      await setDoc(chatDocRef, chatData);
+      return chatId;
+    } catch (error) {
+      console.error('Fehler beim Erstellen des Gruppenchats:', error);
       return null;
     }
-
-    const chatData = {
-      groupName: groupName,
-      selectedContacts: selectedContactUids,
-      admin: loggedUserId,
-      chatId: chatId,
-    };
-
-    await setDoc(chatDocRef, chatData);
-    return chatId;
-  } catch (error) {
-    console.error('Fehler beim Erstellen des Gruppenchats:', error);
-    return null;
   }
-}
 
- //generiert eine eindeutige ChatID, die aus dem Gruppennamen und den UserIDs der ausgewählten Kontakte besteht. 
+  //generiert eine eindeutige ChatID, die aus dem Gruppennamen und den UserIDs der ausgewählten Kontakte besteht. 
   //Die Methode join('_') fügt die Benutzer-IDs im Array durch Unterstriche getrennt zu einer einzigen Zeichenkette zusammen.
   createChatId(selectedContactUids: string[]): string {
     return `${this.groupName}_${selectedContactUids.join('_')}`;
@@ -123,34 +123,33 @@ async createGroupChat(groupName: string, loggedUserId: string, selectedContactUi
     this.admin = uid;
   }
 
-// 
-async loadMessages(chatId: string, limitCount: number = 10): Promise<Message[]> {
-  try {
-    const user = await this.afAuth.currentUser;
-    if (!user) throw new Error('Benutzer ist nicht angemeldet.');
+  // 
+  async loadMessages(chatId: string, limitCount: number = 10): Promise<Message[]> {
+    try {
+      const user = await this.afAuth.currentUser;
+      if (!user) throw new Error('Benutzer ist nicht angemeldet.');
 
-    const messagesQuery = query(
-      collection(this.firestore, 'messages'),
-      where('chatId', '==', chatId),
-      orderBy('timestamp', 'desc'),
-      limit(limitCount)
-    );
+      const messagesQuery = query(
+        collection(this.firestore, 'messages'),
+        where('chatId', '==', chatId),
+        orderBy('timestamp', 'desc'),
+        limit(limitCount)
+      );
 
-    const messagesQuerySnapshot = await getDocs(messagesQuery);
+      const messagesQuerySnapshot = await getDocs(messagesQuery);
 
-    const messages = messagesQuerySnapshot.docs.map((doc) => {
-      const message = doc.data() as Message;
-      if (message.senderId === user.uid) message.isCurrentUser = true;
-      return message;
-    });
+      const messages = messagesQuerySnapshot.docs.map((doc) => {
+        const message = doc.data() as Message;
+        if (message.senderId === user.uid) message.isCurrentUser = true;
+        return message;
+      });
 
-    return messages.reverse();
-  } catch (error) {
-    console.error('Fehler beim Laden der Nachrichten:', error);
-    return [];
+      return messages.reverse();
+    } catch (error) {
+      console.error('Fehler beim Laden der Nachrichten:', error);
+      return [];
+    }
   }
-}
-
 
   // filtert die letzte nachricht aus dem Chat
   async loadLastMessage(chatId: string): Promise<Message | null> {
@@ -159,7 +158,7 @@ async loadMessages(chatId: string, limitCount: number = 10): Promise<Message[]> 
         collection(this.firestore, 'messages'),
         where('chatId', '==', chatId),
         orderBy('timestamp', 'desc'),
-        limit(1) 
+        limit(1)
       );
       const messagesQuerySnapshot = await getDocs(messagesQuery);
       if (messagesQuerySnapshot.empty) return null;
@@ -169,4 +168,6 @@ async loadMessages(chatId: string, limitCount: number = 10): Promise<Message[]> 
       return null;
     }
   }
+
+
 }

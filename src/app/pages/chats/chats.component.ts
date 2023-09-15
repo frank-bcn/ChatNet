@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Firestore } from '@angular/fire/firestore';
 import { OnlineStatusService } from 'src/app/service/online-status.service';
-import { FavoriteService } from 'src/app/service/favoriten-service.service';
 import { ChatDataService } from 'src/app/service/chat-data.service';
 import { ChatService } from 'src/app/service/chat-service.service';
 
@@ -21,7 +20,6 @@ export class ChatsComponent {
     private onlineStatusService: OnlineStatusService,
     public chatDataService: ChatDataService,
     public chatService: ChatService,
-    private favoriteService: FavoriteService
   ) { }
 
   async ngOnInit() {
@@ -84,7 +82,7 @@ export class ChatsComponent {
 
   // öffnet den chat
   async navigateToChatDialog(chatId: string) {
-    this.chatDataService.currentChatDetails = {}; // Setzen Sie die aktuellen Chat-Details zurück, falls erforderlich
+    this.chatDataService.currentChatDetails = {};
     console.log('Öffne Einzelchat mit Chat-ID:', chatId);
     this.router.navigate(['/chat-dialog', chatId]);
   }
@@ -100,5 +98,10 @@ export class ChatsComponent {
         }
       }
     }
+  }
+
+  //prüft die uid's in chats um den online status anzuzeigen
+  shouldDisplayOnlineStatus(chat: any): boolean {
+    return chat.users && chat.users.length < 3;
   }
 }
