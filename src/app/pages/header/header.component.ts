@@ -130,4 +130,8 @@ export class HeaderComponent implements OnInit {
       }
     }
   }
+
+  openDesign() {
+    this.router.navigate(['/design']);
+  }
 }

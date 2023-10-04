@@ -1,0 +1,25 @@
+<div class="page" [style.background-color]="backgroundColor">
+  <div class="headlineProfile">
+    <span class="profileName"><b>{{ this.chatDataService.username }}</b></span>
+    <button class="menuButton" type="button" (click)="goToMainPage()">
+      <img src="./assets/img/arrow.png">
+    </button>
+  </div>
+  <div class="userContent">
+    <div class="profilImage">
+      <img src="./assets/img/profile+.png">
+    </div>
+  </div>
+  <div class="containerContent">
+  <button class="menuButton" (click)="toggleDropdown()">
+    <img src="./assets/img/menu.png">
+  </button>
+  <div class="buttonText">change Backgroundcolor</div>
+  </div>
+  <div class="dropdown-content" *ngIf="isDropdownOpen">
+    <button  class="menuButtonProfile" type="button"><a>Profile</a></button>
+    <button  class="menuButtonGroup" type="button"><a>Create group chat</a></button>
+    <button  class="menuButtonGroup" type="button"><a>Delete Account</a></button>
+    <button class="menuButtonGroup" type="button"><a>Desingn</a></button>
+</div>
+</div>

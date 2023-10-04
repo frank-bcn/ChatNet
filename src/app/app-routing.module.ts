@@ -8,6 +8,7 @@ import { ChatDialogComponent } from 'src/app/pages/chat-dialog/chat-dialog.compo
 import { ContactlistComponent } from 'src/app/pages/contactlist/contactlist.component';
 import { ChatsComponent } from 'src/app/pages/chats/chats.component';
 import { GroupChatComponent } from 'src/app/pages/group-chat/group-chat.component';
+import { DesignComponent } from 'src/app/pages/design/design.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'contactlist', component: ContactlistComponent },
   { path: 'chats', component: ChatsComponent },
   { path: 'group', component: GroupChatComponent },
+  { path: 'design', component: DesignComponent },
 ];
 
 @NgModule({

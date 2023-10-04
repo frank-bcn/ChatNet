@@ -22,6 +22,7 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
 import { ContactlistComponent } from './pages/contactlist/contactlist.component';
 import { ChatsComponent } from './pages/chats/chats.component';
 import { GroupChatComponent } from './pages/group-chat/group-chat.component';
+import { DesignComponent } from './pages/design/design.component';
 
 
 
@@ -38,6 +39,7 @@ import { GroupChatComponent } from './pages/group-chat/group-chat.component';
     ContactlistComponent,
     ChatsComponent,
     GroupChatComponent,
+    DesignComponent,
    
   ],
   imports: [
